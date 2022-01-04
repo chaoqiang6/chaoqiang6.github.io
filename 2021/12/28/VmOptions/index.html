@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>chaoqiang6&#39;s memo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="VM Options   参数 用途 示例    -Xss 指定栈内存大小 -Xss256k   -XX:MaxMetaspaceSize 指定元空间内存大小 -XX:MaxMetaspaceSize&#x3D;8m   -XX:MaxPermSize 指定永久代内存 -XX:MaxPermSize&#x3D;8m   –XX:-UseGCOverheadLimit 不使用垃圾回收开销限制 -号设置为不开启，+号设置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="chaoqiang6&#39;s memo">
+<meta property="og:url" content="http://example.com/2021/12/28/VmOptions/index.html">
+<meta property="og:site_name" content="chaoqiang6&#39;s memo">
+<meta property="og:description" content="VM Options   参数 用途 示例    -Xss 指定栈内存大小 -Xss256k   -XX:MaxMetaspaceSize 指定元空间内存大小 -XX:MaxMetaspaceSize&#x3D;8m   -XX:MaxPermSize 指定永久代内存 -XX:MaxPermSize&#x3D;8m   –XX:-UseGCOverheadLimit 不使用垃圾回收开销限制 -号设置为不开启，+号设置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-28T15:43:34.037Z">
+<meta property="article:modified_time" content="2022-01-04T13:20:43.500Z">
+<meta property="article:author" content="chaoqiang6">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="chaoqiang6's memo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">chaoqiang6&#39;s memo</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">talk is cheap,show me code</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-VmOptions" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/12/28/VmOptions/" class="article-date">
+  <time class="dt-published" datetime="2021-12-28T15:43:34.037Z" itemprop="datePublished">2021-12-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="VM-Options"><a href="#VM-Options" class="headerlink" title="VM Options"></a>VM Options</h1><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>用途</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-Xss</td>
+<td>指定栈内存大小</td>
+<td>-Xss256k</td>
+</tr>
+<tr>
+<td>-XX:MaxMetaspaceSize</td>
+<td>指定元空间内存大小</td>
+<td>-XX:MaxMetaspaceSize=8m</td>
+</tr>
+<tr>
+<td>-XX:MaxPermSize</td>
+<td>指定永久代内存</td>
+<td>-XX:MaxPermSize=8m</td>
+</tr>
+<tr>
+<td>–XX:-UseGCOverheadLimit</td>
+<td>不使用垃圾回收开销限制</td>
+<td>-号设置为不开启，+号设置为开启java.lang.OutOfMemoryError: GC overhead limit exceed 如果超过98%的时间花费在垃圾回收但只有小于2%的堆空间被回收，会触发上述错误,避免程序假死</td>
+</tr>
+<tr>
+<td>-XX:+PrintStringTableStatistics</td>
+<td>打印字符串常量池统计信息</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:StringTableSize</td>
+<td>设置字符串常量池初始桶大小</td>
+<td>-XX:StringTableSize=200000</td>
+</tr>
+<tr>
+<td>-XX:+DisableExplicitGC</td>
+<td>禁用显式垃圾回收</td>
+<td>由于System.gc()是full gc，为避免程序员在代码中不慎操作full gc，可添加此配置禁用显式垃圾回收，但是添加该配置后，可能ByteBuffer不能及时得到释放导致占用物理内存空间，可以用UnSafe对象的freeMemory(xxx)手动释放内存</td>
+</tr>
+<tr>
+<td>-XX:UseCompressedOops -XX:-UseCompressedClassPointers</td>
+<td>禁用指针压缩</td>
+<td></td>
+</tr>
+<tr>
+<td>-Xbootclasspath/a:.</td>
+<td>设置启动类加载器加载路径</td>
+<td>java -Xbootclasspath: <code>&lt;new bootclasspath&gt;</code> 完全替换<br />/a:.表示将当前目录追加至bootclasspath之后<br />/p:.表示将当前目录追加至bootclasspath之前-用这个方法替换核心类</td>
+</tr>
+<tr>
+<td>-XX:-DoEscapeAnalysis</td>
+<td>关闭逃逸分析</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX+UnlockDiagnosticVMOptions -XX:+PrintInlining</td>
+<td>打印方法内连优化详情</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:CompileCommand=dontinline,*类名.square</td>
+<td></td>
+<td>针对任意包下指定类名的指定方法禁用方法内联</td>
+</tr>
+<tr>
+<td>-XX:-UseBiasedLocking</td>
+<td>禁用偏向锁</td>
+<td></td>
+</tr>
+<tr>
+<td>堆相关</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>-Xms</td>
+<td>指定堆的初始大小</td>
+<td>-Xms8m，生产中一般和-Xmx大小一样</td>
+</tr>
+<tr>
+<td>-Xmx</td>
+<td>指定堆内存最大值</td>
+<td>-Xmx8m等价于-XX:MaxHeapSize=size</td>
+</tr>
+<tr>
+<td>-Xmn</td>
+<td>新生代大小</td>
+<td>-Xmn1m等价于-XX:NewSize=1m -XX:MaxNewSize=1m<br />即将新生代初始大小NewSize和新生代最大大小MaxNewSize都设置为1m</td>
+</tr>
+<tr>
+<td>-XX:InitialSurvivorRatio=ratio</td>
+<td>设置幸存区比例，默认为8</td>
+<td>Eden区与From区比例</td>
+</tr>
+<tr>
+<td>-XX:InitialSurvivorRatio=ratio -XX:+UseAdaptiveSizePolicy</td>
+<td>动态调整幸存区比例</td>
+<td>指定初始化幸存区比例，动态调整新生代中Eden与From区比例</td>
+</tr>
+<tr>
+<td>-XX:MaxTenuringThreshold=threshold</td>
+<td>晋升阈值</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintTenuringDistribution</td>
+<td>打印晋升详情</td>
+<td></td>
+</tr>
+<tr>
+<td>-XX:+PrintGCDetails</td>
+<td>打印垃圾回收详细信息</td>
+<td></td>
+</tr>
+<tr>
+<td>-verbose:gc</td>
+<td>以最简单形式激活垃圾收集信息的日志记录</td>
+<td>-XX:+PrintGCDetails -verbose:gc</td>
+</tr>
+<tr>
+<td>-XX:+ScavengeBeforeFullGC</td>
+<td>FullGC前Minor GC</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>-Xmx20m -Xms20m -Xmn10m -XX:+UseSerialGC   -XX:+PrintGCDetails -verbose:gc</p>
+<p>执行main方法打印堆信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 9216K, used 2214K [0x00000007bf600000, 0x00000007c0000000, 0x00000007c0000000)</span><br><span class="line">  eden space 8192K, 27% used [0x00000007bf600000,0x00000007bf8299b0,0x00000007bfe00000)</span><br><span class="line">  from space 1024K, 0% used [0x00000007bff00000,0x00000007bff00000,0x00000007c0000000)</span><br><span class="line">  to   space 1024K, 0% used [0x00000007bfe00000,0x00000007bfe00000,0x00000007bff00000)</span><br><span class="line"> ParOldGen       total 14336K, used 0K [0x00000007be800000, 0x00000007bf600000, 0x00000007bf600000)</span><br><span class="line">  object space 14336K, 0% used [0x00000007be800000,0x00000007be800000,0x00000007bf600000)</span><br><span class="line"> Metaspace       used 3081K, capacity 4620K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 324K, capacity 392K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<p>新生代中total为Eden+From，因为To始终要空着，所以，total大概为9m</p>
+<p>调用垃圾回收信息</p>
+<p>DefNew: 6146K-&gt;480K(9216K),新生代回收前内存占用，回收后内存占用，新生代内存大小</p>
+<p>6146K-&gt;4576K(23552K), 0.0011131 secs回收前堆内存占用，回收后堆内存占用，整个堆的内存大小</p>
+<p>因为第二次创建对象时，新生代没有足够空间存放新创建的4M对象，直接将第一个4m对象存放到老年区了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;<span class="keyword">byte</span>[]&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="keyword">new</span> <span class="keyword">byte</span>[_4MB]);</span><br><span class="line">        list.add(<span class="keyword">new</span> <span class="keyword">byte</span>[_4MB]);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[GC (Allocation Failure) [DefNew: 6146K-&gt;480K(9216K), 0.0010934 secs] 6146K-&gt;4576K(23552K), 0.0011131 secs] [Times: user=0.00 sys=0.01, real=0.00 secs] </span><br><span class="line">Heap</span><br><span class="line"> def new generation   total 9216K, used 4658K [0x00000007be800000, 0x00000007bf200000, 0x00000007bf200000)</span><br><span class="line">  eden space 8192K,  53% used [0x00000007be800000, 0x00000007bec3d8a0, 0x00000007bf000000)</span><br><span class="line">  from space 1024K,  46% used [0x00000007bf100000, 0x00000007bf1781b8, 0x00000007bf200000)</span><br><span class="line">  to   space 1024K,   0% used [0x00000007bf000000, 0x00000007bf000000, 0x00000007bf100000)</span><br><span class="line"> tenured generation   total 14336K, used 4096K [0x00000007bf200000, 0x00000007c0000000, 0x00000007c0000000)</span><br><span class="line">   the space 14336K,  28% used [0x00000007bf200000, 0x00000007bf600010, 0x00000007bf600200, 0x00000007c0000000)</span><br><span class="line"> Metaspace       used 3082K, capacity 4620K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 324K, capacity 392K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>​    </p>
+<p>HSDB工具</p>
+<p>arthas-boot.jar可以反编译动态生成类</p>
+<p>并发压测 工具jcstress</p>
+<p>JMH工具</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/12/28/VmOptions/" data-id="cky07z9pm0001it6yh2zdfevv" data-title="" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          JAVA内存结构
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/12/28/Linux%E5%AE%9E%E6%93%8D/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/JVM/" rel="tag">JVM</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/JVM/" style="font-size: 10px;">JVM</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/01/04/JVM-1/">JVM</a>
+          </li>
+        
+          <li>
+            <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JAVA内存结构</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/28/VmOptions/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/28/Linux%E5%AE%9E%E6%93%8D/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/">(no title)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 chaoqiang6<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

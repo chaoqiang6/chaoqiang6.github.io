@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Hello World | chaoqiang6&#39;s memo</title>
+  <title>chaoqiang6&#39;s memo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="单例模式单例模式实现方式饿汉式枚举型单例懒汉式双减锁单例volitile 解决指令重排序 可见行 有序性 内部类型懒汉单例破坏单例 反射破坏 反序列化破坏。readResolve Unsafe破坏单例  枚举类型反射和反序列化可以破坏单例 java类库中使用单例 Runtime-静态变量 Consol-双检锁懒汉创建单例 Collections中的EmptyXXX对象–懒汉式内部类 Compara">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://example.com/2021/12/28/hello-world/index.html">
+<meta property="og:title" content="chaoqiang6&#39;s memo">
+<meta property="og:url" content="http://example.com/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/index.html">
 <meta property="og:site_name" content="chaoqiang6&#39;s memo">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="单例模式单例模式实现方式饿汉式枚举型单例懒汉式双减锁单例volitile 解决指令重排序 可见行 有序性 内部类型懒汉单例破坏单例 反射破坏 反序列化破坏。readResolve Unsafe破坏单例  枚举类型反射和反序列化可以破坏单例 java类库中使用单例 Runtime-静态变量 Consol-双检锁懒汉创建单例 Collections中的EmptyXXX对象–懒汉式内部类 Compara">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-12-28T12:47:43.346Z">
-<meta property="article:modified_time" content="2021-12-28T12:47:43.346Z">
+<meta property="article:published_time" content="2021-12-28T13:38:33.903Z">
+<meta property="article:modified_time" content="2021-12-28T13:38:33.903Z">
 <meta property="article:author" content="chaoqiang6">
 <meta name="twitter:card" content="summary">
   
@@ -77,46 +77,37 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-黑马高频" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/12/28/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2021-12-28T12:47:43.346Z" itemprop="datePublished">2021-12-28</time>
+    <a href="/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/" class="article-date">
+  <time class="dt-published" datetime="2021-12-28T13:38:33.903Z" itemprop="datePublished">2021-12-28</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      Hello World
-    </h1>
-  
-
-      </header>
-    
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><h3 id="单例模式实现方式"><a href="#单例模式实现方式" class="headerlink" title="单例模式实现方式"></a>单例模式实现方式</h3><h4 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h4><h4 id="枚举型单例"><a href="#枚举型单例" class="headerlink" title="枚举型单例"></a>枚举型单例</h4><h4 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h4><h4 id="双减锁单例"><a href="#双减锁单例" class="headerlink" title="双减锁单例"></a>双减锁单例</h4><p>volitile 解决指令重排序</p>
+<p>可见行</p>
+<p>有序性</p>
+<h4 id="内部类型懒汉单例"><a href="#内部类型懒汉单例" class="headerlink" title="内部类型懒汉单例"></a>内部类型懒汉单例</h4><h3 id="破坏单例"><a href="#破坏单例" class="headerlink" title="破坏单例"></a>破坏单例</h3><ul>
+<li>反射破坏</li>
+<li>反序列化破坏。readResolve</li>
+<li>Unsafe破坏单例</li>
+</ul>
+<p>枚举类型反射和反序列化可以破坏单例</p>
+<p>java类库中使用单例</p>
+<p>Runtime-静态变量</p>
+<p>Consol-双检锁懒汉创建单例</p>
+<p>Collections中的EmptyXXX对象–懒汉式内部类</p>
+<p>Comparators中的NaturalOrderComparator使用的是枚举型饿汉式单例</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/hello-world/" data-id="ckxq4ods900009d6y4pc92bpw" data-title="Hello World" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/" data-id="cky07z9pm0002it6y8anre4t0" data-title="" class="article-share-link">分享</a>
       
       
       
@@ -126,15 +117,20 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/12/28/JVM/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/12/28/Linux%E5%AE%9E%E6%93%8D/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
       <div class="article-nav-title">
         
-          JVM
+          (no title)
         
       </div>
     </a>
   
+  
+    <a href="/2021/12/28/JVM/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">JVM</div>
+    </a>
   
 </nav>
 
