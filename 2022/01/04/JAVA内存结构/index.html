@@ -13,13 +13,13 @@
 <meta property="og:site_name" content="chaoqiang6&#39;s memo">
 <meta property="og:description" content="1.程序计数器每个线程独有，永远不会发生内存溢出，对应CPU中的高速缓存器,用于记录线程下一条执行语句的行数，当时间片轮转回该线程时，从原有位置继续执行 2.栈内存每个线程数独有 虚拟机栈 每个线程运行时所需要的内存，成为虚拟机栈 每个栈有多个栈帧组成，对应着每 次方法调用时所占用的内存 每个线程只能有一个活动栈帧，对应着当前正在执行的方法  垃圾回收不涉及栈内存 方法内的局部变量是否线程安全">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/Users/chaoqiang/blog/source/_posts/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/VmOptions.png">
-<meta property="article:published_time" content="2022-01-04T14:32:55.000Z">
-<meta property="article:modified_time" content="2022-01-04T15:07:19.754Z">
+<meta property="og:image" content="http://example.com/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/image-20220104232039407.png">
+<meta property="article:published_time" content="2022-01-04T15:18:57.000Z">
+<meta property="article:modified_time" content="2022-01-04T15:20:48.397Z">
 <meta property="article:author" content="chaoqiang6">
 <meta property="article:tag" content="JVM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/Users/chaoqiang/blog/source/_posts/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/VmOptions.png">
+<meta name="twitter:image" content="http://example.com/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/image-20220104232039407.png">
   
     <link rel="alternate" href="/atom.xml" title="chaoqiang6's memo" type="application/atom+xml">
   
@@ -83,7 +83,7 @@
         <section id="main"><article id="post-JAVA内存结构" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" class="article-date">
-  <time class="dt-published" datetime="2022-01-04T14:32:55.000Z" itemprop="datePublished">2022-01-04</time>
+  <time class="dt-published" datetime="2022-01-04T15:18:57.000Z" itemprop="datePublished">2022-01-04</time>
 </a>
     
   </div>
@@ -102,7 +102,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><img src="/Users/chaoqiang/blog/source/_posts/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/VmOptions.png" alt="Java内存结构"></p>
+        <p><img src="/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/image-20220104232039407.png" alt="image-20220104232039407"></p>
 <h3 id="1-程序计数器"><a href="#1-程序计数器" class="headerlink" title="1.程序计数器"></a>1.程序计数器</h3><p>每个线程独有，永远不会发生内存溢出，对应CPU中的高速缓存器,用于记录线程下一条执行语句的行数，当时间片轮转回该线程时，从原有位置继续执行</p>
 <h3 id="2-栈内存"><a href="#2-栈内存" class="headerlink" title="2.栈内存"></a>2.栈内存</h3><p>每个线程数独有</p>
 <h4 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h4><ul>
@@ -151,7 +151,7 @@
 <h4 id="堆内存溢出"><a href="#堆内存溢出" class="headerlink" title="堆内存溢出"></a>堆内存溢出</h4><p>java.lang.OutOfMemoryError:Java heap space </p>
 <h4 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h4><h5 id="eden区"><a href="#eden区" class="headerlink" title="eden区"></a>eden区</h5><h5 id="survior"><a href="#survior" class="headerlink" title="survior"></a>survior</h5><h6 id="From-Space"><a href="#From-Space" class="headerlink" title="From Space"></a>From Space</h6><h6 id="To-Space"><a href="#To-Space" class="headerlink" title="To Space"></a>To Space</h6><h4 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h4><h3 id="5-方法区"><a href="#5-方法区" class="headerlink" title="5.方法区"></a>5.方法区</h3><p>概念上属于堆，但是具体实现上不同JVM厂商实现方式不同，可能不在堆内存</p>
 <p>HotSpot虚拟机JVM内存结构</p>
-<p>![JAVA内存结构/截屏2021-12-30 下午8.14.08.png](/Users/chaoqiang/blog/source/_posts/JAVA内存结构/截屏2021-12-30 下午8.14.08.png)</p>
+<p>![JAVA内存结构/截屏2021-12-30 下午8.14.08.png](JAVA内存结构/截屏2021-12-30 下午8.14.08.png)</p>
 <h4 id="永久代"><a href="#永久代" class="headerlink" title="永久代"></a>永久代</h4><p>jdk1.6以前使用堆的一部分</p>
 <h4 id="元空间"><a href="#元空间" class="headerlink" title="元空间"></a>元空间</h4><p>jdk1.8以后使用的是操作系统内存</p>
 <h4 id="方法区内存溢出"><a href="#方法区内存溢出" class="headerlink" title="方法区内存溢出"></a>方法区内存溢出</h4><p>元空间内存溢出java.lang.OutOfMemoryError:Metaspace</p>
@@ -218,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" data-id="cky08ita70000le6ydv7uaxso" data-title="JAVA内存结构" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" data-id="cky09emeb0000pr6y0d8v9f12" data-title="JAVA内存结构" class="article-share-link">分享</a>
       
       
       
@@ -230,19 +230,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2022/01/04/JVM-1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">前一篇</strong>
-      <div class="article-nav-title">
-        
-          JVM
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/12/28/VmOptions/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2022/01/04/JVM-1/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title"></div>
+      <div class="article-nav-title">JVM</div>
     </a>
   
 </nav>
@@ -294,11 +285,11 @@
       <ul>
         
           <li>
-            <a href="/2022/01/04/JVM-1/">JVM</a>
+            <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JAVA内存结构</a>
           </li>
         
           <li>
-            <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JAVA内存结构</a>
+            <a href="/2022/01/04/JVM-1/">JVM</a>
           </li>
         
           <li>

@@ -75,48 +75,10 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-JVM-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/01/04/JVM-1/" class="article-date">
-  <time class="dt-published" datetime="2022-01-04T14:59:34.000Z" itemprop="datePublished">2022-01-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/01/04/JVM-1/">JVM</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/04/JVM-1/" data-id="cky08scqd0000mi6y917gf4qf" data-title="JVM" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
     <article id="post-JAVA内存结构" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" class="article-date">
-  <time class="dt-published" datetime="2022-01-04T14:32:55.000Z" itemprop="datePublished">2022-01-04</time>
+  <time class="dt-published" datetime="2022-01-04T15:18:57.000Z" itemprop="datePublished">2022-01-04</time>
 </a>
     
   </div>
@@ -135,7 +97,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><img src="/Users/chaoqiang/blog/source/_posts/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/VmOptions.png" alt="Java内存结构"></p>
+        <p><img src="/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/image-20220104232039407.png" alt="image-20220104232039407"></p>
 <h3 id="1-程序计数器"><a href="#1-程序计数器" class="headerlink" title="1.程序计数器"></a>1.程序计数器</h3><p>每个线程独有，永远不会发生内存溢出，对应CPU中的高速缓存器,用于记录线程下一条执行语句的行数，当时间片轮转回该线程时，从原有位置继续执行</p>
 <h3 id="2-栈内存"><a href="#2-栈内存" class="headerlink" title="2.栈内存"></a>2.栈内存</h3><p>每个线程数独有</p>
 <h4 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h4><ul>
@@ -184,7 +146,7 @@
 <h4 id="堆内存溢出"><a href="#堆内存溢出" class="headerlink" title="堆内存溢出"></a>堆内存溢出</h4><p>java.lang.OutOfMemoryError:Java heap space </p>
 <h4 id="新生代"><a href="#新生代" class="headerlink" title="新生代"></a>新生代</h4><h5 id="eden区"><a href="#eden区" class="headerlink" title="eden区"></a>eden区</h5><h5 id="survior"><a href="#survior" class="headerlink" title="survior"></a>survior</h5><h6 id="From-Space"><a href="#From-Space" class="headerlink" title="From Space"></a>From Space</h6><h6 id="To-Space"><a href="#To-Space" class="headerlink" title="To Space"></a>To Space</h6><h4 id="老年代"><a href="#老年代" class="headerlink" title="老年代"></a>老年代</h4><h3 id="5-方法区"><a href="#5-方法区" class="headerlink" title="5.方法区"></a>5.方法区</h3><p>概念上属于堆，但是具体实现上不同JVM厂商实现方式不同，可能不在堆内存</p>
 <p>HotSpot虚拟机JVM内存结构</p>
-<p>![JAVA内存结构/截屏2021-12-30 下午8.14.08.png](/Users/chaoqiang/blog/source/_posts/JAVA内存结构/截屏2021-12-30 下午8.14.08.png)</p>
+<p>![JAVA内存结构/截屏2021-12-30 下午8.14.08.png](JAVA内存结构/截屏2021-12-30 下午8.14.08.png)</p>
 <h4 id="永久代"><a href="#永久代" class="headerlink" title="永久代"></a>永久代</h4><p>jdk1.6以前使用堆的一部分</p>
 <h4 id="元空间"><a href="#元空间" class="headerlink" title="元空间"></a>元空间</h4><p>jdk1.8以后使用的是操作系统内存</p>
 <h4 id="方法区内存溢出"><a href="#方法区内存溢出" class="headerlink" title="方法区内存溢出"></a>方法区内存溢出</h4><p>元空间内存溢出java.lang.OutOfMemoryError:Metaspace</p>
@@ -251,12 +213,50 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" data-id="cky08ita70000le6ydv7uaxso" data-title="JAVA内存结构" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" data-id="cky09emeb0000pr6y0d8v9f12" data-title="JAVA内存结构" class="article-share-link">分享</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JVM/" rel="tag">JVM</a></li></ul>
 
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-JVM-1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/01/04/JVM-1/" class="article-date">
+  <time class="dt-published" datetime="2022-01-04T14:59:34.000Z" itemprop="datePublished">2022-01-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/01/04/JVM-1/">JVM</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/01/04/JVM-1/" data-id="cky099dml0001pd6y1xldcus0" data-title="JVM" class="article-share-link">分享</a>
+      
+      
+      
     </footer>
   </div>
   
@@ -442,7 +442,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/VmOptions/" data-id="cky07z9pm0001it6yh2zdfevv" data-title="" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/VmOptions/" data-id="cky099dmn0004pd6y66vf5ei4" data-title="" class="article-share-link">分享</a>
       
       
       
@@ -520,7 +520,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/Linux%E5%AE%9E%E6%93%8D/" data-id="cky07z9pl0000it6ybjy82uqq" data-title="" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/Linux%E5%AE%9E%E6%93%8D/" data-id="cky099dmm0003pd6yhxkbb7v9" data-title="" class="article-share-link">分享</a>
       
       
       
@@ -562,7 +562,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/" data-id="cky07z9pm0002it6y8anre4t0" data-title="" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/%E9%BB%91%E9%A9%AC%E9%AB%98%E9%A2%91/" data-id="cky099dmq0008pd6y51gn8xdq" data-title="" class="article-share-link">分享</a>
       
       
       
@@ -720,7 +720,7 @@ height: 100%; left: 0; top: 0;"> </iframe></div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/JVM/" data-id="ckxq4q5t000009w6y9j72dmvp" data-title="JVM" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/JVM/" data-id="cky099dmn0005pd6yhmfq46dj" data-title="JVM" class="article-share-link">分享</a>
       
       
       
@@ -771,7 +771,7 @@ height: 100%; left: 0; top: 0;"> </iframe></div>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/12/28/hello-world/" data-id="ckxq4ods900009d6y4pc92bpw" data-title="Hello World" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/12/28/hello-world/" data-id="cky099dmo0007pd6yap1mhf11" data-title="Hello World" class="article-share-link">分享</a>
       
       
       
@@ -828,11 +828,11 @@ height: 100%; left: 0; top: 0;"> </iframe></div>
       <ul>
         
           <li>
-            <a href="/2022/01/04/JVM-1/">JVM</a>
+            <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JAVA内存结构</a>
           </li>
         
           <li>
-            <a href="/2022/01/04/JAVA%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/">JAVA内存结构</a>
+            <a href="/2022/01/04/JVM-1/">JVM</a>
           </li>
         
           <li>
