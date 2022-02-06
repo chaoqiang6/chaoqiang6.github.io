@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="keywords" content="Hexo Theme Keep">
     <meta name="description" content="Hexo Theme Keep">
-    <meta name="author" content="Keep Team">
+    <meta name="author" content="chaoqiang.qiu">
     
     <title>
         
-        Keep Theme
+            Ant构建Tomcat源码开发环境，解决乱码 |
+        
+        进击的阿强
     </title>
     
 <link rel="stylesheet" href="/css/style.css">
@@ -20,8 +22,8 @@
 
     <script id="hexo-configurations">
     let KEEP = window.KEEP || {};
-    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN"};
-    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
     KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
   </script>
 <meta name="generator" content="Hexo 6.0.0"></head>
@@ -48,7 +50,7 @@
         <div class="left">
             
             <a class="logo-title" href="/">
-                Keep Theme
+                进击的阿强
             </a>
         </div>
 
@@ -72,10 +74,24 @@
                             </a>
                         </li>
                     
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
                     
                 </ul>
             </div>
             <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
                 
                 <div class="icon-item menu-bar">
                     <div class="menu-bar-middle"></div>
@@ -97,6 +113,11 @@
                        href="/archives">归档</a>
                 </li>
             
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
         </ul>
     </div>
 
@@ -116,7 +137,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation"></span>
+            <span class="title-hover-animation">Ant构建Tomcat源码开发环境，解决乱码</span>
         </div>
 
         
@@ -126,9 +147,7 @@
                 </div>
                 <div class="info">
                     <div class="author">
-                        <span class="name">Keep Team</span>
-                        
-                            <span class="author-label">Lv2</span>
+                        <span class="name">chaoqiang.qiu</span>
                         
                     </div>
                     <div class="meta-info">
@@ -139,6 +158,36 @@
         <span class="mobile">2022-02-06 14:10</span>
     </span>
     
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/tomcat/">tomcat</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/tomcat/">tomcat</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/idea/">idea</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/ant/">ant</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -153,7 +202,7 @@
         
 
         <div class="article-content markdown-body">
-            <h1 id="Ant构建Tomcat源码开发环境，解决乱码"><a href="#Ant构建Tomcat源码开发环境，解决乱码" class="headerlink" title="Ant构建Tomcat源码开发环境，解决乱码"></a>Ant构建Tomcat源码开发环境，解决乱码</h1><p>学习tomcat，因为网上好多使用maven搭建的tomcat，但tomcat官方推荐的是使用ant搭建，所以在此记录。</p>
+            <p>学习tomcat，因为网上好多使用maven搭建的tomcat，但tomcat官方推荐的是使用ant搭建，所以在此记录。</p>
 <p>上半部分搭建环境，下半部分解决乱码。</p>
 <p>参考资料:</p>
 <p><a class="link" target="_blank" rel="noopener" href="https://tomcat.apache.org/tomcat-8.5-doc/building.html">官方搭建开发环境文档<i class="fas fa-external-link-alt"></i></a>(推荐一定要先看一下文档)</p>
@@ -187,7 +236,7 @@
 <p>打开File-&gt;ProjectStructure</p>
 <p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141719356.png" alt="image-20220206141719356"></p>
 <p>发现module中的dependency中部分jar没法正常依赖</p>
-<p>你们第一次打开应该是${TOMCAT_BUILD_LIBS}/*.jar这种带环境变量参数的相对路径</p>
+<p>第一次打开应该是${TOMCAT_BUILD_LIBS}/*.jar这种带环境变量参数的相对路径</p>
 <p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143054522.png" alt="image-20220206143054522"></p>
 <p>打开项目启动设置</p>
 <p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141937586.png" alt="image-20220206141937586"></p>
@@ -201,6 +250,9 @@
 <p>启动bootstrap类的main方法，尴尬的发现控制台输出全部乱码</p>
 <p>​    <img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206144149233.png" alt="image-20220206144149233"></p>
 <h2 id="乱码原因分析"><a href="#乱码原因分析" class="headerlink" title="乱码原因分析"></a>乱码原因分析</h2><p><a href="./Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90">原因</a></p>
+<a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" title="Ant构建tomcat源码环境乱码原因分析">Ant构建tomcat源码环境乱码原因分析</a>
+
+
 <h2 id="解决乱码"><a href="#解决乱码" class="headerlink" title="解决乱码"></a>解决乱码</h2><p>创建一个UTF8Control子类</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.tomcat.util.res;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStreamReader;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.net.URLConnection;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.Locale;</span><br><span class="line"><span class="keyword">import</span> java.util.PropertyResourceBundle;</span><br><span class="line"><span class="keyword">import</span> java.util.ResourceBundle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UTF8Control</span> <span class="keyword">extends</span> <span class="title">ResourceBundle</span>.<span class="title">Control</span> </span>&#123;</span><br><span class="line">    <span class="comment">//这里重写父类的newBundle方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResourceBundle <span class="title">newBundle</span></span></span><br><span class="line"><span class="function">            <span class="params">(String baseName, Locale locale, String format, ClassLoader loader, <span class="keyword">boolean</span> reload)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IllegalAccessException, InstantiationException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">// The below is a copy of the default implementation.</span></span><br><span class="line">        <span class="comment">//这里时默认的实现,c-v一下就好</span></span><br><span class="line">        String bundleName = toBundleName(baseName, locale);</span><br><span class="line">        String resourceName = toResourceName(bundleName, <span class="string">&quot;properties&quot;</span>);</span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line">        InputStream stream = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (reload) &#123;</span><br><span class="line">            URL url = loader.getResource(resourceName);</span><br><span class="line">            <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">                URLConnection connection = url.openConnection();</span><br><span class="line">                <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    connection.setUseCaches(<span class="keyword">false</span>);</span><br><span class="line">                    stream = connection.getInputStream();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            stream = loader.getResourceAsStream(resourceName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (stream != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// Only this line is changed to make it to read properties files as UTF-8.</span></span><br><span class="line">                <span class="comment">//这里就是一个关键的地方,将原来的is使用UTF-8格式读取的InputStremReader包装起来</span></span><br><span class="line">                <span class="comment">//这里就会默认按照UTF-8格式读取!!!</span></span><br><span class="line">                bundle = <span class="keyword">new</span> PropertyResourceBundle(<span class="keyword">new</span> InputStreamReader(stream, StandardCharsets.UTF_8));</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                stream.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -229,6 +281,22 @@
         
 
         
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/tomcat/">#tomcat</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/idea/">#idea</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/ant/">#ant</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
 
         
             <div class="article-nav">
@@ -242,7 +310,7 @@
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item"></span>
+                                <span class="post-nav-title-item">Ant构建tomcat源码环境乱码原因分析</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -268,6 +336,63 @@
         
 
         
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
     </div>
 </div>
 
@@ -286,7 +411,7 @@
               <span>2020</span>
               -
             
-            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">Keep Team</a>
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
         </div>
         
         <div class="theme-info info-item">
@@ -306,8 +431,16 @@
     <ul class="tools-list">
         <!-- TOC aside toggle -->
         
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
 
         <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
         
     </ul>
 </div>
@@ -359,11 +492,48 @@
     </div>
 
     
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E6%BA%90%E7%A0%81%E5%90%AF%E5%8A%A8%E7%8E%AF%E5%A2%83"><span class="nav-text">搭建源码启动环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDtomcat%E6%BA%90%E7%A0%81"><span class="nav-text">下载tomcat源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%8E%8B%E6%BA%90%E7%A0%81%E5%8C%85"><span class="nav-text">解压源码包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%9E%84%E5%BB%BAjar%E5%8C%85%E6%8C%87%E5%AE%9A%E8%B7%AF%E5%BE%84"><span class="nav-text">修改构建jar包指定路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E5%AE%9Aide%E5%BC%80%E5%A7%8B%E6%9E%84%E5%BB%BA"><span class="nav-text">指定ide开始构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#idea%E5%AF%BC%E5%85%A5%E9%A1%B9%E7%9B%AE"><span class="nav-text">idea导入项目</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90"><span class="nav-text">乱码原因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81"><span class="nav-text">解决乱码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
 
     <div class="image-viewer-container">
     <img src="">
 </div>
 
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
 
     
 
@@ -384,12 +554,28 @@
 
 
 
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
 
 
 
 
 
 <div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
     
 </div>
 
