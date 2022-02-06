@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Keep Team">
+    
+    <title>
+        
+            类加载与字节码技术 |
+        
+        Keep Theme
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">类加载与字节码技术</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">Keep Team</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-01-05 00:56:55</span>
+        <span class="mobile">2022-01-05 00:56</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <ol>
+<li>类文件结构</li>
+<li>字节码指令</li>
+<li>编译期处理</li>
+<li>类加载阶段</li>
+<li>类加载器</li>
+<li>运行期优化</li>
+</ol>
+<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><p><a class="link" target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7">doc<i class="fas fa-external-link-alt"></i></a></p>
+<p>u[n]代表字节数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ClassFile &#123;</span><br><span class="line">    u4             magic;</span><br><span class="line">    u2             minor_version;</span><br><span class="line">    u2             major_version;</span><br><span class="line">    u2             constant_pool_count;</span><br><span class="line">    cp_info        constant_pool[constant_pool_count-1];</span><br><span class="line">    u2             access_flags;</span><br><span class="line">    u2             this_class;</span><br><span class="line">    u2             super_class;</span><br><span class="line">    u2             interfaces_count;</span><br><span class="line">    u2             interfaces[interfaces_count];</span><br><span class="line">    u2             fields_count;</span><br><span class="line">    field_info     fields[fields_count];</span><br><span class="line">    u2             methods_count;</span><br><span class="line">    method_info    methods[methods_count];</span><br><span class="line">    u2             attributes_count;</span><br><span class="line">    attribute_info attributes[attributes_count];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>0000000    ca  fe  ba  be  00  00  00  34  00  62  0a  00  16  00  2d  09</p>
+<h3 id="magic"><a href="#magic" class="headerlink" title="magic"></a>magic</h3><p>0000000    <strong>ca  fe  ba  be</strong>  00  00  00  34  00  62  0a  00  16  00  2d  09</p>
+<p>魔数，表示文件格式，class文件默认为 ca  fe  ba  be</p>
+<h3 id="minor-version"><a href="#minor-version" class="headerlink" title="minor_version"></a>minor_version</h3><p>0000000    ca  fe  ba  be  <strong>00  00</strong>  00  34  00  62  0a  00  16  00  2d  09</p>
+<p>次版本</p>
+<h3 id="major-version"><a href="#major-version" class="headerlink" title="major_version"></a>major_version</h3><p>0000000    ca  fe  ba  be  00  00  <strong>00  34</strong>  00  62  0a  00  16  00  2d  09</p>
+<p>主版本，类文件格式的版本表示位主版本.次版本</p>
+<h3 id="constant-pool-count"><a href="#constant-pool-count" class="headerlink" title="constant_pool_count"></a>constant_pool_count</h3><p>0000000    ca  fe  ba  be  00  00  00  34  <strong>00  62</strong>  0a  00  16  00  2d  09</p>
+<p> 常量池中常量数量,表明有97个常量，索引从1到97</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The value of the constant_pool_count item is equal to the number of entries in the constant_pool table plus one. A constant_pool index is considered valid if it is greater than zero and less than constant_pool_count, with the exception for constants of type long and double noted in §4.4.5.</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="cp-info"><a href="#cp-info" class="headerlink" title="cp_info"></a>cp_info</h3><p>后面从0000000行的0a  00  16  00  2d 到0003100行的    73  全是常量池中的遍历信息</p>
+<p>constant_pool[constant_pool_count-1]</p>
+<p>常量池中每一个常量</p>
+<h3 id="access-flags"><a href="#access-flags" class="headerlink" title="access_flags"></a>access_flags</h3><p>0003100    73  <strong>00  21</strong>  00  15  00  16  00  00  00  01  00  1a  00  17  00</p>
+<p>21表示ACC_PUBLIC + ACC_SUPER 表示它是一个public 类</p>
+<p> 该类的访问权限</p>
+<table>
+<thead>
+<tr>
+<th>Flag Name</th>
+<th>Value</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ACC_PUBLIC</code></td>
+<td>0x0001</td>
+<td>Declared <code>public</code>; may be accessed from outside its package.</td>
+</tr>
+<tr>
+<td><code>ACC_FINAL</code></td>
+<td>0x0010</td>
+<td>Declared <code>final</code>; no subclasses allowed.</td>
+</tr>
+<tr>
+<td><code>ACC_SUPER</code></td>
+<td>0x0020</td>
+<td>Treat superclass methods specially when invoked by the <em>invokespecial</em> instruction.</td>
+</tr>
+<tr>
+<td><code>ACC_INTERFACE</code></td>
+<td>0x0200</td>
+<td>Is an interface, not a class.</td>
+</tr>
+<tr>
+<td><code>ACC_ABSTRACT</code></td>
+<td>0x0400</td>
+<td>Declared <code>abstract</code>; must not be instantiated.</td>
+</tr>
+<tr>
+<td><code>ACC_SYNTHETIC</code></td>
+<td>0x1000</td>
+<td>Declared synthetic; not present in the source code.</td>
+</tr>
+<tr>
+<td><code>ACC_ANNOTATION</code></td>
+<td>0x2000</td>
+<td>Declared as an annotation type.</td>
+</tr>
+<tr>
+<td><code>ACC_ENUM</code></td>
+<td>0x4000</td>
+<td>Declared as an <code>enum</code> type.</td>
+</tr>
+</tbody></table>
+<h3 id="this-class"><a href="#this-class" class="headerlink" title="this_class"></a>this_class</h3><p>0003100    73  00  21  <strong>00  15</strong>  00  16  00  00  00  01  00  1a  00  17  00</p>
+<p>Main</p>
+<p> 该类文件定义的类或接口，必须是常量池表中的一个CONSTANT_Class_info类型常量</p>
+<h3 id="super-class"><a href="#super-class" class="headerlink" title="super_class"></a>super_class</h3><p>0003100    73  00  21  00  15  <strong>00  16</strong>  00  00  00  01  00  1a  00  17  00</p>
+<p>Object</p>
+<p>父类，必须是常量池表中的一个类常量</p>
+<h3 id="interfaces-count"><a href="#interfaces-count" class="headerlink" title="interfaces_count"></a>interfaces_count</h3><p>0003100    73  00  21  00  15  00  16  <strong>00  00</strong>  00  01  00  1a  00  17  00</p>
+<p> 接口数量</p>
+<h3 id="interfaces-interfaces-count"><a href="#interfaces-interfaces-count" class="headerlink" title="interfaces[interfaces_count]"></a>interfaces[interfaces_count]</h3><p>每一个接口，必须是常量池表中的一个CONSTANT_Class_info常量</p>
+<h3 id="fields-count"><a href="#fields-count" class="headerlink" title="fields_count"></a>fields_count</h3><p>0003100    73  00  21  00  15  00  16  00  00  <strong>00  01</strong>  00  1a  00  17  00</p>
+<p>字段数量</p>
+<p>拓展:</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://blog.csdn.net/beyond181/article/details/54928025">何为java中的field<i class="fas fa-external-link-alt"></i></a></p>
+<p>What is a field in java?</p>
+<p>A field is an attribute. A field may be a class’s variable, an object’s variable, an object’s method’s variable, or a parameter of a function.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">bike</span></span>&#123; </span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> bikes;</span><br><span class="line">  <span class="keyword">int</span> gear;</span><br><span class="line">  <span class="keyword">int</span> cadence;</span><br><span class="line"> </span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">( <span class="keyword">int</span> newGear, <span class="keyword">int</span> newCadence )</span></span>&#123;</span><br><span class="line">    bikes = bikes + <span class="number">1</span>;</span><br><span class="line">    gear = newGear;</span><br><span class="line">    cadence = newCadence;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">getSpeed</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> speed = gear*cadence*<span class="number">5</span>*<span class="number">3.141</span>;</span><br><span class="line">    <span class="keyword">return</span> speed;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x27;bikes&#x27; is a class&#x27;s variable (class variable) (static field).</span><br><span class="line">&#x27;gear&#x27; and &#x27;cadence&#x27; could be an object&#x27;s variables (instance variables) (non-static fields).</span><br><span class="line">&#x27;speed&#x27; is an object&#x27;s method&#x27;s variable (local variable).</span><br><span class="line">&#x27;newGear&#x27; and &#x27;newCadence&#x27; are parameters of a function (parameters).</span><br></pre></td></tr></table></figure>
+
+<h3 id="fields"><a href="#fields" class="headerlink" title="fields[]"></a>fields[]</h3><p>看不下去了</p>
+<p>00  1a </p>
+<p>access_flags</p>
+<p>4194304 </p>
+<p>00  17</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name_index</span><br></pre></td></tr></table></figure>
+
+<p>_4MB </p>
+<p>00  18</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">descriptor_index</span><br></pre></td></tr></table></figure>
+
+<p>| </p>
+<p>00  01</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attributes_count</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attribute_info</span><br></pre></td></tr></table></figure>
+
+<p>00  19</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attribute_name_index</span><br></pre></td></tr></table></figure>
+
+<p>00  00  00  02</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">attribute_length</span><br></pre></td></tr></table></figure>
+
+
+
+<p>0003100    73  00  21  00  15  00  16  00  00  00  01  <strong>00  1a  00  17  00</strong></p>
+<p>0003120    <strong>18</strong>  <strong>00  01  00  19</strong>  00  00  00  02  00  1a  00  05  00  01  00</p>
+<h3 id="methods-count"><a href="#methods-count" class="headerlink" title="methods_count"></a>methods_count</h3><p>方法数量</p>
+<h3 id="methods-methods-count"><a href="#methods-methods-count" class="headerlink" title="methods[methods_count]"></a>methods[methods_count]</h3><p>每一个方法，必须是常量池中的method_info结构</p>
+<h3 id="attributes-count"><a href="#attributes-count" class="headerlink" title="attributes_count"></a>attributes_count</h3><p>附加属性数量</p>
+<p>0003640    00  00  53  00  21  00  00  00  05  01  00  2a  10  00  00  <strong>03</strong></p>
+<h3 id="attributes"><a href="#attributes" class="headerlink" title="attributes[]"></a>attributes[]</h3><p>0003660    <strong>00  2b</strong>  00  00  00  02  00  2c  00  40  00  00  00  12  00  02</p>
+<p>0003660    00  2b  <strong>00  00  00  02</strong>  00  2c  00  40  00  00  00  12  00  02</p>
+<p>0003660    00  2b  00  00  00  02  <strong>00  2c</strong>  00  40  00  00  00  12  00  02</p>
+<p>0003660    00  2b  00  00  00  02  00  2c  <strong>00  40</strong>  00  00  00  12  00  02</p>
+<p>0003660    00  2b  00  00  00  02  00  2c  00  40  <strong>00  00  00  12</strong>  00  02</p>
+<p>代码属性每一个属性，必须是常量池中的<code>CONSTANT_Utf8</code>结构</p>
+<p>扩展<a class="link" target="_blank" rel="noopener" href="https://stackoverflow.com/questions/10115588/what-is-the-difference-between-field-variable-attribute-and-property-in-java">java POJO中field,variable,attribute,property的区别<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">javac -parameters -d . Main.java</span><br><span class="line"></span><br><span class="line">od -t xC Main.class</span><br><span class="line"></span><br><span class="line">javap -v Main.class</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>扩展</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line">0000000    ca  fe  ba  be  00  00  00  34  00  62  0a  00  16  00  2d  09</span><br><span class="line">0000020    00  2e  00  2f  08  00  30  0a  00  31  00  32  07  00  33  0a</span><br><span class="line">0000040    00  05  00  2d  0a  00  05  00  34  07  00  35  05  00  00  00</span><br><span class="line">0000060    00  00  00  0b  b8  09  00  36  00  37  07  00  38  0a  00  0c</span><br><span class="line">0000100    00  2d  12  00  00  00  3d  07  00  3e  0a  00  0f  00  2d  0a</span><br><span class="line">0000120    00  08  00  41  07  00  42  08  00  43  0a  00  12  00  44  07</span><br><span class="line">0000140    00  45  07  00  46  01  00  04  5f  34  4d  42  01  00  01  49</span><br><span class="line">0000160    01  00  0d  43  6f  6e  73  74  61  6e  74  56  61  6c  75  65</span><br><span class="line">0000200    03  00  40  00  00  01  00  06  3c  69  6e  69  74  3e  01  00</span><br><span class="line">0000220    03  28  29  56  01  00  04  43  6f  64  65  01  00  0f  4c  69</span><br><span class="line">0000240    6e  65  4e  75  6d  62  65  72  54  61  62  6c  65  01  00  04</span><br><span class="line">0000260    6d  61  69  6e  01  00  16  28  5b  4c  6a  61  76  61  2f  6c</span><br><span class="line">0000300    61  6e  67  2f  53  74  72  69  6e  67  3b  29  56  01  00  10</span><br><span class="line">0000320    4d  65  74  68  6f  64  50  61  72  61  6d  65  74  65  72  73</span><br><span class="line">0000340    01  00  04  61  72  67  73  01  00  02  6d  33  01  00  1b  28</span><br><span class="line">0000360    29  4c  6a  61  76  61  2f  6c  61  6e  67  2f  53  74  72  69</span><br><span class="line">0000400    6e  67  42  75  69  6c  64  65  72  3b  01  00  17  72  65  66</span><br><span class="line">0000420    6c  65  63  74  69  6f  6e  43  61  73  74  53  69  6e  67  6c</span><br><span class="line">0000440    65  74  6f  6e  01  00  26  28  4c  6a  61  76  61  2f  6c  61</span><br><span class="line">0000460    6e  67  2f  4f  62  6a  65  63  74  3b  29  4c  6a  61  76  61</span><br><span class="line">0000500    2f  6c  61  6e  67  2f  4f  62  6a  65  63  74  3b  01  00  03</span><br><span class="line">0000520    6f  62  6a  01  00  20  6c  61  6d  62  64  61  24  72  65  66</span><br><span class="line">0000540    6c  65  63  74  69  6f  6e  43  61  73  74  53  69  6e  67  6c</span><br><span class="line">0000560    65  74  6f  6e  24  30  01  00  28  28  4c  6a  61  76  61  2f</span><br><span class="line">0000600    6c  61  6e  67  2f  52  75  6e  6e  61  62  6c  65  3b  29  4c</span><br><span class="line">0000620    6a  61  76  61  2f  6c  61  6e  67  2f  54  68  72  65  61  64</span><br><span class="line">0000640    3b  01  00  01  72  01  00  0a  53  6f  75  72  63  65  46  69</span><br><span class="line">0000660    6c  65  01  00  09  4d  61  69  6e  2e  6a  61  76  61  0c  00</span><br><span class="line">0000700    1b  00  1c  07  00  47  0c  00  48  00  49  01  00  0b  48  65</span><br><span class="line">0000720    6c  6c  6f  20  57  6f  72  6c  64  07  00  4a  0c  00  4b  00</span><br><span class="line">0000740    4c  01  00  17  6a  61  76  61  2f  6c  61  6e  67  2f  53  74</span><br><span class="line">0000760    72  69  6e  67  42  75  69  6c  64  65  72  0c  00  4d  00  4e</span><br><span class="line">0001000    01  00  27  6a  61  76  61  2f  75  74  69  6c  2f  63  6f  6e</span><br><span class="line">0001020    63  75  72  72  65  6e  74  2f  54  68  72  65  61  64  50  6f</span><br><span class="line">0001040    6f  6c  45  78  65  63  75  74  6f  72  07  00  4f  0c  00  50</span><br><span class="line">0001060    00  51  01  00  28  6a  61  76  61  2f  75  74  69  6c  2f  63</span><br><span class="line">0001100    6f  6e  63  75  72  72  65  6e  74  2f  4c  69  6e  6b  65  64</span><br><span class="line">0001120    42  6c  6f  63  6b  69  6e  67  44  65  71  75  65  01  00  10</span><br><span class="line">0001140    42  6f  6f  74  73  74  72  61  70  4d  65  74  68  6f  64  73</span><br><span class="line">0001160    0f  06  00  52  10  00  29  0f  06  00  53  0c  00  54  00  55</span><br><span class="line">0001200    01  00  33  6a  61  76  61  2f  75  74  69  6c  2f  63  6f  6e</span><br><span class="line">0001220    63  75  72  72  65  6e  74  2f  54  68  72  65  61  64  50  6f</span><br><span class="line">0001240    6f  6c  45  78  65  63  75  74  6f  72  24  41  62  6f  72  74</span><br><span class="line">0001260    50  6f  6c  69  63  79  01  00  0b  41  62  6f  72  74  50  6f</span><br><span class="line">0001300    6c  69  63  79  01  00  0c  49  6e  6e  65  72  43  6c  61  73</span><br><span class="line">0001320    73  65  73  0c  00  1b  00  56  01  00  10  6a  61  76  61  2f</span><br><span class="line">0001340    6c  61  6e  67  2f  54  68  72  65  61  64  01  00  03  31  32</span><br><span class="line">0001360    33  0c  00  1b  00  4c  01  00  0e  73  69  6e  67  6c  65  74</span><br><span class="line">0001400    6f  6e  2f  4d  61  69  6e  01  00  10  6a  61  76  61  2f  6c</span><br><span class="line">0001420    61  6e  67  2f  4f  62  6a  65  63  74  01  00  10  6a  61  76</span><br><span class="line">0001440    61  2f  6c  61  6e  67  2f  53  79  73  74  65  6d  01  00  03</span><br><span class="line">0001460    6f  75  74  01  00  15  4c  6a  61  76  61  2f  69  6f  2f  50</span><br><span class="line">0001500    72  69  6e  74  53  74  72  65  61  6d  3b  01  00  13  6a  61</span><br><span class="line">0001520    76  61  2f  69  6f  2f  50  72  69  6e  74  53  74  72  65  61</span><br><span class="line">0001540    6d  01  00  07  70  72  69  6e  74  6c  6e  01  00  15  28  4c</span><br><span class="line">0001560    6a  61  76  61  2f  6c  61  6e  67  2f  53  74  72  69  6e  67</span><br><span class="line">0001600    3b  29  56  01  00  06  61  70  70  65  6e  64  01  00  1c  28</span><br><span class="line">0001620    49  29  4c  6a  61  76  61  2f  6c  61  6e  67  2f  53  74  72</span><br><span class="line">0001640    69  6e  67  42  75  69  6c  64  65  72  3b  01  00  1d  6a  61</span><br><span class="line">0001660    76  61  2f  75  74  69  6c  2f  63  6f  6e  63  75  72  72  65</span><br><span class="line">0001700    6e  74  2f  54  69  6d  65  55  6e  69  74  01  00  0c  4d  49</span><br><span class="line">0001720    4c  4c  49  53  45  43  4f  4e  44  53  01  00  1f  4c  6a  61</span><br><span class="line">0001740    76  61  2f  75  74  69  6c  2f  63  6f  6e  63  75  72  72  65</span><br><span class="line">0001760    6e  74  2f  54  69  6d  65  55  6e  69  74  3b  0a  00  57  00</span><br><span class="line">0002000    58  0a  00  15  00  59  01  00  09  6e  65  77  54  68  72  65</span><br><span class="line">0002020    61  64  01  00  26  28  29  4c  6a  61  76  61  2f  75  74  69</span><br><span class="line">0002040    6c  2f  63  6f  6e  63  75  72  72  65  6e  74  2f  54  68  72</span><br><span class="line">0002060    65  61  64  46  61  63  74  6f  72  79  3b  01  00  9c  28  49</span><br><span class="line">0002100    49  4a  4c  6a  61  76  61  2f  75  74  69  6c  2f  63  6f  6e</span><br><span class="line">0002120    63  75  72  72  65  6e  74  2f  54  69  6d  65  55  6e  69  74</span><br><span class="line">0002140    3b  4c  6a  61  76  61  2f  75  74  69  6c  2f  63  6f  6e  63</span><br><span class="line">0002160    75  72  72  65  6e  74  2f  42  6c  6f  63  6b  69  6e  67  51</span><br><span class="line">0002200    75  65  75  65  3b  4c  6a  61  76  61  2f  75  74  69  6c  2f</span><br><span class="line">0002220    63  6f  6e  63  75  72  72  65  6e  74  2f  54  68  72  65  61</span><br><span class="line">0002240    64  46  61  63  74  6f  72  79  3b  4c  6a  61  76  61  2f  75</span><br><span class="line">0002260    74  69  6c  2f  63  6f  6e  63  75  72  72  65  6e  74  2f  52</span><br><span class="line">0002300    65  6a  65  63  74  65  64  45  78  65  63  75  74  69  6f  6e</span><br><span class="line">0002320    48  61  6e  64  6c  65  72  3b  29  56  07  00  5a  0c  00  5b</span><br><span class="line">0002340    00  5e  0c  00  28  00  29  01  00  22  6a  61  76  61  2f  6c</span><br><span class="line">0002360    61  6e  67  2f  69  6e  76  6f  6b  65  2f  4c  61  6d  62  64</span><br><span class="line">0002400    61  4d  65  74  61  66  61  63  74  6f  72  79  01  00  0b  6d</span><br><span class="line">0002420    65  74  61  66  61  63  74  6f  72  79  07  00  60  01  00  06</span><br><span class="line">0002440    4c  6f  6f  6b  75  70  01  00  cc  28  4c  6a  61  76  61  2f</span><br><span class="line">0002460    6c  61  6e  67  2f  69  6e  76  6f  6b  65  2f  4d  65  74  68</span><br><span class="line">0002500    6f  64  48  61  6e  64  6c  65  73  24  4c  6f  6f  6b  75  70</span><br><span class="line">0002520    3b  4c  6a  61  76  61  2f  6c  61  6e  67  2f  53  74  72  69</span><br><span class="line">0002540    6e  67  3b  4c  6a  61  76  61  2f  6c  61  6e  67  2f  69  6e</span><br><span class="line">0002560    76  6f  6b  65  2f  4d  65  74  68  6f  64  54  79  70  65  3b</span><br><span class="line">0002600    4c  6a  61  76  61  2f  6c  61  6e  67  2f  69  6e  76  6f  6b</span><br><span class="line">0002620    65  2f  4d  65  74  68  6f  64  54  79  70  65  3b  4c  6a  61</span><br><span class="line">0002640    76  61  2f  6c  61  6e  67  2f  69  6e  76  6f  6b  65  2f  4d</span><br><span class="line">0002660    65  74  68  6f  64  48  61  6e  64  6c  65  3b  4c  6a  61  76</span><br><span class="line">0002700    61  2f  6c  61  6e  67  2f  69  6e  76  6f  6b  65  2f  4d  65</span><br><span class="line">0002720    74  68  6f  64  54  79  70  65  3b  29  4c  6a  61  76  61  2f</span><br><span class="line">0002740    6c  61  6e  67  2f  69  6e  76  6f  6b  65  2f  43  61  6c  6c</span><br><span class="line">0002760    53  69  74  65  3b  07  00  61  01  00  25  6a  61  76  61  2f</span><br><span class="line">0003000    6c  61  6e  67  2f  69  6e  76  6f  6b  65  2f  4d  65  74  68</span><br><span class="line">0003020    6f  64  48  61  6e  64  6c  65  73  24  4c  6f  6f  6b  75  70</span><br><span class="line">0003040    01  00  1e  6a  61  76  61  2f  6c  61  6e  67  2f  69  6e  76</span><br><span class="line">0003060    6f  6b  65  2f  4d  65  74  68  6f  64  48  61  6e  64  6c  65</span><br><span class="line">0003100    73  00  21  00  15  00  16  00  00  00  01  00  1a  00  17  00</span><br><span class="line">0003120    18  00  01  00  19  00  00  00  02  00  1a  00  05  00  01  00</span><br><span class="line">0003140    1b  00  1c  00  01  00  1d  00  00  00  1d  00  01  00  01  00</span><br><span class="line">0003160    00  00  05  2a  b7  00  01  b1  00  00  00  01  00  1e  00  00</span><br><span class="line">0003200    00  06  00  01  00  00  00  08  00  09  00  1f  00  20  00  02</span><br><span class="line">0003220    00  1d  00  00  00  25  00  02  00  01  00  00  00  09  b2  00</span><br><span class="line">0003240    02  12  03  b6  00  04  b1  00  00  00  01  00  1e  00  00  00</span><br><span class="line">0003260    0a  00  02  00  00  00  3c  00  08  00  44  00  21  00  00  00</span><br><span class="line">0003300    05  01  00  22  00  00  00  09  00  23  00  24  00  01  00  1d</span><br><span class="line">0003320    00  00  00  44  00  02  00  01  00  00  00  1c  bb  00  05  59</span><br><span class="line">0003340    b7  00  06  4b  2a  04  b6  00  07  57  2a  05  b6  00  07  57</span><br><span class="line">0003360    2a  06  b6  00  07  57  2a  b0  00  00  00  01  00  1e  00  00</span><br><span class="line">0003400    00  16  00  05  00  00  00  4b  00  08  00  4c  00  0e  00  4d</span><br><span class="line">0003420    00  14  00  4e  00  1a  00  4f  00  0a  00  25  00  26  00  02</span><br><span class="line">0003440    00  1d  00  00  00  42  00  0b  00  02  00  00  00  26  bb  00</span><br><span class="line">0003460    08  59  08  10  07  14  00  09  b2  00  0b  bb  00  0c  59  b7</span><br><span class="line">0003500    00  0d  ba  00  0e  00  00  bb  00  0f  59  b7  00  10  b7  00</span><br><span class="line">0003520    11  4c  01  b0  00  00  00  01  00  1e  00  00  00  0a  00  02</span><br><span class="line">0003540    00  00  00  53  00  24  00  54  00  21  00  00  00  05  01  00</span><br><span class="line">0003560    27  00  00  10  0a  00  28  00  29  00  02  00  1d  00  00  00</span><br><span class="line">0003600    22  00  03  00  01  00  00  00  0a  bb  00  12  59  12  13  b7</span><br><span class="line">0003620    00  14  b0  00  00  00  01  00  1e  00  00  00  06  00  01  00</span><br><span class="line">0003640    00  00  53  00  21  00  00  00  05  01  00  2a  10  00  00  03</span><br><span class="line">0003660    00  2b  00  00  00  02  00  2c  00  40  00  00  00  12  00  02</span><br><span class="line">0003700    00  0f  00  08  00  3f  00  09  00  5c  00  5f  00  5d  00  19</span><br><span class="line">0003720    00  39  00  00  00  0c  00  01  00  3a  00  03  00  3b  00  3c</span><br><span class="line">0003740    00  3b                                                        </span><br><span class="line">0003742</span><br></pre></td></tr></table></figure>
+
+<p>附表</p>
+<p>1.常量池类型索引</p>
+<p>Constant pool tags</p>
+<table>
+<thead>
+<tr>
+<th>Constant Type</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CONSTANT_Class</code></td>
+<td>7</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Fieldref</code></td>
+<td>9</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Methodref</code></td>
+<td>10</td>
+</tr>
+<tr>
+<td><code>CONSTANT_InterfaceMethodref</code></td>
+<td>11</td>
+</tr>
+<tr>
+<td><code>CONSTANT_String</code></td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Integer</code></td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Float</code></td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Long</code></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Double</code></td>
+<td>6</td>
+</tr>
+<tr>
+<td><code>CONSTANT_NameAndType</code></td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>CONSTANT_Utf8</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>CONSTANT_MethodHandle</code></td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>CONSTANT_MethodType</code></td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>CONSTANT_InvokeDynamic</code></td>
+<td>18</td>
+</tr>
+</tbody></table>
+<p>2.常量池中各种类型结构</p>
+<p>CONSTANT_Class</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Class_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 name_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Fieldref</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Fieldref_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 class_index;</span><br><span class="line">    u2 name_and_type_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Methodref</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Methodref_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 class_index;</span><br><span class="line">    u2 name_and_type_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_InterfaceMethodref</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_InterfaceMethodref_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 class_index;</span><br><span class="line">    u2 name_and_type_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_String</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_String_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 string_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Integer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Integer_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u4 bytes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Float</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Float_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u4 bytes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Long</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Long_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u4 high_bytes;</span><br><span class="line">    u4 low_bytes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Double</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Double_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u4 high_bytes;</span><br><span class="line">    u4 low_bytes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_NameAndType</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_NameAndType_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 name_index;</span><br><span class="line">    u2 descriptor_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_Utf8</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_Utf8_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 length;</span><br><span class="line">    u1 bytes[length];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_MethodHandle</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_MethodHandle_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u1 reference_kind;</span><br><span class="line">    u2 reference_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_MethodType</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_MethodType_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 descriptor_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CONSTANT_InvokeDynamic</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CONSTANT_InvokeDynamic_info &#123;</span><br><span class="line">    u1 tag;</span><br><span class="line">    u2 bootstrap_method_attr_index;</span><br><span class="line">    u2 name_and_type_index;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="JAVAP工具"><a href="#JAVAP工具" class="headerlink" title="JAVAP工具"></a>JAVAP工具</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">chaoqiang@Pineapple singleton % javap --<span class="built_in">help</span></span><br><span class="line">用法: javap &lt;options&gt; &lt;classes&gt;</span><br><span class="line">其中, 可能的选项包括:</span><br><span class="line">  -<span class="built_in">help</span>  --<span class="built_in">help</span>  -?        输出此用法消息</span><br><span class="line">  -version                 版本信息</span><br><span class="line">  -v  -verbose             输出附加信息</span><br><span class="line">  -l                       输出行号和本地变量表</span><br><span class="line">  -public                  仅显示公共类和成员</span><br><span class="line">  -protected               显示受保护的/公共类和成员</span><br><span class="line">  -package                 显示程序包/受保护的/公共类</span><br><span class="line">                           和成员 (默认)</span><br><span class="line">  -p  -private             显示所有类和成员</span><br><span class="line">  -c                       对代码进行反汇编</span><br><span class="line">  -s                       输出内部类型签名</span><br><span class="line">  -sysinfo                 显示正在处理的类的</span><br><span class="line">                           系统信息 (路径, 大小, 日期, MD5 散列)</span><br><span class="line">  -constants               显示最终常量</span><br><span class="line">  -classpath &lt;path&gt;        指定查找用户类文件的位置</span><br><span class="line">  -cp &lt;path&gt;               指定查找用户类文件的位置</span><br><span class="line">  -bootclasspath &lt;path&gt;    覆盖引导类文件的位置</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line">chaoqiang@Pineapple singleton % javap -v Main.class</span><br><span class="line">Classfile /Users/chaoqiang/IdeaProjects/learning/interview/src/main/java/singleton/singleton/Main.class</span><br><span class="line">  Last modified 2022-1-2; size 2018 bytes</span><br><span class="line">  MD5 checksum 4e01c6c498e93b2bc4ee92022604825c</span><br><span class="line">  Compiled from <span class="string">&quot;Main.java&quot;</span></span><br><span class="line">public class singleton.Main</span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: 52</span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   <span class="comment">#1 = Methodref          #22.#45        // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">   <span class="comment">#2 = Fieldref           #46.#47        // java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">   <span class="comment">#3 = String             #48            // Hello World</span></span><br><span class="line">   <span class="comment">#4 = Methodref          #49.#50        // java/io/PrintStream.println:(Ljava/lang/String;)V</span></span><br><span class="line">   <span class="comment">#5 = Class              #51            // java/lang/StringBuilder</span></span><br><span class="line">   <span class="comment">#6 = Methodref          #5.#45         // java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">   <span class="comment">#7 = Methodref          #5.#52         // java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span><br><span class="line">   <span class="comment">#8 = Class              #53            // java/util/concurrent/ThreadPoolExecutor</span></span><br><span class="line">   <span class="comment">#9 = Long               3000l</span></span><br><span class="line">  <span class="comment">#11 = Fieldref           #54.#55        // java/util/concurrent/TimeUnit.MILLISECONDS:Ljava/util/concurrent/TimeUnit;</span></span><br><span class="line">  <span class="comment">#12 = Class              #56            // java/util/concurrent/LinkedBlockingDeque</span></span><br><span class="line">  <span class="comment">#13 = Methodref          #12.#45        // java/util/concurrent/LinkedBlockingDeque.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">  <span class="comment">#14 = InvokeDynamic      #0:#61         // #0:newThread:()Ljava/util/concurrent/ThreadFactory;</span></span><br><span class="line">  <span class="comment">#15 = Class              #62            // java/util/concurrent/ThreadPoolExecutor$AbortPolicy</span></span><br><span class="line">  <span class="comment">#16 = Methodref          #15.#45        // java/util/concurrent/ThreadPoolExecutor$AbortPolicy.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">  <span class="comment">#17 = Methodref          #8.#65         // java/util/concurrent/ThreadPoolExecutor.&quot;&lt;init&gt;&quot;:(IIJLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/BlockingQueue;Ljava/util/concurrent/ThreadFactory;Ljava/util/concurrent/RejectedExecutionHandler;)V</span></span><br><span class="line">  <span class="comment">#18 = Class              #66            // java/lang/Thread</span></span><br><span class="line">  <span class="comment">#19 = String             #67            // 123</span></span><br><span class="line">  <span class="comment">#20 = Methodref          #18.#68        // java/lang/Thread.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">  <span class="comment">#21 = Class              #69            // singleton/Main</span></span><br><span class="line">  <span class="comment">#22 = Class              #70            // java/lang/Object</span></span><br><span class="line">  <span class="comment">#23 = Utf8               _4MB</span></span><br><span class="line">  <span class="comment">#24 = Utf8               I</span></span><br><span class="line">  <span class="comment">#25 = Utf8               ConstantValue</span></span><br><span class="line">  <span class="comment">#26 = Integer            4194304</span></span><br><span class="line">  <span class="comment">#27 = Utf8               &lt;init&gt;</span></span><br><span class="line">  <span class="comment">#28 = Utf8               ()V</span></span><br><span class="line">  <span class="comment">#29 = Utf8               Code</span></span><br><span class="line">  <span class="comment">#30 = Utf8               LineNumberTable</span></span><br><span class="line">  <span class="comment">#31 = Utf8               main</span></span><br><span class="line">  <span class="comment">#32 = Utf8               ([Ljava/lang/String;)V</span></span><br><span class="line">  <span class="comment">#33 = Utf8               MethodParameters</span></span><br><span class="line">  <span class="comment">#34 = Utf8               args</span></span><br><span class="line">  <span class="comment">#35 = Utf8               m3</span></span><br><span class="line">  <span class="comment">#36 = Utf8               ()Ljava/lang/StringBuilder;</span></span><br><span class="line">  <span class="comment">#37 = Utf8               reflectionCastSingleton</span></span><br><span class="line">  <span class="comment">#38 = Utf8               (Ljava/lang/Object;)Ljava/lang/Object;</span></span><br><span class="line">  <span class="comment">#39 = Utf8               obj</span></span><br><span class="line">  <span class="comment">#40 = Utf8               lambda$reflectionCastSingleton$0</span></span><br><span class="line">  <span class="comment">#41 = Utf8               (Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">  <span class="comment">#42 = Utf8               r</span></span><br><span class="line">  <span class="comment">#43 = Utf8               SourceFile</span></span><br><span class="line">  <span class="comment">#44 = Utf8               Main.java</span></span><br><span class="line">  <span class="comment">#45 = NameAndType        #27:#28        // &quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">  <span class="comment">#46 = Class              #71            // java/lang/System</span></span><br><span class="line">  <span class="comment">#47 = NameAndType        #72:#73        // out:Ljava/io/PrintStream;</span></span><br><span class="line">  <span class="comment">#48 = Utf8               Hello World</span></span><br><span class="line">  <span class="comment">#49 = Class              #74            // java/io/PrintStream</span></span><br><span class="line">  <span class="comment">#50 = NameAndType        #75:#76        // println:(Ljava/lang/String;)V</span></span><br><span class="line">  <span class="comment">#51 = Utf8               java/lang/StringBuilder</span></span><br><span class="line">  <span class="comment">#52 = NameAndType        #77:#78        // append:(I)Ljava/lang/StringBuilder;</span></span><br><span class="line">  <span class="comment">#53 = Utf8               java/util/concurrent/ThreadPoolExecutor</span></span><br><span class="line">  <span class="comment">#54 = Class              #79            // java/util/concurrent/TimeUnit</span></span><br><span class="line">  <span class="comment">#55 = NameAndType        #80:#81        // MILLISECONDS:Ljava/util/concurrent/TimeUnit;</span></span><br><span class="line">  <span class="comment">#56 = Utf8               java/util/concurrent/LinkedBlockingDeque</span></span><br><span class="line">  <span class="comment">#57 = Utf8               BootstrapMethods</span></span><br><span class="line">  <span class="comment">#58 = MethodHandle       #6:#82         // invokestatic java/lang/invoke/LambdaMetafactory.metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;</span></span><br><span class="line">  <span class="comment">#59 = MethodType         #41            //  (Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">  <span class="comment">#60 = MethodHandle       #6:#83         // invokestatic singleton/Main.lambda$reflectionCastSingleton$0:(Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">  <span class="comment">#61 = NameAndType        #84:#85        // newThread:()Ljava/util/concurrent/ThreadFactory;</span></span><br><span class="line">  <span class="comment">#62 = Utf8               java/util/concurrent/ThreadPoolExecutor$AbortPolicy</span></span><br><span class="line">  <span class="comment">#63 = Utf8               AbortPolicy</span></span><br><span class="line">  <span class="comment">#64 = Utf8               InnerClasses</span></span><br><span class="line">  <span class="comment">#65 = NameAndType        #27:#86        // &quot;&lt;init&gt;&quot;:(IIJLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/BlockingQueue;Ljava/util/concurrent/ThreadFactory;Ljava/util/concurrent/RejectedExecutionHandler;)V</span></span><br><span class="line">  <span class="comment">#66 = Utf8               java/lang/Thread</span></span><br><span class="line">  <span class="comment">#67 = Utf8               123</span></span><br><span class="line">  <span class="comment">#68 = NameAndType        #27:#76        // &quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">  <span class="comment">#69 = Utf8               singleton/Main</span></span><br><span class="line">  <span class="comment">#70 = Utf8               java/lang/Object</span></span><br><span class="line">  <span class="comment">#71 = Utf8               java/lang/System</span></span><br><span class="line">  <span class="comment">#72 = Utf8               out</span></span><br><span class="line">  <span class="comment">#73 = Utf8               Ljava/io/PrintStream;</span></span><br><span class="line">  <span class="comment">#74 = Utf8               java/io/PrintStream</span></span><br><span class="line">  <span class="comment">#75 = Utf8               println</span></span><br><span class="line">  <span class="comment">#76 = Utf8               (Ljava/lang/String;)V</span></span><br><span class="line">  <span class="comment">#77 = Utf8               append</span></span><br><span class="line">  <span class="comment">#78 = Utf8               (I)Ljava/lang/StringBuilder;</span></span><br><span class="line">  <span class="comment">#79 = Utf8               java/util/concurrent/TimeUnit</span></span><br><span class="line">  <span class="comment">#80 = Utf8               MILLISECONDS</span></span><br><span class="line">  <span class="comment">#81 = Utf8               Ljava/util/concurrent/TimeUnit;</span></span><br><span class="line">  <span class="comment">#82 = Methodref          #87.#88        // java/lang/invoke/LambdaMetafactory.metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;</span></span><br><span class="line">  <span class="comment">#83 = Methodref          #21.#89        // singleton/Main.lambda$reflectionCastSingleton$0:(Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">  <span class="comment">#84 = Utf8               newThread</span></span><br><span class="line">  <span class="comment">#85 = Utf8               ()Ljava/util/concurrent/ThreadFactory;</span></span><br><span class="line">  <span class="comment">#86 = Utf8               (IIJLjava/util/concurrent/TimeUnit;Ljava/util/concurrent/BlockingQueue;Ljava/util/concurrent/ThreadFactory;Ljava/util/concurrent/RejectedExecutionHandler;)V</span></span><br><span class="line">  <span class="comment">#87 = Class              #90            // java/lang/invoke/LambdaMetafactory</span></span><br><span class="line">  <span class="comment">#88 = NameAndType        #91:#94        // metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;</span></span><br><span class="line">  <span class="comment">#89 = NameAndType        #40:#41        // lambda$reflectionCastSingleton$0:(Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">  <span class="comment">#90 = Utf8               java/lang/invoke/LambdaMetafactory</span></span><br><span class="line">  <span class="comment">#91 = Utf8               metafactory</span></span><br><span class="line">  <span class="comment">#92 = Class              #96            // java/lang/invoke/MethodHandles$Lookup</span></span><br><span class="line">  <span class="comment">#93 = Utf8               Lookup</span></span><br><span class="line">  <span class="comment">#94 = Utf8               (Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;</span></span><br><span class="line">  <span class="comment">#95 = Class              #97            // java/lang/invoke/MethodHandles</span></span><br><span class="line">  <span class="comment">#96 = Utf8               java/lang/invoke/MethodHandles$Lookup</span></span><br><span class="line">  <span class="comment">#97 = Utf8               java/lang/invoke/MethodHandles</span></span><br><span class="line">  <span class="comment"># 构造方法</span></span><br><span class="line">&#123;</span><br><span class="line">  public singleton.Main();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=1, locals=1, args_size=1</span><br><span class="line">         0: aload_0</span><br><span class="line">         1: invokespecial <span class="comment">#1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">         4: <span class="built_in">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 8: 0</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=1, args_size=1</span><br><span class="line">         0: getstatic     <span class="comment">#2                  // Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">         3: ldc           <span class="comment">#3                  // String Hello World</span></span><br><span class="line">         5: invokevirtual <span class="comment">#4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span></span><br><span class="line">         8: <span class="built_in">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 61: 0</span><br><span class="line">        line 69: 8</span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      args</span><br><span class="line"></span><br><span class="line">  public static java.lang.StringBuilder m3();</span><br><span class="line">    descriptor: ()Ljava/lang/StringBuilder;</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=1, args_size=0</span><br><span class="line">         0: new           <span class="comment">#5                  // class java/lang/StringBuilder</span></span><br><span class="line">         3: dup</span><br><span class="line">         4: invokespecial <span class="comment">#6                  // Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">         7: astore_0</span><br><span class="line">         8: aload_0</span><br><span class="line">         9: iconst_1</span><br><span class="line">        10: invokevirtual <span class="comment">#7                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span><br><span class="line">        13: pop</span><br><span class="line">        14: aload_0</span><br><span class="line">        15: iconst_2</span><br><span class="line">        16: invokevirtual <span class="comment">#7                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span><br><span class="line">        19: pop</span><br><span class="line">        20: aload_0</span><br><span class="line">        21: iconst_3</span><br><span class="line">        22: invokevirtual <span class="comment">#7                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;</span></span><br><span class="line">        25: pop</span><br><span class="line">        26: aload_0</span><br><span class="line">        27: areturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 76: 0</span><br><span class="line">        line 77: 8</span><br><span class="line">        line 78: 14</span><br><span class="line">        line 79: 20</span><br><span class="line">        line 80: 26</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;Main.java&quot;</span></span><br><span class="line">InnerClasses:</span><br><span class="line">     public static <span class="comment">#63= #15 of #8; //AbortPolicy=class java/util/concurrent/ThreadPoolExecutor$AbortPolicy of class java/util/concurrent/ThreadPoolExecutor</span></span><br><span class="line">     public static final <span class="comment">#93= #92 of #95; //Lookup=class java/lang/invoke/MethodHandles$Lookup of class java/lang/invoke/MethodHandles</span></span><br><span class="line">BootstrapMethods:</span><br><span class="line">  0: <span class="comment">#58 invokestatic java/lang/invoke/LambdaMetafactory.metafactory:(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;</span></span><br><span class="line">    Method arguments:</span><br><span class="line">      <span class="comment">#59 (Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">      <span class="comment">#60 invokestatic singleton/Main.lambda$reflectionCastSingleton$0:(Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line">      <span class="comment">#59 (Ljava/lang/Runnable;)Ljava/lang/Thread;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>类加载时</p>
+<p>常量池载入运行时常量池，运行时常量池属于方法区</p>
+<p>short内的数字和字节码指令存在一起，一旦超过short的最大值，该数字就存储在运行时常量池</p>
+<p>方法字节码载入方法区 </p>
+<h3 id="CInit"><a href="#CInit" class="headerlink" title="CInit"></a>CInit</h3><p>静态代码块和静态变量会在编译时合并为一个static方法，按代码中的顺序加载</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">20</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">30</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  static int i;</span><br><span class="line">    descriptor: I</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line"></span><br><span class="line">  public singleton.Main();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=1, locals=1, args_size=1</span><br><span class="line">         0: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         4: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 8: 0</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=1, args_size=1</span><br><span class="line">         0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">         3: getstatic     #3                  // Field i:I</span><br><span class="line">         6: invokevirtual #4                  // Method java/io/PrintStream.println:(I)V</span><br><span class="line">         9: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 36: 0</span><br><span class="line">        line 104: 9</span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      args</span><br><span class="line"></span><br><span class="line">  static &#123;&#125;;</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=1, locals=0, args_size=0</span><br><span class="line">         0: bipush        20</span><br><span class="line">         2: putstatic     #3                  // Field i:I</span><br><span class="line">         5: bipush        30</span><br><span class="line">         7: putstatic     #3                  // Field i:I</span><br><span class="line">        10: bipush        10</span><br><span class="line">        12: putstatic     #3                  // Field i:I</span><br><span class="line">        15: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 26: 0</span><br><span class="line">        line 30: 5</span><br><span class="line">        line 33: 10</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="Init"><a href="#Init" class="headerlink" title="Init"></a>Init</h3><p>编译器会按照从上至下的顺序，收集所有{}代码块和成员变量赋值的构造方法，但原始构造方法内的代码总是在最后</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String a = <span class="string">&quot;s1&quot;</span>;</span><br><span class="line">    &#123;</span><br><span class="line">        b = <span class="number">20</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> b = <span class="number">10</span>;</span><br><span class="line">    &#123;</span><br><span class="line">        a = <span class="string">&quot;s2&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Main(String a,<span class="keyword">int</span> b)&#123;</span><br><span class="line">        <span class="keyword">this</span>.a = a;</span><br><span class="line">        <span class="keyword">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Main main = <span class="keyword">new</span> Main(<span class="string">&quot;s3&quot;</span>,<span class="number">30</span>);</span><br><span class="line">        System.out.println(main.a);</span><br><span class="line">        System.out.println(main.b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  singleton.Main(java.lang.String, int);</span><br><span class="line">    descriptor: (Ljava/lang/String;I)V</span><br><span class="line">    flags:</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=3, args_size=3</span><br><span class="line">         0: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         4: aload_0</span><br><span class="line">         5: ldc           #2                  // String s1</span><br><span class="line">         7: putfield      #3                  // Field a:Ljava/lang/String;</span><br><span class="line">        10: aload_0</span><br><span class="line">        11: bipush        20</span><br><span class="line">        13: putfield      #4                  // Field b:I</span><br><span class="line">        16: aload_0</span><br><span class="line">        17: bipush        10</span><br><span class="line">        19: putfield      #4                  // Field b:I</span><br><span class="line">        22: aload_0</span><br><span class="line">        23: ldc           #5                  // String s2</span><br><span class="line">        25: putfield      #3                  // Field a:Ljava/lang/String;</span><br><span class="line">        28: aload_0</span><br><span class="line">        29: aload_1</span><br><span class="line">        30: putfield      #3                  // Field a:Ljava/lang/String;</span><br><span class="line">        33: aload_0</span><br><span class="line">        34: iload_2</span><br><span class="line">        35: putfield      #4                  // Field b:I</span><br><span class="line">        38: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 29: 0</span><br><span class="line">        line 20: 4</span><br><span class="line">        line 22: 10</span><br><span class="line">        line 24: 16</span><br><span class="line">        line 26: 22</span><br><span class="line">        line 30: 28</span><br><span class="line">        line 31: 33</span><br><span class="line">        line 32: 38</span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      a</span><br><span class="line">      b</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=4, locals=2, args_size=1</span><br><span class="line">         0: new           #6                  // class singleton/Main</span><br><span class="line">         3: dup</span><br><span class="line">         4: ldc           #7                  // String s3</span><br><span class="line">         6: bipush        30</span><br><span class="line">         8: invokespecial #8                  // Method &quot;&lt;init&gt;&quot;:(Ljava/lang/String;I)V</span><br><span class="line">        11: astore_1</span><br><span class="line">        12: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        15: aload_1</span><br><span class="line">        16: getfield      #3                  // Field a:Ljava/lang/String;</span><br><span class="line">        19: invokevirtual #10                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V</span><br><span class="line">        22: getstatic     #9                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        25: aload_1</span><br><span class="line">        26: getfield      #4                  // Field b:I</span><br><span class="line">        29: invokevirtual #11                 // Method java/io/PrintStream.println:(I)V</span><br><span class="line">        32: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 35: 0</span><br><span class="line">        line 36: 12</span><br><span class="line">        line 37: 22</span><br><span class="line">        line 105: 32</span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      args</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="方法调用字节码"><a href="#方法调用字节码" class="headerlink" title="方法调用字节码"></a>方法调用字节码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">  <span class="comment">//invokespecial</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line">  <span class="comment">//invokespecial</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line">  <span class="comment">//invokevirtual</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Main main = <span class="keyword">new</span> Main();</span><br><span class="line">        main.test1();</span><br><span class="line">        main.test2();</span><br><span class="line">        main.test3();</span><br><span class="line">        main.test4();</span><br><span class="line">        Main.test4();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  public singleton.Main();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=1, locals=1, args_size=1</span><br><span class="line">         0: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         4: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 8: 0</span><br><span class="line"></span><br><span class="line">  public void test3();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=0, locals=1, args_size=1</span><br><span class="line">         0: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 37: 0</span><br><span class="line"></span><br><span class="line">  public static void main(java.lang.String[]);</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=2, locals=2, args_size=1</span><br><span class="line">         0: new           #2                  // class singleton/Main分配新创建的对象地址，压栈</span><br><span class="line">         3: dup																//复制栈顶引用压栈</span><br><span class="line">         4: invokespecial #3                  // Method &quot;&lt;init&gt;&quot;:()V//栈顶引用对象调用构造方法，弹栈 </span><br><span class="line">         7: astore_1																								//出站，将引用保存到1槽位</span><br><span class="line">         8: aload_1</span><br><span class="line">         9: invokespecial #4                  // Method test1:()V</span><br><span class="line">        12: aload_1</span><br><span class="line">        13: invokespecial #5                  // Method test2:()V</span><br><span class="line">        16: aload_1</span><br><span class="line">        17: invokevirtual #6                  // Method test3:()V		//调用虚拟方法，因为编译时不确定方法的入口地址</span><br><span class="line">        20: aload_1</span><br><span class="line">        21: pop																//静态方法不需要使用对象调用，所以压栈后直接弹栈了</span><br><span class="line">        22: invokestatic  #7                  // Method test4:()V</span><br><span class="line">        25: invokestatic  #7                  // Method test4:()V</span><br><span class="line">        28: return</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line 41: 0</span><br><span class="line">        line 42: 8</span><br><span class="line">        line 43: 12</span><br><span class="line">        line 44: 16</span><br><span class="line">        line 45: 20</span><br><span class="line">        line 46: 25</span><br><span class="line">        line 115: 28</span><br><span class="line">    MethodParameters:</span><br><span class="line">      Name                           Flags</span><br><span class="line">      args</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="多态方法查找实际调用地址"><a href="#多态方法查找实际调用地址" class="headerlink" title="多态方法查找实际调用地址"></a>多态方法查找实际调用地址</h3><p>当执行invokevirtual指令时</p>
+<ol>
+<li>先通过栈帧中的对象引用找到对象</li>
+<li>分析对象头，找到对象的实际Class</li>
+<li>Class结构中有vtable，它在类加载的链接阶段就已经根据方法的重写规则生成好了</li>
+<li>查表得到方法的具体地址</li>
+<li>执行方法的字节码</li>
+</ol>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><p>Exception table</p>
+<p>​    from        to        target        type</p>
+<p>​            2        5            8                java/lang/NullPointerException</p>
+<p>​            2        5            22                java/lang/Exception</p>
+<h3 id="multi-catch情况"><a href="#multi-catch情况" class="headerlink" title="multi-catch情况"></a>multi-catch情况</h3><p>多种异常可以捕获多种catch</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">try&#123;</span><br><span class="line"></span><br><span class="line">&#125;catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException)</span><br></pre></td></tr></table></figure>
+
+<h3 id="finally字节码"><a href="#finally字节码" class="headerlink" title="finally字节码"></a>finally字节码</h3><p>finally块的字节码分别加在try块的最后和catch块的最后</p>
+<p>如果在finally中出现了return，会吞掉throw，千万不要在finally中return</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> i = <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">30</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span></span>;</span><br><span class="line">   descriptor: ()I</span><br><span class="line">   flags: ACC_PUBLIC</span><br><span class="line">   Code:</span><br><span class="line">     stack=<span class="number">3</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">        <span class="number">0</span>: iconst_1</span><br><span class="line">        <span class="number">1</span>: iconst_0</span><br><span class="line">        <span class="number">2</span>: idiv</span><br><span class="line">        <span class="number">3</span>: istore_1</span><br><span class="line">        <span class="number">4</span>: bipush        <span class="number">10</span></span><br><span class="line">        <span class="number">6</span>: istore_2				<span class="comment">//将栈顶元素进行暂存</span></span><br><span class="line">        <span class="number">7</span>: bipush        <span class="number">30</span></span><br><span class="line">        <span class="number">9</span>: ireturn</span><br><span class="line">       <span class="number">10</span>: astore_1</span><br><span class="line">       <span class="number">11</span>: <span class="keyword">new</span>           #<span class="number">3</span>                  <span class="comment">// class java/lang/Error</span></span><br><span class="line">       <span class="number">14</span>: dup</span><br><span class="line">       <span class="number">15</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String error</span></span><br><span class="line">       <span class="number">17</span>: invokespecial #<span class="number">5</span>                  <span class="comment">// Method java/lang/Error.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">       <span class="number">20</span>: athrow</span><br><span class="line">       <span class="number">21</span>: astore_3</span><br><span class="line">       <span class="number">22</span>: bipush        <span class="number">30</span>											<span class="comment">//注意，此处并没有throw出去</span></span><br><span class="line">       <span class="number">24</span>: ireturn</span><br><span class="line">     Exception table:</span><br><span class="line">        from    to  target type</span><br><span class="line">            <span class="number">0</span>     <span class="number">7</span>    <span class="number">10</span>   Class java/lang/Exception</span><br><span class="line">            <span class="number">0</span>     <span class="number">7</span>    <span class="number">21</span>   any</span><br><span class="line">           <span class="number">10</span>    <span class="number">22</span>    <span class="number">21</span>   any</span><br><span class="line">     LineNumberTable:</span><br><span class="line">       line <span class="number">41</span>: <span class="number">0</span></span><br><span class="line">       line <span class="number">43</span>: <span class="number">4</span></span><br><span class="line">       line <span class="number">48</span>: <span class="number">7</span></span><br><span class="line">       line <span class="number">45</span>: <span class="number">10</span></span><br><span class="line">       line <span class="number">46</span>: <span class="number">11</span></span><br><span class="line">       line <span class="number">48</span>: <span class="number">21</span></span><br><span class="line">     StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">       frame_type = <span class="number">74</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">         stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Exception</span> ]</span></span><br><span class="line"><span class="class">       <span class="title">frame_type</span> </span>= <span class="number">74</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">         stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Throwable</span> ]</span></span><br><span class="line"><span class="class"></span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="keyword">int</span> i = <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()I</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: iconst_1</span><br><span class="line">         <span class="number">1</span>: iconst_0</span><br><span class="line">         <span class="number">2</span>: idiv</span><br><span class="line">         <span class="number">3</span>: istore_1</span><br><span class="line">         <span class="number">4</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="number">6</span>: istore_2			</span><br><span class="line">         <span class="number">7</span>: iload_2			</span><br><span class="line">         <span class="number">8</span>: ireturn</span><br><span class="line">         <span class="number">9</span>: astore_1</span><br><span class="line">        <span class="number">10</span>: <span class="keyword">new</span>           #<span class="number">3</span>                  <span class="comment">// class java/lang/Error</span></span><br><span class="line">        <span class="number">13</span>: dup</span><br><span class="line">        <span class="number">14</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String error</span></span><br><span class="line">        <span class="number">16</span>: invokespecial #<span class="number">5</span>                  <span class="comment">// Method java/lang/Error.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">        <span class="number">19</span>: athrow</span><br><span class="line">        <span class="number">20</span>: astore_3</span><br><span class="line">        <span class="number">21</span>: aload_3</span><br><span class="line">        <span class="number">22</span>: athrow</span><br><span class="line">      Exception table:</span><br><span class="line">         from    to  target type</span><br><span class="line">             <span class="number">0</span>     <span class="number">7</span>     <span class="number">9</span>   Class java/lang/Exception</span><br><span class="line">             <span class="number">0</span>     <span class="number">7</span>    <span class="number">20</span>   any</span><br><span class="line">             <span class="number">9</span>    <span class="number">21</span>    <span class="number">20</span>   any</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">41</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">43</span>: <span class="number">4</span></span><br><span class="line">        line <span class="number">45</span>: <span class="number">9</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">10</span></span><br><span class="line">        line <span class="number">47</span>: <span class="number">20</span></span><br><span class="line">        line <span class="number">48</span>: <span class="number">21</span></span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">        frame_type = <span class="number">73</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">          stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Exception</span> ]</span></span><br><span class="line"><span class="class">        <span class="title">frame_type</span> </span>= <span class="number">74</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">          stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Throwable</span> ]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="number">11</span>;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Error(<span class="string">&quot;error&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            i = <span class="number">12</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()I</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="number">2</span>: istore_1</span><br><span class="line">         <span class="number">3</span>: bipush        <span class="number">11</span></span><br><span class="line">         <span class="number">5</span>: istore_2					<span class="comment">//注意，此处try正常执行到return语句，会将return结果存到slot2进行暂存，固定返回值，执行finally会返回11</span></span><br><span class="line">         <span class="number">6</span>: bipush        <span class="number">12</span></span><br><span class="line">         <span class="number">8</span>: istore_1</span><br><span class="line">         <span class="number">9</span>: iload_2</span><br><span class="line">        <span class="number">10</span>: ireturn</span><br><span class="line">        <span class="number">11</span>: astore_2</span><br><span class="line">        <span class="number">12</span>: <span class="keyword">new</span>           #<span class="number">3</span>                  <span class="comment">// class java/lang/Error</span></span><br><span class="line">        <span class="number">15</span>: dup</span><br><span class="line">        <span class="number">16</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String error</span></span><br><span class="line">        <span class="number">18</span>: invokespecial #<span class="number">5</span>                  <span class="comment">// Method java/lang/Error.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">        <span class="number">21</span>: athrow</span><br><span class="line">        <span class="number">22</span>: astore_3</span><br><span class="line">        <span class="number">23</span>: bipush        <span class="number">12</span></span><br><span class="line">        <span class="number">25</span>: istore_1</span><br><span class="line">        <span class="number">26</span>: aload_3</span><br><span class="line">        <span class="number">27</span>: athrow</span><br><span class="line">      Exception table:</span><br><span class="line">         from    to  target type</span><br><span class="line">             <span class="number">3</span>     <span class="number">6</span>    <span class="number">11</span>   Class java/lang/Exception</span><br><span class="line">             <span class="number">3</span>     <span class="number">6</span>    <span class="number">22</span>   any</span><br><span class="line">            <span class="number">11</span>    <span class="number">23</span>    <span class="number">22</span>   any</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">40</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">43</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">48</span>: <span class="number">6</span></span><br><span class="line">        line <span class="number">43</span>: <span class="number">9</span></span><br><span class="line">        line <span class="number">45</span>: <span class="number">11</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">12</span></span><br><span class="line">        line <span class="number">48</span>: <span class="number">22</span></span><br><span class="line">        line <span class="number">49</span>: <span class="number">26</span></span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">        frame_type = <span class="number">255</span> <span class="comment">/* full_frame */</span></span><br><span class="line">          offset_delta = <span class="number">11</span></span><br><span class="line">          locals = [ <span class="class"><span class="keyword">class</span> <span class="title">singleton</span>/<span class="title">Main</span>, <span class="title">int</span> ]</span></span><br><span class="line"><span class="class">          <span class="title">stack</span> </span>= [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Exception</span> ]</span></span><br><span class="line"><span class="class">        <span class="title">frame_type</span> </span>= <span class="number">74</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">          stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Throwable</span> ]</span></span><br><span class="line"><span class="class"></span></span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item"></span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/01/05/JIT%E8%BF%90%E8%A1%8C%E6%97%B6%E4%BC%98%E5%8C%96/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">JIT运行时优化</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">Keep Team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>

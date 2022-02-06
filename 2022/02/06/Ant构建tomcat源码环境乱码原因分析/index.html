@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="Keep Team">
+    
+    <title>
+        
+        Keep Theme
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation"></span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">Keep Team</span>
+                        
+                            <span class="author-label">Lv2</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-06 17:18:48</span>
+        <span class="mobile">2022-02-06 17:18</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Ant构建tomcat源码环境乱码原因分析"><a href="#Ant构建tomcat源码环境乱码原因分析" class="headerlink" title="Ant构建tomcat源码环境乱码原因分析"></a>Ant构建tomcat源码环境乱码原因分析</h1><p>为什么会有乱码呢，根据网上资料，打印日志文件时，调用了StringManager类的getString方法，str就是getString方法返回的乱码值。</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/image-20220206150523421.png" alt="image-20220206150523421"></p>
+<p>追ResoutceBundle的getString方法</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/image-20220206150949647-4140269.png" alt="image-20220206150949647"></p>
+<p>可以看到，getString方法中调用了getObject,getObject中调用了handleGetObject，追handleGetObject发现它是一个抽象方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Gets an object for the given key from this resource bundle.</span></span><br><span class="line"><span class="comment"> * Returns null if this resource bundle does not contain an</span></span><br><span class="line"><span class="comment"> * object for the given key.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> key the key for the desired object</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@exception</span> NullPointerException if &lt;code&gt;key&lt;/code&gt; is &lt;code&gt;null&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> the object for the given key, or null</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Object <span class="title">handleGetObject</span><span class="params">(String key)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过debug发现当打印日志时，传来的bundle是PropertyResourceBundle，PropertyResourceBundle是从lookup的Map中取值的,这个Map在初始化时候读取到的文件必须使用ISO-8859-1的编码，但tomcat国际化文件使用的是utf8编码，用iso-8859-1读肯定乱码。</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/image-20220206151441768-4140277.png" alt="ProprotyResourceBundle中的handleGetObject方法"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a property resource bundle from an &#123;<span class="doctag">@link</span> java.io.InputStream</span></span><br><span class="line"><span class="comment">     * InputStream&#125;.  The property file read with this constructor</span></span><br><span class="line"><span class="comment">     * must be encoded in ISO-8859-1.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> stream an InputStream that represents a property file</span></span><br><span class="line"><span class="comment">     *        to read from.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException if an I/O error occurs</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> NullPointerException if &lt;code&gt;stream&lt;/code&gt; is null</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IllegalArgumentException if &#123;<span class="doctag">@code</span> stream&#125; contains a</span></span><br><span class="line"><span class="comment">     *     malformed Unicode escape sequence.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@SuppressWarnings(&#123;&quot;unchecked&quot;, &quot;rawtypes&quot;&#125;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PropertyResourceBundle</span> <span class="params">(InputStream stream)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Properties properties = <span class="keyword">new</span> Properties();</span><br><span class="line">        properties.load(stream);</span><br><span class="line">        lookup = <span class="keyword">new</span> HashMap(properties);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>解决三种思路：</p>
+<ul>
+<li>修改tomcat国际化文件为utf-8编码</li>
+<li>将使用ISO-8859-1读取的乱码字符串转化为字节数组再转为UTF-8字符串str = new String(str.getBytes(“ISO-8859-1”), “UTF-8”);<ul>
+<li>这样会向堆中创建大量String对象，这么干肯定不行</li>
+</ul>
+</li>
+<li>换一个ResourceBundle，这样调用其</li>
+<li>java8之前的PropertyResourceBundle默认编码是ISO-8859-1,java9后默认为UTF-8，所以升级jdk版本是最方便的办法</li>
+</ul>
+<p>换tomcat国际化编码文件太多，换jdk版本也太简单，所以考虑换一个ResourceBundle,那这个ResourceBundle从哪里来的呢?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new StringManager for a given package. This is a</span></span><br><span class="line"><span class="comment">     * private method and all access to it is arbitrated by the</span></span><br><span class="line"><span class="comment">     * static getManager method call so that only one StringManager</span></span><br><span class="line"><span class="comment">     * per package will be created.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> packageName Name of package to create StringManager for.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">StringManager</span><span class="params">(String packageName, Locale locale)</span> </span>&#123;</span><br><span class="line">        String bundleName = packageName + <span class="string">&quot;.LocalStrings&quot;</span>;</span><br><span class="line">        ResourceBundle bnd = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// The ROOT Locale uses English. If English is requested, force the</span></span><br><span class="line">            <span class="comment">// use of the ROOT Locale else incorrect results may be obtained if</span></span><br><span class="line">            <span class="comment">// the system default locale is not English and translations are</span></span><br><span class="line">            <span class="comment">// available for the system default locale.</span></span><br><span class="line">            <span class="keyword">if</span> (locale.getLanguage().equals(Locale.ENGLISH.getLanguage())) &#123;</span><br><span class="line">                locale = Locale.ROOT;</span><br><span class="line">            &#125;</span><br><span class="line">          <span class="comment">//使用ExtClassLoader获取到bnd对象</span></span><br><span class="line">            bnd = ResourceBundle.getBundle(bundleName, locale);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (MissingResourceException ex) &#123;</span><br><span class="line">            <span class="comment">// Try from the current loader (that&#x27;s the case for trusted apps)</span></span><br><span class="line">            <span class="comment">// Should only be required if using a TC5 style classloader structure</span></span><br><span class="line">            <span class="comment">// where common != shared != server</span></span><br><span class="line">            ClassLoader cl = Thread.currentThread().getContextClassLoader();</span><br><span class="line">            <span class="keyword">if</span> (cl != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    bnd = ResourceBundle.getBundle(bundleName, locale, cl);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (MissingResourceException ex2) &#123;</span><br><span class="line">                    <span class="comment">// Ignore</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        bundle = bnd;</span><br><span class="line">        <span class="comment">// Get the actual locale, which may be different from the requested one</span></span><br><span class="line">        <span class="keyword">if</span> (bundle != <span class="keyword">null</span>) &#123;</span><br><span class="line">            Locale bundleLocale = bundle.getLocale();</span><br><span class="line">            <span class="keyword">if</span> (bundleLocale.equals(Locale.ROOT)) &#123;</span><br><span class="line">                <span class="keyword">this</span>.locale = Locale.ENGLISH;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">this</span>.locale = bundleLocale;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.locale = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>21行bnd = ResourceBundle.getBundle(bundleName, locale);</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ResourceBundle <span class="title">getBundle</span><span class="params">(String baseName,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                 Locale locale)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getBundleImpl(baseName, locale,</span><br><span class="line">                             getLoader(Reflection.getCallerClass()),</span><br><span class="line">                             getDefaultControl(baseName));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第7行返回一个默认的Control对象</p>
+<p>第5行获取Bundle实现类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ResourceBundle <span class="title">getBundleImpl</span><span class="params">(String baseName, Locale locale,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                ClassLoader loader, Control control)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (locale == <span class="keyword">null</span> || control == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// We create a CacheKey here for use by this call. The base</span></span><br><span class="line">        <span class="comment">// name and loader will never change during the bundle loading</span></span><br><span class="line">        <span class="comment">// process. We have to make sure that the locale is set before</span></span><br><span class="line">        <span class="comment">// using it as a cache key.</span></span><br><span class="line">        CacheKey cacheKey = <span class="keyword">new</span> CacheKey(baseName, locale, loader);</span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Quick lookup of the cache.</span></span><br><span class="line">        BundleReference bundleRef = cacheList.get(cacheKey);</span><br><span class="line">        <span class="keyword">if</span> (bundleRef != <span class="keyword">null</span>) &#123;</span><br><span class="line">            bundle = bundleRef.get();</span><br><span class="line">            bundleRef = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If this bundle and all of its parents are valid (not expired),</span></span><br><span class="line">        <span class="comment">// then return this bundle. If any of the bundles is expired, we</span></span><br><span class="line">        <span class="comment">// don&#x27;t call control.needsReload here but instead drop into the</span></span><br><span class="line">        <span class="comment">// complete loading process below.</span></span><br><span class="line">        <span class="keyword">if</span> (isValidBundle(bundle) &amp;&amp; hasValidParentChain(bundle)) &#123;</span><br><span class="line">            <span class="keyword">return</span> bundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// No valid bundle was found in the cache, so we need to load the</span></span><br><span class="line">        <span class="comment">// resource bundle and its parents.</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> isKnownControl = (control == Control.INSTANCE) ||</span><br><span class="line">                                   (control <span class="keyword">instanceof</span> SingleFormatControl);</span><br><span class="line">        List&lt;String&gt; formats = control.getFormats(baseName);</span><br><span class="line">        <span class="keyword">if</span> (!isKnownControl &amp;&amp; !checkList(formats)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Invalid Control: getFormats&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ResourceBundle baseBundle = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (Locale targetLocale = locale;</span><br><span class="line">             targetLocale != <span class="keyword">null</span>;</span><br><span class="line">             targetLocale = control.getFallbackLocale(baseName, targetLocale)) &#123;</span><br><span class="line">            List&lt;Locale&gt; candidateLocales = control.getCandidateLocales(baseName, targetLocale);</span><br><span class="line">            <span class="keyword">if</span> (!isKnownControl &amp;&amp; !checkList(candidateLocales)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Invalid Control: getCandidateLocales&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            bundle = findBundle(cacheKey, candidateLocales, formats, <span class="number">0</span>, control, baseBundle);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If the loaded bundle is the base bundle and exactly for the</span></span><br><span class="line">            <span class="comment">// requested locale or the only candidate locale, then take the</span></span><br><span class="line">            <span class="comment">// bundle as the resulting one. If the loaded bundle is the base</span></span><br><span class="line">            <span class="comment">// bundle, it&#x27;s put on hold until we finish processing all</span></span><br><span class="line">            <span class="comment">// fallback locales.</span></span><br><span class="line">            <span class="keyword">if</span> (isValidBundle(bundle)) &#123;</span><br><span class="line">                <span class="keyword">boolean</span> isBaseBundle = Locale.ROOT.equals(bundle.locale);</span><br><span class="line">                <span class="keyword">if</span> (!isBaseBundle || bundle.locale.equals(locale)</span><br><span class="line">                    || (candidateLocales.size() == <span class="number">1</span></span><br><span class="line">                        &amp;&amp; bundle.locale.equals(candidateLocales.get(<span class="number">0</span>)))) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// If the base bundle has been loaded, keep the reference in</span></span><br><span class="line">                <span class="comment">// baseBundle so that we can avoid any redundant loading in case</span></span><br><span class="line">                <span class="comment">// the control specify not to cache bundles.</span></span><br><span class="line">                <span class="keyword">if</span> (isBaseBundle &amp;&amp; baseBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    baseBundle = bundle;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (bundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (baseBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">                throwMissingResourceException(baseName, locale, cacheKey.getCause());</span><br><span class="line">            &#125;</span><br><span class="line">            bundle = baseBundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        keepAlive(loader);</span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第48行findBundle</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ResourceBundle <span class="title">findBundle</span><span class="params">(CacheKey cacheKey,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             List&lt;Locale&gt; candidateLocales,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             List&lt;String&gt; formats,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             <span class="keyword">int</span> index,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             Control control,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             ResourceBundle baseBundle)</span> </span>&#123;</span><br><span class="line">        Locale targetLocale = candidateLocales.get(index);</span><br><span class="line">        ResourceBundle parent = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (index != candidateLocales.size() - <span class="number">1</span>) &#123;</span><br><span class="line">            parent = findBundle(cacheKey, candidateLocales, formats, index + <span class="number">1</span>,</span><br><span class="line">                                control, baseBundle);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (baseBundle != <span class="keyword">null</span> &amp;&amp; Locale.ROOT.equals(targetLocale)) &#123;</span><br><span class="line">            <span class="keyword">return</span> baseBundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Before we do the real loading work, see whether we need to</span></span><br><span class="line">        <span class="comment">// do some housekeeping: If references to class loaders or</span></span><br><span class="line">        <span class="comment">// resource bundles have been nulled out, remove all related</span></span><br><span class="line">        <span class="comment">// information from the cache.</span></span><br><span class="line">        Object ref;</span><br><span class="line">        <span class="keyword">while</span> ((ref = referenceQueue.poll()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            cacheList.remove(((CacheKeyReference)ref).getCacheKey());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// flag indicating the resource bundle has expired in the cache</span></span><br><span class="line">        <span class="keyword">boolean</span> expiredBundle = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// First, look up the cache to see if it&#x27;s in the cache, without</span></span><br><span class="line">        <span class="comment">// attempting to load bundle.</span></span><br><span class="line">        cacheKey.setLocale(targetLocale);</span><br><span class="line">        ResourceBundle bundle = findBundleInCache(cacheKey, control);</span><br><span class="line">        <span class="keyword">if</span> (isValidBundle(bundle)) &#123;</span><br><span class="line">            expiredBundle = bundle.expired;</span><br><span class="line">            <span class="keyword">if</span> (!expiredBundle) &#123;</span><br><span class="line">                <span class="comment">// If its parent is the one asked for by the candidate</span></span><br><span class="line">                <span class="comment">// locales (the runtime lookup path), we can take the cached</span></span><br><span class="line">                <span class="comment">// one. (If it&#x27;s not identical, then we&#x27;d have to check the</span></span><br><span class="line">                <span class="comment">// parent&#x27;s parents to be consistent with what&#x27;s been</span></span><br><span class="line">                <span class="comment">// requested.)</span></span><br><span class="line">                <span class="keyword">if</span> (bundle.parent == parent) &#123;</span><br><span class="line">                    <span class="keyword">return</span> bundle;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// Otherwise, remove the cached one since we can&#x27;t keep</span></span><br><span class="line">                <span class="comment">// the same bundles having different parents.</span></span><br><span class="line">                BundleReference bundleRef = cacheList.get(cacheKey);</span><br><span class="line">                <span class="keyword">if</span> (bundleRef != <span class="keyword">null</span> &amp;&amp; bundleRef.get() == bundle) &#123;</span><br><span class="line">                    cacheList.remove(cacheKey, bundleRef);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (bundle != NONEXISTENT_BUNDLE) &#123;</span><br><span class="line">            CacheKey constKey = (CacheKey) cacheKey.clone();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                bundle = loadBundle(cacheKey, formats, control, expiredBundle);</span><br><span class="line">                <span class="keyword">if</span> (bundle != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (bundle.parent == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        bundle.setParent(parent);</span><br><span class="line">                    &#125;</span><br><span class="line">                    bundle.locale = targetLocale;</span><br><span class="line">                    bundle = putBundleInCache(cacheKey, bundle, control);</span><br><span class="line">                    <span class="keyword">return</span> bundle;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// Put NONEXISTENT_BUNDLE in the cache as a mark that there&#x27;s no bundle</span></span><br><span class="line">                <span class="comment">// instance for the locale.</span></span><br><span class="line">                putBundleInCache(cacheKey, NONEXISTENT_BUNDLE, control);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (constKey.getCause() <span class="keyword">instanceof</span> InterruptedException) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> parent;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第56行loadBundle</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ResourceBundle <span class="title">loadBundle</span><span class="params">(CacheKey cacheKey,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             List&lt;String&gt; formats,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             Control control,</span></span></span><br><span class="line"><span class="params"><span class="function">                                             <span class="keyword">boolean</span> reload)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Here we actually load the bundle in the order of formats</span></span><br><span class="line">        <span class="comment">// specified by the getFormats() value.</span></span><br><span class="line">        Locale targetLocale = cacheKey.getLocale();</span><br><span class="line"></span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">int</span> size = formats.size();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            String format = formats.get(i);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                bundle = control.newBundle(cacheKey.getName(), targetLocale, format,</span><br><span class="line">                                           cacheKey.getLoader(), reload);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (LinkageError error) &#123;</span><br><span class="line">                <span class="comment">// We need to handle the LinkageError case due to</span></span><br><span class="line">                <span class="comment">// inconsistent case-sensitivity in ClassLoader.</span></span><br><span class="line">                <span class="comment">// See 6572242 for details.</span></span><br><span class="line">                cacheKey.setCause(error);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception cause) &#123;</span><br><span class="line">                cacheKey.setCause(cause);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (bundle != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Set the format in the cache key so that it can be</span></span><br><span class="line">                <span class="comment">// used when calling needsReload later.</span></span><br><span class="line">                cacheKey.setFormat(format);</span><br><span class="line">                bundle.name = cacheKey.getName();</span><br><span class="line">                bundle.locale = targetLocale;</span><br><span class="line">                <span class="comment">// Bundle provider might reuse instances. So we should make</span></span><br><span class="line">                <span class="comment">// sure to clear the expired flag here.</span></span><br><span class="line">                bundle.expired = <span class="keyword">false</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>第15行newBundle</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ResourceBundle <span class="title">newBundle</span><span class="params">(String baseName, Locale locale, String format,</span></span></span><br><span class="line"><span class="params"><span class="function">                                        ClassLoader loader, <span class="keyword">boolean</span> reload)</span></span></span><br><span class="line"><span class="function">                    <span class="keyword">throws</span> IllegalAccessException, InstantiationException, IOException </span>&#123;</span><br><span class="line">            String bundleName = toBundleName(baseName, locale);</span><br><span class="line">            ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">if</span> (format.equals(<span class="string">&quot;java.class&quot;</span>)) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                    Class&lt;? extends ResourceBundle&gt; bundleClass</span><br><span class="line">                        = (Class&lt;? extends ResourceBundle&gt;)loader.loadClass(bundleName);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// If the class isn&#x27;t a ResourceBundle subclass, throw a</span></span><br><span class="line">                    <span class="comment">// ClassCastException.</span></span><br><span class="line">                    <span class="keyword">if</span> (ResourceBundle.class.isAssignableFrom(bundleClass)) &#123;</span><br><span class="line">                        bundle = bundleClass.newInstance();</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> ClassCastException(bundleClass.getName()</span><br><span class="line">                                     + <span class="string">&quot; cannot be cast to ResourceBundle&quot;</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (format.equals(<span class="string">&quot;java.properties&quot;</span>)) &#123;</span><br><span class="line">                <span class="keyword">final</span> String resourceName = toResourceName0(bundleName, <span class="string">&quot;properties&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span> (resourceName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> bundle;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">final</span> ClassLoader classLoader = loader;</span><br><span class="line">                <span class="keyword">final</span> <span class="keyword">boolean</span> reloadFlag = reload;</span><br><span class="line">                InputStream stream = <span class="keyword">null</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    stream = AccessController.doPrivileged(</span><br><span class="line">                        <span class="keyword">new</span> PrivilegedExceptionAction&lt;InputStream&gt;() &#123;</span><br><span class="line">                            <span class="function"><span class="keyword">public</span> InputStream <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                                InputStream is = <span class="keyword">null</span>;</span><br><span class="line">                                <span class="keyword">if</span> (reloadFlag) &#123;</span><br><span class="line">                                    URL url = classLoader.getResource(resourceName);</span><br><span class="line">                                    <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                        URLConnection connection = url.openConnection();</span><br><span class="line">                                        <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</span><br><span class="line">                                            <span class="comment">// Disable caches to get fresh data for</span></span><br><span class="line">                                            <span class="comment">// reloading.</span></span><br><span class="line">                                            connection.setUseCaches(<span class="keyword">false</span>);</span><br><span class="line">                                            is = connection.getInputStream();</span><br><span class="line">                                        &#125;</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                    is = classLoader.getResourceAsStream(resourceName);</span><br><span class="line">                                &#125;</span><br><span class="line">                                <span class="keyword">return</span> is;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (PrivilegedActionException e) &#123;</span><br><span class="line">                    <span class="keyword">throw</span> (IOException) e.getException();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (stream != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        bundle = <span class="keyword">new</span> PropertyResourceBundle(stream);</span><br><span class="line">                    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                        stream.close();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;unknown format: &quot;</span> + format);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> bundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>31行读取STREAM流，55行发现stream流不为空，所以创建了一个PropertyResourceBundle。</p>
+<p>难道真的没有办法了?</p>
+<p>等等，我们是通过control的newBundle获取Bundle对象的，但是tomcat没有指定control对象，导致系统查找默认的Control对象，如果我们写一个Control对象，重写newBundle方法,返回一个使用UTF-8编码读取文件的bundle对象。</p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item"></span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">Keep Team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>
