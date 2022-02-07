@@ -1,92 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Ant构建Tomcat源码开发环境，解决乱码</title>
-    <url>/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/</url>
-    <content><![CDATA[<p>学习tomcat，因为网上好多使用maven搭建的tomcat，但tomcat官方推荐的是使用ant搭建，所以在此记录。</p>
-<p>上半部分搭建环境，下半部分解决乱码。</p>
-<p>参考资料:</p>
-<p><a class="link" href="https://tomcat.apache.org/tomcat-8.5-doc/building.html">官方搭建开发环境文档<i class="fas fa-external-link-alt"></i></a>(推荐一定要先看一下文档)</p>
-<p>解决乱码{</p>
-<p><a class="link" href="https://juejin.cn/post/6967701837696729124">关于Tomcat源码启动的乱码问题的解决<i class="fas fa-external-link-alt"></i></a></p>
-<p><a class="link" href="https://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle">How to use UTF-8 in resource properties with ResourceBundle<i class="fas fa-external-link-alt"></i></a></p>
-<p>}</p>
-<p>解决访问报错{</p>
-<p><a class="link" href="https://github.com/gqzdev/tomcat-start">解决访问500无法为JSP编译类问题<i class="fas fa-external-link-alt"></i></a></p>
-<p>}</p>
-<h2 id="搭建源码启动环境"><a href="#搭建源码启动环境" class="headerlink" title="搭建源码启动环境"></a>搭建源码启动环境</h2><p>当前环境</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装jdk</span></span><br><span class="line">chaoqiang@Pineapple bin % java -version</span><br><span class="line">openjdk version <span class="string">&quot;1.8.0_322&quot;</span></span><br><span class="line">OpenJDK Runtime Environment (Zulu 8.60.0.21-CA-macos-aarch64) (build 1.8.0_322-b06)</span><br><span class="line">OpenJDK 64-Bit Server VM (Zulu 8.60.0.21-CA-macos-aarch64) (build 25.322-b06, mixed mode)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装ant</span></span><br><span class="line">chaoqiang@Pineapple bin % ant -version</span><br><span class="line">Apache Ant(TM) version 1.10.10 compiled on April 12 2021</span><br></pre></td></tr></table></figure>
-
-<h2 id="下载tomcat源码"><a href="#下载tomcat源码" class="headerlink" title="下载tomcat源码"></a>下载tomcat源码</h2><p>本人使用tomcat8.5,可根据个人需求在官网选择版本</p>
-<h3 id="解压源码包"><a href="#解压源码包" class="headerlink" title="解压源码包"></a>解压源码包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple self-learn % ll</span><br><span class="line">total 13728</span><br><span class="line">drwxr-xr-x  16 chaoqiang  staff      512  2  6 13:46 ./</span><br><span class="line">drwxr-xr-x+ 68 chaoqiang  staff     2176  2  5 23:26 ../</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    10244  2  5 21:34 .DS_Store</span><br><span class="line">drwx------@  7 chaoqiang  staff      224 10 17 16:06 SpringBoot打包部署/</span><br><span class="line">drwx------@  5 chaoqiang  staff      160  4 23  2021 VODUploadDemo-java-1.4.14/</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff  5961981  1 31 14:42 apache-tomcat-8.5.75-src.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple self-learn % tar -zxvf apache-tomcat-8.5.75-src.tar.gz </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="修改构建jar包指定路径"><a href="#修改构建jar包指定路径" class="headerlink" title="修改构建jar包指定路径"></a>修改构建jar包指定路径</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % <span class="built_in">pwd</span></span><br><span class="line">/Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src</span><br><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % vi build.properties.default </span><br></pre></td></tr></table></figure>
-
-
-
-<p>修改base.path属性，默认为用户路径下的/tomcat-build-libs，修改为源码目录下/tomcat-build-libs</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206142732170.png" alt="image-20220206142732170"></p>
-<h3 id="指定ide开始构建"><a href="#指定ide开始构建" class="headerlink" title="指定ide开始构建"></a>指定ide开始构建</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % ant ide-intellij </span><br><span class="line">Buildfile: /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/build.xml</span><br><span class="line"></span><br><span class="line">download-compile:</span><br><span class="line"></span><br><span class="line">testexist:</span><br><span class="line">     [<span class="built_in">echo</span>] Testing  <span class="keyword">for</span> /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/commons-daemon-1.2.4/commons-daemon-1.2.4.jar</span><br><span class="line"></span><br><span class="line">downloadgz-2:</span><br><span class="line">.......</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ide-intellij:</span><br><span class="line">     [copy] Copying 10 files to /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/.idea</span><br><span class="line">     [<span class="built_in">echo</span>] IntelliJ IDEA project directory created. Please create PATH VARIABLES <span class="keyword">for</span></span><br><span class="line">     [<span class="built_in">echo</span>] </span><br><span class="line">     [<span class="built_in">echo</span>]       ANT_HOME          = /Users/chaoqiang/.sdkman/candidates/ant/current</span><br><span class="line">     [<span class="built_in">echo</span>]       TOMCAT_BUILD_LIBS = /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src</span><br><span class="line">     [<span class="built_in">echo</span>]     </span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line">Total time: 27 seconds</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple ~ % <span class="built_in">export</span> | grep ANT_HOME</span><br><span class="line">ANT_HOME=/Users/chaoqiang/.sdkman/candidates/ant/current</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple ~ % <span class="built_in">export</span> | grep TOMCAT_BUILD_LIBS</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % ll</span><br><span class="line">total 680</span><br><span class="line">drwxr-xr-x  36 chaoqiang  staff    1152  2  6 13:58 ./</span><br><span class="line">drwxr-xr-x  17 chaoqiang  staff     544  2  6 13:47 ../</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1061  1 18 06:07 .editorconfig</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1451  1 18 06:07 .gitignore</span><br><span class="line">drwxr-xr-x  10 chaoqiang  staff     320  2  6 13:58 .idea/</span><br><span class="line">drwxr-xr-x@  3 chaoqiang  staff      96  1 18 06:07 .travis/</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3181  1 18 06:07 .travis.yml</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   19585  1 18 06:07 BUILDING.txt</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    6210  1 18 06:07 CONTRIBUTING.md</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   44901  1 18 06:07 KEYS</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   57011  1 18 06:07 LICENSE</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3225  1 18 06:07 MERGE.txt</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1726  1 18 06:07 NOTICE</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3378  1 18 06:07 README.md</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    7228  1 18 06:07 RELEASE-NOTES</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   16696  1 18 06:07 RUNNING.txt</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>让添加两个环境变量，先暂时不添加TOMCAT_BUILD_LIBS，可以看到当前源码目录已经有.idea项目文件了</p>
-<h3 id="idea导入项目"><a href="#idea导入项目" class="headerlink" title="idea导入项目"></a>idea导入项目</h3><p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141142916.png" alt="image-20220206141142916"></p>
-<p>选择源码路径，new Window</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141419296.png" alt="image-20220206141419296"></p>
-<p>项目导入后，找到BootStrap类，启动报错，说是部分包没找到</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141547288.png" alt="image-20220206141547288"></p>
-<p>打开File-&gt;ProjectStructure</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141719356.png" alt="image-20220206141719356"></p>
-<p>发现module中的dependency中部分jar没法正常依赖</p>
-<p>第一次打开应该是${TOMCAT_BUILD_LIBS}/*.jar这种带环境变量参数的相对路径</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143054522.png" alt="image-20220206143054522"></p>
-<p>打开项目启动设置</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141937586.png" alt="image-20220206141937586"></p>
-<p>添加环境变量</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206142031646.png" alt="image-20220206142031646"></p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143558758.png" alt="image-20220206143558758"></p>
-<p>点击确定后，你可能会发现没什么变化，清一下idea缓存重新打开，会发现使用环境变量参数依赖的jar包都已成功转化为相对路径</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143701905.png" alt="image-20220206143701905"></p>
-<p>但还有一个junit的jar包找不到，手动设置上就好</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143940847.png" alt="image-20220206143940847"></p>
-<p>启动bootstrap类的main方法，尴尬的发现控制台输出全部乱码</p>
-<p>​    <img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206144149233.png" alt="image-20220206144149233"></p>
-<h2 id="乱码原因分析"><a href="#乱码原因分析" class="headerlink" title="乱码原因分析"></a>乱码原因分析</h2><p><a href="./Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90">原因</a></p>
-<a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" title="Ant构建tomcat源码环境乱码原因分析">Ant构建tomcat源码环境乱码原因分析</a>
-
-
-<h2 id="解决乱码"><a href="#解决乱码" class="headerlink" title="解决乱码"></a>解决乱码</h2><p>创建一个UTF8Control子类</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.tomcat.util.res;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStreamReader;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.net.URLConnection;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.Locale;</span><br><span class="line"><span class="keyword">import</span> java.util.PropertyResourceBundle;</span><br><span class="line"><span class="keyword">import</span> java.util.ResourceBundle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UTF8Control</span> <span class="keyword">extends</span> <span class="title">ResourceBundle</span>.<span class="title">Control</span> </span>&#123;</span><br><span class="line">    <span class="comment">//这里重写父类的newBundle方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResourceBundle <span class="title">newBundle</span></span></span><br><span class="line"><span class="function">            <span class="params">(String baseName, Locale locale, String format, ClassLoader loader, <span class="keyword">boolean</span> reload)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IllegalAccessException, InstantiationException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">// The below is a copy of the default implementation.</span></span><br><span class="line">        <span class="comment">//这里时默认的实现,c-v一下就好</span></span><br><span class="line">        String bundleName = toBundleName(baseName, locale);</span><br><span class="line">        String resourceName = toResourceName(bundleName, <span class="string">&quot;properties&quot;</span>);</span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line">        InputStream stream = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (reload) &#123;</span><br><span class="line">            URL url = loader.getResource(resourceName);</span><br><span class="line">            <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">                URLConnection connection = url.openConnection();</span><br><span class="line">                <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    connection.setUseCaches(<span class="keyword">false</span>);</span><br><span class="line">                    stream = connection.getInputStream();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            stream = loader.getResourceAsStream(resourceName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (stream != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// Only this line is changed to make it to read properties files as UTF-8.</span></span><br><span class="line">                <span class="comment">//这里就是一个关键的地方,将原来的is使用UTF-8格式读取的InputStremReader包装起来</span></span><br><span class="line">                <span class="comment">//这里就会默认按照UTF-8格式读取!!!</span></span><br><span class="line">                bundle = <span class="keyword">new</span> PropertyResourceBundle(<span class="keyword">new</span> InputStreamReader(stream, StandardCharsets.UTF_8));</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                stream.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，上面读取stream流后使用了StandardCharsets.UTF_8方式读取数据</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206172008318.png" alt="image-20220206172008318"></p>
-<p>然后在StringManager中，指定control为常见的UTF8Control对象，就不会再使用那个默认的Control对象了</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206165620070.png" alt="image-20220206165620070"></p>
-<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>重新启动BootStrap,发现控制台已经可以正常打印中文</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163217154.png" alt="image-20220206163217154"></p>
-<p>出现报错是因为example项目中classes包默认标记为test类型，idea读不到，把它标记为Sources类型</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163539516.png" alt="image-20220206163539516"></p>
-<p>启动看起来没问题，浏览器访问<a class="link" href="http://127.0.0.1:8080/%E6%8A%A5%E9%94%99">http://127.0.0.1:8080/报错<i class="fas fa-external-link-alt"></i></a></p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163726207.png" alt="image-20220206163726207"></p>
-<p>我去，又是500又是乱码，心态崩了啊</p>
-<p>修改Localizer中的static代码块，将control传刚才创建的UTF8Bundle，重新启动</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163947013.png" alt="image-20220206163947013"></p>
-<p>乱码解决了，还是无法访问，前往org.apache.catalina.startup.ContextConfig#configureStart</p>
-<p>添加一行</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始化 jsp 解析引擎</span></span><br><span class="line">        context.addServletContainerInitializer(<span class="keyword">new</span> JasperInitializer(),<span class="keyword">null</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>重启完美解决，放一张汤姆猫压压惊:smiley:</p>
-<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206165702691.png" alt="image-20220206165702691"></p>
-]]></content>
-      <categories>
-        <category>tomcat</category>
-      </categories>
-      <tags>
-        <tag>tomcat</tag>
-        <tag>idea</tag>
-        <tag>ant</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CAS与原子类</title>
     <url>/2022/01/05/CAS%E4%B8%8E%E5%8E%9F%E5%AD%90%E7%B1%BB/</url>
     <content><![CDATA[<h2 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h2><p>compare and swap,体现的是乐观锁思想，比如多个线程要对一个共享的整形变量执行+1操作</p>
@@ -124,6 +38,35 @@
 ]]></content>
   </entry>
   <entry>
+    <title>JMM内存模型</title>
+    <url>/2022/01/05/JMM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</url>
+    <content><![CDATA[<h1 id="JMM内存模型"><a href="#JMM内存模型" class="headerlink" title="JMM内存模型"></a>JMM内存模型</h1><p>java内存模型</p>
+<p><a class="link" href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf">Java Memory Model(JMM)<i class="fas fa-external-link-alt"></i></a></p>
+<p>JMM定义了一套在多线程读写共享数据时(成员变量，数组)时，对数据的可见性，有序性和原子性的规则和保障</p>
+<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><p>现象：</p>
+<p>两个线程对同一个静态变量分别做5000次自增和自减，结果不一定是0，是因为java对静态变量的自增自减不是原子操作</p>
+<p>![截屏2022-01-03 下午5.27.05](./JMM内存模型/截屏2022-01-03 下午5.27.05.png)</p>
+<p>解决方法：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(对象)&#123;</span><br><span class="line">	<span class="comment">//要作为原子操作代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>![截屏2022-01-03 下午5.41.55](./JMM内存模型/截屏2022-01-03 下午5.41.55.png)</p>
+<p>方便的话加锁范围，因为频繁moniterenter和moniterexit相对耗时</p>
+<h2 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h2><p>JIT编译器会将频繁执行的代码放入高速缓存，如果线程中检测的对象被缓存到该线程的内存中，主存对检测对象的修改不会被上面线程检测到</p>
+<p>解决方法:</p>
+<p>volitile</p>
+<p>可修饰成员变量，避免线程从自己的工作缓存中查找变量的值</p>
+<p>它保证的是多个线程之间，一个线程对volitile变量的修改对另一个线程可见，不能保证原子性，仅用在一个写线程，多个读线程的情况</p>
+<p>注意:</p>
+<p>synchronized语句块可保证代码块的原子性和可见性，但缺点是重量级锁，性能相对更低</p>
+<p>System.out.println在内部加了锁</p>
+<h3 id="有序性"><a href="#有序性" class="headerlink" title="有序性"></a>有序性</h3><p>jit编译器对于在单线程操作，不影响操作结果的情况下进行指令重排</p>
+<p>双重校验锁单例不使用volitile可能会返回没有实例化完成的对象</p>
+<p>使用volitile禁止指令重排，有方向</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Ant构建tomcat源码环境乱码原因分析</title>
     <url>/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id><a href="#" class="headerlink" title></a></h1><p>为什么会有乱码呢，根据网上资料，打印日志文件时，调用了StringManager类的getString方法，str就是getString方法返回的乱码值。</p>
@@ -155,7 +98,7 @@
 <p>21行bnd = ResourceBundle.getBundle(bundleName, locale);</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@CallerSensitive</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ResourceBundle <span class="title">getBundle</span><span class="params">(String baseName,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                 Locale locale)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getBundleImpl(baseName, locale,</span><br><span class="line">                             getLoader(Reflection.getCallerClass()),</span><br><span class="line">                             getDefaultControl(baseName));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
-<p>第7行返回一个默认的Control对象</p>
+<p>第7行返回一个默认的Control对象，使用了SPI机制，有兴趣的可移步</p>
 <p>第5行获取Bundle实现类</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ResourceBundle <span class="title">getBundleImpl</span><span class="params">(String baseName, Locale locale,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                ClassLoader loader, Control control)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (locale == <span class="keyword">null</span> || control == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// We create a CacheKey here for use by this call. The base</span></span><br><span class="line">        <span class="comment">// name and loader will never change during the bundle loading</span></span><br><span class="line">        <span class="comment">// process. We have to make sure that the locale is set before</span></span><br><span class="line">        <span class="comment">// using it as a cache key.</span></span><br><span class="line">        CacheKey cacheKey = <span class="keyword">new</span> CacheKey(baseName, locale, loader);</span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Quick lookup of the cache.</span></span><br><span class="line">        BundleReference bundleRef = cacheList.get(cacheKey);</span><br><span class="line">        <span class="keyword">if</span> (bundleRef != <span class="keyword">null</span>) &#123;</span><br><span class="line">            bundle = bundleRef.get();</span><br><span class="line">            bundleRef = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If this bundle and all of its parents are valid (not expired),</span></span><br><span class="line">        <span class="comment">// then return this bundle. If any of the bundles is expired, we</span></span><br><span class="line">        <span class="comment">// don&#x27;t call control.needsReload here but instead drop into the</span></span><br><span class="line">        <span class="comment">// complete loading process below.</span></span><br><span class="line">        <span class="keyword">if</span> (isValidBundle(bundle) &amp;&amp; hasValidParentChain(bundle)) &#123;</span><br><span class="line">            <span class="keyword">return</span> bundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// No valid bundle was found in the cache, so we need to load the</span></span><br><span class="line">        <span class="comment">// resource bundle and its parents.</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">boolean</span> isKnownControl = (control == Control.INSTANCE) ||</span><br><span class="line">                                   (control <span class="keyword">instanceof</span> SingleFormatControl);</span><br><span class="line">        List&lt;String&gt; formats = control.getFormats(baseName);</span><br><span class="line">        <span class="keyword">if</span> (!isKnownControl &amp;&amp; !checkList(formats)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Invalid Control: getFormats&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ResourceBundle baseBundle = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (Locale targetLocale = locale;</span><br><span class="line">             targetLocale != <span class="keyword">null</span>;</span><br><span class="line">             targetLocale = control.getFallbackLocale(baseName, targetLocale)) &#123;</span><br><span class="line">            List&lt;Locale&gt; candidateLocales = control.getCandidateLocales(baseName, targetLocale);</span><br><span class="line">            <span class="keyword">if</span> (!isKnownControl &amp;&amp; !checkList(candidateLocales)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;Invalid Control: getCandidateLocales&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            bundle = findBundle(cacheKey, candidateLocales, formats, <span class="number">0</span>, control, baseBundle);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If the loaded bundle is the base bundle and exactly for the</span></span><br><span class="line">            <span class="comment">// requested locale or the only candidate locale, then take the</span></span><br><span class="line">            <span class="comment">// bundle as the resulting one. If the loaded bundle is the base</span></span><br><span class="line">            <span class="comment">// bundle, it&#x27;s put on hold until we finish processing all</span></span><br><span class="line">            <span class="comment">// fallback locales.</span></span><br><span class="line">            <span class="keyword">if</span> (isValidBundle(bundle)) &#123;</span><br><span class="line">                <span class="keyword">boolean</span> isBaseBundle = Locale.ROOT.equals(bundle.locale);</span><br><span class="line">                <span class="keyword">if</span> (!isBaseBundle || bundle.locale.equals(locale)</span><br><span class="line">                    || (candidateLocales.size() == <span class="number">1</span></span><br><span class="line">                        &amp;&amp; bundle.locale.equals(candidateLocales.get(<span class="number">0</span>)))) &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// If the base bundle has been loaded, keep the reference in</span></span><br><span class="line">                <span class="comment">// baseBundle so that we can avoid any redundant loading in case</span></span><br><span class="line">                <span class="comment">// the control specify not to cache bundles.</span></span><br><span class="line">                <span class="keyword">if</span> (isBaseBundle &amp;&amp; baseBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    baseBundle = bundle;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (bundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (baseBundle == <span class="keyword">null</span>) &#123;</span><br><span class="line">                throwMissingResourceException(baseName, locale, cacheKey.getCause());</span><br><span class="line">            &#125;</span><br><span class="line">            bundle = baseBundle;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        keepAlive(loader);</span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
@@ -171,7 +114,7 @@
 <p>31行读取STREAM流，55行发现stream流不为空，所以创建了一个PropertyResourceBundle。</p>
 <p>难道真的没有办法了?</p>
 <p>等等，我们是通过control的newBundle获取Bundle对象的，但是tomcat没有指定control对象，导致系统查找默认的Control对象，如果我们写一个Control对象，重写newBundle方法,返回一个使用UTF-8编码读取文件的bundle对象。</p>
-<a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/" title="Ant构建Tomcat源码开发环境，解决乱码">Ant构建Tomcat源码开发环境，解决乱码</a>#解决乱码
+<a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/" title="Ant构建Tomcat源码开发环境，解决乱码">Ant构建Tomcat源码开发环境，解决乱码</a>
 
 ]]></content>
       <categories>
@@ -185,32 +128,18 @@
       </tags>
   </entry>
   <entry>
-    <title>JMM内存模型</title>
-    <url>/2022/01/05/JMM%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</url>
-    <content><![CDATA[<h1 id="JMM内存模型"><a href="#JMM内存模型" class="headerlink" title="JMM内存模型"></a>JMM内存模型</h1><p>java内存模型</p>
-<p><a class="link" href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf">Java Memory Model(JMM)<i class="fas fa-external-link-alt"></i></a></p>
-<p>JMM定义了一套在多线程读写共享数据时(成员变量，数组)时，对数据的可见性，有序性和原子性的规则和保障</p>
-<h2 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h2><p>现象：</p>
-<p>两个线程对同一个静态变量分别做5000次自增和自减，结果不一定是0，是因为java对静态变量的自增自减不是原子操作</p>
-<p>![截屏2022-01-03 下午5.27.05](./JMM内存模型/截屏2022-01-03 下午5.27.05.png)</p>
-<p>解决方法：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(对象)&#123;</span><br><span class="line">	<span class="comment">//要作为原子操作代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <title>JVM</title>
+    <url>/2021/12/28/JVM/</url>
+    <content><![CDATA[<p>本文档根据黑马JVM教程书写，在此感谢黑马和满一航老师的知识分享</p>
+<style>.bbplayer{width: 100%; max-width: 850px; margin: auto}</style><div class="bbplayer"><iframe class="bbplayer" id="mmedia-ggIWQCPrPVcItuCx" src="https://player.bilibili.com/player.html?bvid=BV1yE411Z7AP&page=1&high_quality=1&danmaku=false" allowfullscreen="allowfullscreen" scrolling="no" border="0" frameborder="0" framespacing="0" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups"></iframe></div><script> document.getElementById("mmedia-ggIWQCPrPVcItuCx").style.height=document.getElementById("mmedia-ggIWQCPrPVcItuCx").scrollWidth*0.76+"px";
+    window.onresize = function(){
+      document.getElementById("mmedia-ggIWQCPrPVcItuCx").style.height=document.getElementById("mmedia-ggIWQCPrPVcItuCx").scrollWidth*0.76+"px";
+    }; </script>
 
 
-
-<p>![截屏2022-01-03 下午5.41.55](./JMM内存模型/截屏2022-01-03 下午5.41.55.png)</p>
-<p>方便的话加锁范围，因为频繁moniterenter和moniterexit相对耗时</p>
-<h2 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h2><p>JIT编译器会将频繁执行的代码放入高速缓存，如果线程中检测的对象被缓存到该线程的内存中，主存对检测对象的修改不会被上面线程检测到</p>
-<p>解决方法:</p>
-<p>volitile</p>
-<p>可修饰成员变量，避免线程从自己的工作缓存中查找变量的值</p>
-<p>它保证的是多个线程之间，一个线程对volitile变量的修改对另一个线程可见，不能保证原子性，仅用在一个写线程，多个读线程的情况</p>
-<p>注意:</p>
-<p>synchronized语句块可保证代码块的原子性和可见性，但缺点是重量级锁，性能相对更低</p>
-<p>System.out.println在内部加了锁</p>
-<h3 id="有序性"><a href="#有序性" class="headerlink" title="有序性"></a>有序性</h3><p>jit编译器对于在单线程操作，不影响操作结果的情况下进行指令重排</p>
-<p>双重校验锁单例不使用volitile可能会返回没有实例化完成的对象</p>
-<p>使用volitile禁止指令重排，有方向</p>
+<ul>
+<li><a href="/2022/01/04/JVM%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" title="JVM内存结构">JVM内存结构</a></li>
+</ul>
 ]]></content>
   </entry>
   <entry>
@@ -336,21 +265,6 @@
       <tags>
         <tag>JVM</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>JVM</title>
-    <url>/2021/12/28/JVM/</url>
-    <content><![CDATA[<p>本文档根据黑马JVM教程书写，在此感谢黑马和满一航老师的知识分享</p>
-<style>.bbplayer{width: 100%; max-width: 850px; margin: auto}</style><div class="bbplayer"><iframe class="bbplayer" id="mmedia-typdsurQDugoYAgw" src="https://player.bilibili.com/player.html?bvid=BV1yE411Z7AP&page=1&high_quality=1&danmaku=false" allowfullscreen="allowfullscreen" scrolling="no" border="0" frameborder="0" framespacing="0" sandbox="allow-top-navigation allow-same-origin allow-forms allow-scripts allow-popups"></iframe></div><script> document.getElementById("mmedia-typdsurQDugoYAgw").style.height=document.getElementById("mmedia-typdsurQDugoYAgw").scrollWidth*0.76+"px";
-    window.onresize = function(){
-      document.getElementById("mmedia-typdsurQDugoYAgw").style.height=document.getElementById("mmedia-typdsurQDugoYAgw").scrollWidth*0.76+"px";
-    }; </script>
-
-
-<ul>
-<li><a href="/2022/01/04/JVM%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/" title="JVM内存结构">JVM内存结构</a></li>
-</ul>
-]]></content>
   </entry>
   <entry>
     <title>JIT运行时优化</title>
@@ -683,6 +597,48 @@
 ]]></content>
   </entry>
   <entry>
+    <title>jdk8模板方法代替反射操作</title>
+    <url>/2022/02/07/jdk8%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E4%BB%A3%E6%9B%BF%E5%8F%8D%E5%B0%84%E6%93%8D%E4%BD%9C/</url>
+    <content><![CDATA[<p>实际业务中有两个vo对象,页面上分别有是否可放行，是否可批退两个按钮，通过后段传来的结果设置其disable状态，现在有PageVo对象，用于首次进入页面渲染数据，有OperationVo对象，用于用户执行操作后渲染耶main数据，代码如下:</p>
+<figure class="highlight java"><figcaption><span>PageVo.java</span><a href="/downloads/code/vo/PageVo.java">view raw</a></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> lamdademo.vo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PageVo</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> passable;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> rejectable;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span></span>{</span><br><span class="line">        passable = <span class="keyword">false</span>;</span><br><span class="line">        rejectable = <span class="keyword">false</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPassable</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> passable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassable</span><span class="params">(<span class="keyword">boolean</span> passable)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.passable = passable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isRejectable</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> rejectable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRejectable</span><span class="params">(<span class="keyword">boolean</span> rejectable)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.rejectable = rejectable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;PageVo{&quot;</span> +</span><br><span class="line">                <span class="string">&quot;passable=&quot;</span> + passable +</span><br><span class="line">                <span class="string">&quot;, rejectable=&quot;</span> + rejectable +</span><br><span class="line">                <span class="string">&#x27;}&#x27;</span>;</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><figcaption><span>OperationVo.java</span><a href="/downloads/code/vo/OperationVo.java">view raw</a></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> lamdademo.vo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OperationVo</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> passable;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> rejectable;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span></span>{</span><br><span class="line">        passable = <span class="keyword">false</span>;</span><br><span class="line">        rejectable = <span class="keyword">false</span>;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isPassable</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> passable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassable</span><span class="params">(<span class="keyword">boolean</span> passable)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.passable = passable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isRejectable</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> rejectable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setRejectable</span><span class="params">(<span class="keyword">boolean</span> rejectable)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.rejectable = rejectable;</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;OperationVo{&quot;</span> +</span><br><span class="line">                <span class="string">&quot;passable=&quot;</span> + passable +</span><br><span class="line">                <span class="string">&quot;, rejectable=&quot;</span> + rejectable +</span><br><span class="line">                <span class="string">&#x27;}&#x27;</span>;</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+<p>它们都存在是否可放行字段passable，是否可批退字段rejectable,由于判断是否可放行是否可批退超级复杂，并且两个对象的判断逻辑一样，所以使用同样的判断实现是最优解</p>
+<p>思路:</p>
+<ul>
+<li>使用抽象父类，但想到两个vo不应该存在父子类关系，只为让它俩的判断逻辑一样强行绑定父子类关系不地道，所以pass</li>
+<li>使用泛型，一开始也确实是这么做的</li>
+</ul>
+<figure class="highlight java"><figcaption><span>反射设置批退放行状态</span></figcaption><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 使用反射方法修改传入的obj对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> normalParams</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> obj          normalParams不为空时，设置obj可放行，否则，设置obj可批退</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setObjPassableRejectAbleByRefection</span><span class="params">(List&lt;Object&gt; normalParams, Object obj)</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//一系列复杂的操作逻辑</span></span><br><span class="line">    <span class="keyword">if</span> (normalParams.isEmpty()) &#123;</span><br><span class="line">        Class&lt;?&gt; aClass = obj.getClass();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Field rejectable = aClass.getDeclaredField(<span class="string">&quot;rejectable&quot;</span>);</span><br><span class="line">            rejectable.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            rejectable.set(obj, <span class="keyword">true</span>);</span><br><span class="line">    </span><br><span class="line">        &#125; <span class="keyword">catch</span> (ReflectiveOperationException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Class&lt;?&gt; aClass = obj.getClass();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Field passable = aClass.getDeclaredField(<span class="string">&quot;passable&quot;</span>);</span><br><span class="line">            passable.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            passable.set(obj, <span class="keyword">true</span>);</span><br><span class="line">    </span><br><span class="line">        &#125; <span class="keyword">catch</span> (ReflectiveOperationException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>后来在b站看到满一航老师讲的jdk8的Consumer,Function接口后，觉得可以稍微优化一下</p>
+<figure class="highlight java"><figcaption><span>使用jdk8新特性</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 使用模板方法模式搭配supplier,consumer实现方式</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> normalParams</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> supplier       执行consumer操作的对象</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> passConsumer   执行放行操作</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> rejectConsumer 执行批退操作</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">setObjPassableRejectAble</span><span class="params">(List&lt;Object&gt; normalParams, Supplier&lt;T&gt; supplier, Consumer&lt;T&gt; passConsumer, Consumer&lt;T&gt; rejectConsumer)</span> </span>&#123;</span><br><span class="line">       T obj = supplier.get();</span><br><span class="line">       <span class="keyword">if</span> (normalParams.isEmpty()) &#123;</span><br><span class="line">           rejectConsumer.accept(obj);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           passConsumer.accept(obj);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用时，supplier传入待设置的对象，passConsumer传入放行逻辑代码，rejectConsumer传入批退逻辑代码，由于该方法上加了泛型，一旦指定supplier的传入对象类型，passConsumer和rejectConsumer也同时指定了其传入参数具有相同类型</p>
+<p>调用代码如下:</p>
+<figure class="highlight java"><figcaption><span>TestSupplierConsumer.java</span><a href="/downloads/code/TestSupplierConsumer.java">view raw</a></figcaption><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> lamdademo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lamdademo.vo.OperationVo;</span><br><span class="line"><span class="keyword">import</span> lamdademo.vo.PageVo;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.management.ReflectionException;</span><br><span class="line"><span class="keyword">import</span> javax.naming.ReferralException;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collection;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Consumer;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Supplier;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Slf4j(topic = &quot;c.TestSupplierConsumer&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSupplierConsumer</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>{</span><br><span class="line">        List&lt;Object&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        PageVo pageVo = <span class="keyword">new</span> PageVo();</span><br><span class="line">        OperationVo operationVo = <span class="keyword">new</span> OperationVo();</span><br><span class="line">        byRefection(list, pageVo);</span><br><span class="line">        byRefection(list, operationVo);</span><br><span class="line">        pageVo.reset();</span><br><span class="line">        operationVo.reset();</span><br><span class="line">        list.add(<span class="keyword">new</span> Object());</span><br><span class="line">        byRefection(list, pageVo);</span><br><span class="line">        byRefection(list, operationVo);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//        byTemplete(list,pageVo);</span></span><br><span class="line"><span class="comment">//        byTemplete(list,operationVo);</span></span><br><span class="line"><span class="comment">//        pageVo.reset();</span></span><br><span class="line"><span class="comment">//        operationVo.reset();</span></span><br><span class="line"><span class="comment">//        list.add(new Object());</span></span><br><span class="line"><span class="comment">//        byTemplete(list,pageVo);</span></span><br><span class="line"><span class="comment">//        byTemplete(list,operationVo);</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">byTemplete</span><span class="params">(List&lt;Object&gt; list, PageVo pageVo)</span> </span>{</span><br><span class="line">        setObjPassableRejectAble(list, () -&gt; pageVo, vo -&gt; vo.setPassable(<span class="keyword">true</span>), vo -&gt; vo.setRejectable(<span class="keyword">true</span>));</span><br><span class="line">        System.out.println(pageVo);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">byTemplete</span><span class="params">(List&lt;Object&gt; list, OperationVo operationVo)</span> </span>{</span><br><span class="line">        setObjPassableRejectAble(list, () -&gt; operationVo, vo -&gt; vo.setPassable(<span class="keyword">true</span>), vo -&gt; vo.setRejectable(<span class="keyword">true</span>));</span><br><span class="line">        System.out.println(operationVo);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">byRefection</span><span class="params">(List&lt;Object&gt; list, PageVo pageVo)</span></span>{</span><br><span class="line">        setObjPassableRejectAbleByRefection(list,pageVo);</span><br><span class="line">        System.out.println(pageVo);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">byRefection</span><span class="params">(List&lt;Object&gt; list, OperationVo operationVo)</span></span>{</span><br><span class="line">        setObjPassableRejectAbleByRefection(list,operationVo);</span><br><span class="line">        System.out.println(operationVo);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 使用反射方法修改传入的obj对象</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> normalParams</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> obj          normalParams不为空时，设置obj可放行，否则，设置obj可批退</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setObjPassableRejectAbleByRefection</span><span class="params">(List&lt;Object&gt; normalParams, Object obj)</span> </span>{</span><br><span class="line"></span><br><span class="line">        <span class="comment">//一系列复杂的操作逻辑</span></span><br><span class="line">        <span class="keyword">if</span> (normalParams.isEmpty()) {</span><br><span class="line">            Class&lt;?&gt; aClass = obj.getClass();</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                Field rejectable = aClass.getDeclaredField(<span class="string">&quot;rejectable&quot;</span>);</span><br><span class="line">                rejectable.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                rejectable.set(obj, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">            } <span class="keyword">catch</span> (ReflectiveOperationException e) {</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            }</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            Class&lt;?&gt; aClass = obj.getClass();</span><br><span class="line">            <span class="keyword">try</span> {</span><br><span class="line">                Field passable = aClass.getDeclaredField(<span class="string">&quot;passable&quot;</span>);</span><br><span class="line">                passable.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                passable.set(obj, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">            } <span class="keyword">catch</span> (ReflectiveOperationException e) {</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 使用模板方法模式搭配supplier,consumer实现方式</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> normalParams</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> supplier       执行consumer操作的对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> passConsumer   执行放行操作</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rejectConsumer 执行批退操作</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">setObjPassableRejectAble</span><span class="params">(List&lt;Object&gt; normalParams, Supplier&lt;T&gt; supplier, Consumer&lt;T&gt; passConsumer, Consumer&lt;T&gt; rejectConsumer)</span> </span>{</span><br><span class="line">        T obj = supplier.get();</span><br><span class="line">        <span class="keyword">if</span> (normalParams.isEmpty()) {</span><br><span class="line">            rejectConsumer.accept(obj);</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            passConsumer.accept(obj);</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到，使用模板方法设置放行批退状态，五行代码搞定，比直接使用反射更优雅</p>
+<p>干净又卫生</p>
+<p>附记忆口诀:</p>
+<p>Supplier：无中生有</p>
+<p>Consumer：消费代码</p>
+]]></content>
+      <tags>
+        <tag>反射</tag>
+        <tag>jdk8</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2021/12/28/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a class="link" href="https://hexo.io/">Hexo<i class="fas fa-external-link-alt"></i></a>! This is your very first post. Check <a class="link" href="https://hexo.io/docs/">documentation<i class="fas fa-external-link-alt"></i></a> for more info. If you get any problems when using Hexo, you can find the answer in <a class="link" href="https://hexo.io/docs/troubleshooting.html">troubleshooting<i class="fas fa-external-link-alt"></i></a> or you can ask me on <a class="link" href="https://github.com/hexojs/hexo/issues">GitHub<i class="fas fa-external-link-alt"></i></a>.</p>
@@ -699,6 +655,177 @@
 
 <p>More info: <a class="link" href="https://hexo.io/docs/one-command-deployment.html">Deployment<i class="fas fa-external-link-alt"></i></a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>mysql数据库</title>
+    <url>/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93/</url>
+    <content><![CDATA[<p>事务</p>
+<blockquote><p>A <strong>database transaction</strong> symbolizes a unit of work performed within a <a class="link" href="https://en.wikipedia.org/wiki/Database_management_system">database management system<i class="fas fa-external-link-alt"></i></a> (or similar system) against a <a class="link" href="https://en.wikipedia.org/wiki/Database">database<i class="fas fa-external-link-alt"></i></a>, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database. Transactions in a database environment have two main purposes:</p>
+<p>数据库事务象征着在一个数据库管理系统(或类似系统)中执行的工作单元，并以一种连贯可靠的，独立于其他事务去执行。一个事务通常表示在数据库中的任何修改。数据库环境中的事务有两大目的</p>
+<ol>
+<li><p>To provide reliable units of work that allow correct recovery from failures and keep a database consistent even in cases of system failure, when execution prematurely and unexpectedly stops (completely or partially) and many operations upon a database remain uncompleted, with unclear status.</p>
+<p>提供可靠的单元工作(失败可回滚，系统崩了能持久保存数据并保持数据库一致性)</p>
+</li>
+<li><p>To provide isolation between programs accessing a database concurrently. If this isolation is not provided, the programs’ outcomes are possibly erroneous.</p>
+<p>程序并发访问数据库时提供隔离机制</p>
+</li>
+</ol>
+<p>In a database management system, a transaction is a single unit of logic or work, sometimes made up of multiple operations. Any logical calculation done in a consistent mode in a database is known as a transaction. One example is a transfer from one bank account to another: the complete transaction requires subtracting the amount to be transferred from one account and adding that same amount to the other.</p>
+<p>A database transaction, by definition, must be <a class="link" href="https://en.wikipedia.org/wiki/Atomicity_(database_systems)">atomic<i class="fas fa-external-link-alt"></i></a> (it must either be complete in its entirety or have no effect whatsoever), <a class="link" href="https://en.wikipedia.org/wiki/Consistency_(database_systems)">consistent<i class="fas fa-external-link-alt"></i></a> (it must conform to existing constraints in the database), <a class="link" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)">isolated<i class="fas fa-external-link-alt"></i></a> (it must not affect other transactions) and <a class="link" href="https://en.wikipedia.org/wiki/Durability_(database_systems)">durable<i class="fas fa-external-link-alt"></i></a> (it must get written to persistent storage).[<a class="link" href="https://en.wikipedia.org/wiki/Database_transaction#cite_note-1">1]<i class="fas fa-external-link-alt"></i></a> Database practitioners often refer to these properties of database transactions using the acronym <a class="link" href="https://en.wikipedia.org/wiki/ACID">ACID<i class="fas fa-external-link-alt"></i></a>.</p>
+<footer><strong>WikiPedia</strong><cite><a class="link" href="https://en.wikipedia.org/wiki/Database_transaction)">database transaction<i class="fas fa-external-link-alt"></i></a></cite></footer></blockquote>
+
+
+
+
+
+
+
+<p>事务四大特性</p>
+<ul>
+<li>原子性Atomicity<ul>
+<li>要么不成功，要么全部成功</li>
+</ul>
+</li>
+<li>一致性Consistency</li>
+</ul>
+<blockquote><p><strong>Consistency (or Correctness)</strong> in <a class="link" href="https://en.wikipedia.org/wiki/Database_systems">database systems<i class="fas fa-external-link-alt"></i></a> refers to the requirement that <font color="red"> any given <a class="link" href="https://en.wikipedia.org/wiki/Database_transaction">database transaction<i class="fas fa-external-link-alt"></i></a> must change affected data only in allowed ways. </font>Any data written to the database must be valid according to all defined rules, including <a class="link" href="https://en.wikipedia.org/wiki/Integrity_constraints">constraints<i class="fas fa-external-link-alt"></i></a>, <a class="link" href="https://en.wikipedia.org/wiki/Cascading_rollback">cascades<i class="fas fa-external-link-alt"></i></a>, <a class="link" href="https://en.wikipedia.org/wiki/Database_trigger">triggers<i class="fas fa-external-link-alt"></i></a>, and any combination thereof. This does not guarantee correctness of the transaction in all ways the application programmer might have wanted (that is the responsibility of application-level code) but merely that any programming errors cannot result in the violation of any defined database constraints</p>
+<p>数据库系统中的<strong>一致性</strong>（或正确性）是指任何给定的数据库事务必须仅以允许的方式更改受影响的数据的要求。写入数据库的任何数据都必须根据所有定义的规则有效，包括约束、级联、触发器及其任何组合。这并不能保证应用程序程序员可能想要的所有事务的正确性（这是应用程序级代码的责任），而只是任何编程错误都不会导致违反任何定义的数据库约束</p>
+<p>大概意思是对事务操作必须按照预先定义好的规则去修改数据，网上都用转账来举例子，但是假设程序员写了bug，A向B转账1000，A-1000，B+800，程序执行完成后也遵循了一致性原则，因为你的逻辑就是那样规定的</p>
+<footer><strong>WikiPedia</strong><cite><a class="link" href="https://en.wikipedia.org/wiki/Consistency_(database_systems)">Consistency (database systems)<i class="fas fa-external-link-alt"></i></a></cite></footer></blockquote>
+
+<ul>
+<li>事务发生前的状态和发生后的状态守恒(也可以想象能量守恒)<ul>
+<li>比如银行转账</li>
+<li>小偷偷钱</li>
+<li>将可乐从罐子里导入瓶子里</li>
+</ul>
+</li>
+<li>隔离性Isolation<ul>
+<li>一个事务的执行不被另一个事务的执行干扰。</li>
+</ul>
+</li>
+<li>持久性Durability<ul>
+<li>指一个事务一旦提交，它对数据库中数据的改变是永久性的。</li>
+</ul>
+</li>
+</ul>
+<p>如何实现一致性呢?可以认为只要实现了原子性，就实现了一致性</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>关于SPI</title>
+    <url>/2022/02/06/%E5%85%B3%E4%BA%8ESPI/</url>
+    <content><![CDATA[<p>在追tomcat控制台输出乱码原因时，如果不指定control对象，会传入一个默认control对象</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> ResourceBundle <span class="title">getBundle</span><span class="params">(String baseName,</span></span></span><br><span class="line"><span class="params"><span class="function">                                                 Locale locale)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getBundleImpl(baseName, locale,</span><br><span class="line">                             getLoader(Reflection.getCallerClass()),</span><br><span class="line marked">                             getDefaultControl(baseName));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>第6行getDefaultControl方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Control <span class="title">getDefaultControl</span><span class="params">(String baseName)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (providers != <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">for</span> (ResourceBundleControlProvider provider : providers) &#123;</span><br><span class="line">               Control control = provider.getControl(baseName);</span><br><span class="line">               <span class="keyword">if</span> (control != <span class="keyword">null</span>) &#123;</span><br><span class="line">                   <span class="keyword">return</span> control;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> Control.INSTANCE;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中providers的初始化方法如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> List&lt;ResourceBundleControlProvider&gt; providers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> &#123;</span><br><span class="line">  List&lt;ResourceBundleControlProvider&gt; list = <span class="keyword">null</span>;</span><br><span class="line">  ServiceLoader&lt;ResourceBundleControlProvider&gt; serviceLoaders</span><br><span class="line">    = ServiceLoader.loadInstalled(ResourceBundleControlProvider.class);</span><br><span class="line">  <span class="keyword">for</span> (ResourceBundleControlProvider provider : serviceLoaders) &#123;</span><br><span class="line">    <span class="keyword">if</span> (list == <span class="keyword">null</span>) &#123;</span><br><span class="line">      list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    list.add(provider);</span><br><span class="line">  &#125;</span><br><span class="line">  providers = list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第6行使用了ServiceLoader.loadInstalled(ResourceBundleControlProvider.class);使用扩展类加载器加载ResourceBundleControlProvider类型对象，因为双亲委派机制下，如果SystemClassloader已加载了某类，就不会再去使用ExtClassloader加载的类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Creates a new service loader for the given service type, using the</span></span><br><span class="line"><span class="comment">     * extension class loader.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 使用扩展类加载器为给定的服务类型创建一个新的服务加载器。</span></span><br><span class="line"><span class="comment">     * &lt;p&gt; This convenience method simply locates the extension class loader,</span></span><br><span class="line"><span class="comment">     * call it &lt;tt&gt;&lt;i&gt;extClassLoader&lt;/i&gt;&lt;/tt&gt;, and then returns</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;blockquote&gt;&lt;pre&gt;</span></span><br><span class="line"><span class="comment">     * ServiceLoader.load(&lt;i&gt;service&lt;/i&gt;, &lt;i&gt;extClassLoader&lt;/i&gt;)&lt;/pre&gt;&lt;/blockquote&gt;</span></span><br><span class="line"><span class="comment">     * 这个方便的方法只是定位扩展类加载器，调用它extClassLoader ，然后返回</span></span><br><span class="line"><span class="comment">     * ServiceLoader.load(service, extClassLoader)</span></span><br><span class="line"><span class="comment">     * &lt;p&gt; If the extension class loader cannot be found then the system class</span></span><br><span class="line"><span class="comment">     * loader is used; if there is no system class loader then the bootstrap</span></span><br><span class="line"><span class="comment">     * class loader is used.</span></span><br><span class="line"><span class="comment">     * 如果找不到扩展类加载器，则使用系统类加载器；如果没有系统类加载器，则使用引导类加载器。(理论上应该都能找得到，不理解这里为什么说找不到)</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * &lt;p&gt; This method is intended for use when only installed providers are</span></span><br><span class="line"><span class="comment">     * desired.  The resulting service will only find and load providers that</span></span><br><span class="line"><span class="comment">     * have been installed into the current Java virtual machine; providers on</span></span><br><span class="line"><span class="comment">     * the application&#x27;s class path will be ignored.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 该方法仅为如下场景使用:仅需要已安装的提供者(不太好理解，从调用场景来说，也就是只需要查询%JAVA_HOME%/jre/lib/ext目录下的服务提供者)，也就是说只会加载安装到当前java虚拟机内的providers，应用classpath下的provider会被忽略。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  &lt;S&gt; the class of the service type</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>  service</span></span><br><span class="line"><span class="comment">     *         The interface or abstract class representing the service</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> A new service loader</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;S&gt; <span class="function">ServiceLoader&lt;S&gt; <span class="title">loadInstalled</span><span class="params">(Class&lt;S&gt; service)</span> </span>&#123;</span><br><span class="line">        ClassLoader cl = ClassLoader.getSystemClassLoader();</span><br><span class="line">        ClassLoader prev = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">while</span> (cl != <span class="keyword">null</span>) &#123;</span><br><span class="line">            prev = cl;</span><br><span class="line">            cl = cl.getParent();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ServiceLoader.load(service, prev);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>类加载机制</category>
+      </categories>
+      <tags>
+        <tag>SPI</tag>
+        <tag>类加载机制</tag>
+        <tag>国际化</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ant构建Tomcat源码开发环境，解决乱码</title>
+    <url>/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/</url>
+    <content><![CDATA[<p>学习tomcat，因为网上好多使用maven搭建的tomcat，但tomcat官方推荐的是使用ant搭建，所以在此记录。</p>
+<p>上半部分搭建环境，下半部分解决乱码。</p>
+<p>参考资料:</p>
+<p><a class="link" href="https://tomcat.apache.org/tomcat-8.5-doc/building.html">官方搭建开发环境文档<i class="fas fa-external-link-alt"></i></a>(推荐一定要先看一下文档)</p>
+<p>解决乱码{</p>
+<p><a class="link" href="https://juejin.cn/post/6967701837696729124">关于Tomcat源码启动的乱码问题的解决<i class="fas fa-external-link-alt"></i></a></p>
+<p><a class="link" href="https://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle">How to use UTF-8 in resource properties with ResourceBundle<i class="fas fa-external-link-alt"></i></a></p>
+<p>}</p>
+<p>解决访问报错{</p>
+<p><a class="link" href="https://github.com/gqzdev/tomcat-start">解决访问500无法为JSP编译类问题<i class="fas fa-external-link-alt"></i></a></p>
+<p>}</p>
+<h2 id="搭建源码启动环境"><a href="#搭建源码启动环境" class="headerlink" title="搭建源码启动环境"></a>搭建源码启动环境</h2><p>当前环境</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装jdk</span></span><br><span class="line">chaoqiang@Pineapple bin % java -version</span><br><span class="line">openjdk version <span class="string">&quot;1.8.0_322&quot;</span></span><br><span class="line">OpenJDK Runtime Environment (Zulu 8.60.0.21-CA-macos-aarch64) (build 1.8.0_322-b06)</span><br><span class="line">OpenJDK 64-Bit Server VM (Zulu 8.60.0.21-CA-macos-aarch64) (build 25.322-b06, mixed mode)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装ant</span></span><br><span class="line">chaoqiang@Pineapple bin % ant -version</span><br><span class="line">Apache Ant(TM) version 1.10.10 compiled on April 12 2021</span><br></pre></td></tr></table></figure>
+
+<h2 id="下载tomcat源码"><a href="#下载tomcat源码" class="headerlink" title="下载tomcat源码"></a>下载tomcat源码</h2><p>本人使用tomcat8.5,可根据个人需求在官网选择版本</p>
+<h3 id="解压源码包"><a href="#解压源码包" class="headerlink" title="解压源码包"></a>解压源码包</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple self-learn % ll</span><br><span class="line">total 13728</span><br><span class="line">drwxr-xr-x  16 chaoqiang  staff      512  2  6 13:46 ./</span><br><span class="line">drwxr-xr-x+ 68 chaoqiang  staff     2176  2  5 23:26 ../</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    10244  2  5 21:34 .DS_Store</span><br><span class="line">drwx------@  7 chaoqiang  staff      224 10 17 16:06 SpringBoot打包部署/</span><br><span class="line">drwx------@  5 chaoqiang  staff      160  4 23  2021 VODUploadDemo-java-1.4.14/</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff  5961981  1 31 14:42 apache-tomcat-8.5.75-src.tar.gz</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple self-learn % tar -zxvf apache-tomcat-8.5.75-src.tar.gz </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="修改构建jar包指定路径"><a href="#修改构建jar包指定路径" class="headerlink" title="修改构建jar包指定路径"></a>修改构建jar包指定路径</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % <span class="built_in">pwd</span></span><br><span class="line">/Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src</span><br><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % vi build.properties.default </span><br></pre></td></tr></table></figure>
+
+
+
+<p>修改base.path属性，默认为用户路径下的/tomcat-build-libs，修改为源码目录下/tomcat-build-libs</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206142732170.png" alt="image-20220206142732170"></p>
+<h3 id="指定ide开始构建"><a href="#指定ide开始构建" class="headerlink" title="指定ide开始构建"></a>指定ide开始构建</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % ant ide-intellij </span><br><span class="line">Buildfile: /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/build.xml</span><br><span class="line"></span><br><span class="line">download-compile:</span><br><span class="line"></span><br><span class="line">testexist:</span><br><span class="line">     [<span class="built_in">echo</span>] Testing  <span class="keyword">for</span> /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/commons-daemon-1.2.4/commons-daemon-1.2.4.jar</span><br><span class="line"></span><br><span class="line">downloadgz-2:</span><br><span class="line">.......</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ide-intellij:</span><br><span class="line">     [copy] Copying 10 files to /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src/.idea</span><br><span class="line">     [<span class="built_in">echo</span>] IntelliJ IDEA project directory created. Please create PATH VARIABLES <span class="keyword">for</span></span><br><span class="line">     [<span class="built_in">echo</span>] </span><br><span class="line">     [<span class="built_in">echo</span>]       ANT_HOME          = /Users/chaoqiang/.sdkman/candidates/ant/current</span><br><span class="line">     [<span class="built_in">echo</span>]       TOMCAT_BUILD_LIBS = /Users/chaoqiang/self-learn/apache-tomcat-8.5.75-src</span><br><span class="line">     [<span class="built_in">echo</span>]     </span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line">Total time: 27 seconds</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple ~ % <span class="built_in">export</span> | grep ANT_HOME</span><br><span class="line">ANT_HOME=/Users/chaoqiang/.sdkman/candidates/ant/current</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple ~ % <span class="built_in">export</span> | grep TOMCAT_BUILD_LIBS</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple apache-tomcat-8.5.75-src % ll</span><br><span class="line">total 680</span><br><span class="line">drwxr-xr-x  36 chaoqiang  staff    1152  2  6 13:58 ./</span><br><span class="line">drwxr-xr-x  17 chaoqiang  staff     544  2  6 13:47 ../</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1061  1 18 06:07 .editorconfig</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1451  1 18 06:07 .gitignore</span><br><span class="line">drwxr-xr-x  10 chaoqiang  staff     320  2  6 13:58 .idea/</span><br><span class="line">drwxr-xr-x@  3 chaoqiang  staff      96  1 18 06:07 .travis/</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3181  1 18 06:07 .travis.yml</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   19585  1 18 06:07 BUILDING.txt</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    6210  1 18 06:07 CONTRIBUTING.md</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   44901  1 18 06:07 KEYS</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   57011  1 18 06:07 LICENSE</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3225  1 18 06:07 MERGE.txt</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    1726  1 18 06:07 NOTICE</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    3378  1 18 06:07 README.md</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff    7228  1 18 06:07 RELEASE-NOTES</span><br><span class="line">-rw-r--r--@  1 chaoqiang  staff   16696  1 18 06:07 RUNNING.txt</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>让添加两个环境变量，先暂时不添加TOMCAT_BUILD_LIBS，可以看到当前源码目录已经有.idea项目文件了</p>
+<h3 id="idea导入项目"><a href="#idea导入项目" class="headerlink" title="idea导入项目"></a>idea导入项目</h3><p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141142916.png" alt="image-20220206141142916"></p>
+<p>选择源码路径，new Window</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141419296.png" alt="image-20220206141419296"></p>
+<p>项目导入后，找到BootStrap类，启动报错，说是部分包没找到</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141547288.png" alt="image-20220206141547288"></p>
+<p>打开File-&gt;ProjectStructure</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141719356.png" alt="image-20220206141719356"></p>
+<p>发现module中的dependency中部分jar没法正常依赖</p>
+<p>第一次打开应该是${TOMCAT_BUILD_LIBS}/*.jar这种带环境变量参数的相对路径</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143054522.png" alt="image-20220206143054522"></p>
+<p>打开项目启动设置</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206141937586.png" alt="image-20220206141937586"></p>
+<p>添加环境变量</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206142031646.png" alt="image-20220206142031646"></p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143558758.png" alt="image-20220206143558758"></p>
+<p>点击确定后，你可能会发现没什么变化，清一下idea缓存重新打开，会发现使用环境变量参数依赖的jar包都已成功转化为相对路径</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143701905.png" alt="image-20220206143701905"></p>
+<p>但还有一个junit的jar包找不到，手动设置上就好</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206143940847.png" alt="image-20220206143940847"></p>
+<p>启动bootstrap类的main方法，尴尬的发现控制台输出全部乱码</p>
+<p>​    <img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206144149233.png" alt="image-20220206144149233"></p>
+<h2 id="乱码原因分析"><a href="#乱码原因分析" class="headerlink" title="乱码原因分析"></a>乱码原因分析</h2><p><a href="./Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90">原因</a></p>
+<a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" title="Ant构建tomcat源码环境乱码原因分析">Ant构建tomcat源码环境乱码原因分析</a>
+
+
+<h2 id="解决乱码"><a href="#解决乱码" class="headerlink" title="解决乱码"></a>解决乱码</h2><p>创建一个UTF8Control子类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> org.apache.tomcat.util.res;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStreamReader;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.net.URLConnection;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.StandardCharsets;</span><br><span class="line"><span class="keyword">import</span> java.util.Locale;</span><br><span class="line"><span class="keyword">import</span> java.util.PropertyResourceBundle;</span><br><span class="line"><span class="keyword">import</span> java.util.ResourceBundle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UTF8Control</span> <span class="keyword">extends</span> <span class="title">ResourceBundle</span>.<span class="title">Control</span> </span>&#123;</span><br><span class="line">    <span class="comment">//这里重写父类的newBundle方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ResourceBundle <span class="title">newBundle</span></span></span><br><span class="line"><span class="function">            <span class="params">(String baseName, Locale locale, String format, ClassLoader loader, <span class="keyword">boolean</span> reload)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IllegalAccessException, InstantiationException, IOException </span>&#123;</span><br><span class="line">        <span class="comment">// The below is a copy of the default implementation.</span></span><br><span class="line">        <span class="comment">//这里时默认的实现,c-v一下就好</span></span><br><span class="line">        String bundleName = toBundleName(baseName, locale);</span><br><span class="line">        String resourceName = toResourceName(bundleName, <span class="string">&quot;properties&quot;</span>);</span><br><span class="line">        ResourceBundle bundle = <span class="keyword">null</span>;</span><br><span class="line">        InputStream stream = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (reload) &#123;</span><br><span class="line">            URL url = loader.getResource(resourceName);</span><br><span class="line">            <span class="keyword">if</span> (url != <span class="keyword">null</span>) &#123;</span><br><span class="line">                URLConnection connection = url.openConnection();</span><br><span class="line">                <span class="keyword">if</span> (connection != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    connection.setUseCaches(<span class="keyword">false</span>);</span><br><span class="line">                    stream = connection.getInputStream();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            stream = loader.getResourceAsStream(resourceName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (stream != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// Only this line is changed to make it to read properties files as UTF-8.</span></span><br><span class="line">                <span class="comment">//这里就是一个关键的地方,将原来的is使用UTF-8格式读取的InputStremReader包装起来</span></span><br><span class="line">                <span class="comment">//这里就会默认按照UTF-8格式读取!!!</span></span><br><span class="line">                bundle = <span class="keyword">new</span> PropertyResourceBundle(<span class="keyword">new</span> InputStreamReader(stream, StandardCharsets.UTF_8));</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                stream.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> bundle;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，上面读取stream流后使用了StandardCharsets.UTF_8方式读取数据</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206172008318.png" alt="image-20220206172008318"></p>
+<p>然后在StringManager中，指定control为常见的UTF8Control对象，就不会再使用那个默认的Control对象了</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206165620070.png" alt="image-20220206165620070"></p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>重新启动BootStrap,发现控制台已经可以正常打印中文</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163217154.png" alt="image-20220206163217154"></p>
+<p>出现报错是因为example项目中classes包默认标记为test类型，idea读不到，把它标记为Sources类型</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163539516.png" alt="image-20220206163539516"></p>
+<p>启动看起来没问题，浏览器访问<a class="link" href="http://127.0.0.1:8080/%E6%8A%A5%E9%94%99">http://127.0.0.1:8080/报错<i class="fas fa-external-link-alt"></i></a></p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163726207.png" alt="image-20220206163726207"></p>
+<p>我去，又是500又是乱码，心态崩了啊</p>
+<p>修改Localizer中的static代码块，将control传刚才创建的UTF8Bundle，重新启动</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206163947013.png" alt="image-20220206163947013"></p>
+<p>乱码解决了，还是无法访问，前往org.apache.catalina.startup.ContextConfig#configureStart</p>
+<p>添加一行</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 初始化 jsp 解析引擎</span></span><br><span class="line">        context.addServletContainerInitializer(<span class="keyword">new</span> JasperInitializer(),<span class="keyword">null</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>重启完美解决，放一张汤姆猫压压惊:smiley:</p>
+<p><img src="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/image-20220206165702691.png" alt="image-20220206165702691"></p>
+]]></content>
+      <categories>
+        <category>tomcat</category>
+      </categories>
+      <tags>
+        <tag>tomcat</tag>
+        <tag>idea</tag>
+        <tag>ant</tag>
+      </tags>
   </entry>
   <entry>
     <title></title>
@@ -1050,5 +1177,107 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">test1</span><span class="params">()</span></span>;</span><br><span class="line">    descriptor: ()I</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">3</span>, locals=<span class="number">4</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="number">2</span>: istore_1</span><br><span class="line">         <span class="number">3</span>: bipush        <span class="number">11</span></span><br><span class="line">         <span class="number">5</span>: istore_2					<span class="comment">//注意，此处try正常执行到return语句，会将return结果存到slot2进行暂存，固定返回值，执行finally会返回11</span></span><br><span class="line">         <span class="number">6</span>: bipush        <span class="number">12</span></span><br><span class="line">         <span class="number">8</span>: istore_1</span><br><span class="line">         <span class="number">9</span>: iload_2</span><br><span class="line">        <span class="number">10</span>: ireturn</span><br><span class="line">        <span class="number">11</span>: astore_2</span><br><span class="line">        <span class="number">12</span>: <span class="keyword">new</span>           #<span class="number">3</span>                  <span class="comment">// class java/lang/Error</span></span><br><span class="line">        <span class="number">15</span>: dup</span><br><span class="line">        <span class="number">16</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String error</span></span><br><span class="line">        <span class="number">18</span>: invokespecial #<span class="number">5</span>                  <span class="comment">// Method java/lang/Error.&quot;&lt;init&gt;&quot;:(Ljava/lang/String;)V</span></span><br><span class="line">        <span class="number">21</span>: athrow</span><br><span class="line">        <span class="number">22</span>: astore_3</span><br><span class="line">        <span class="number">23</span>: bipush        <span class="number">12</span></span><br><span class="line">        <span class="number">25</span>: istore_1</span><br><span class="line">        <span class="number">26</span>: aload_3</span><br><span class="line">        <span class="number">27</span>: athrow</span><br><span class="line">      Exception table:</span><br><span class="line">         from    to  target type</span><br><span class="line">             <span class="number">3</span>     <span class="number">6</span>    <span class="number">11</span>   Class java/lang/Exception</span><br><span class="line">             <span class="number">3</span>     <span class="number">6</span>    <span class="number">22</span>   any</span><br><span class="line">            <span class="number">11</span>    <span class="number">23</span>    <span class="number">22</span>   any</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">40</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">43</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">48</span>: <span class="number">6</span></span><br><span class="line">        line <span class="number">43</span>: <span class="number">9</span></span><br><span class="line">        line <span class="number">45</span>: <span class="number">11</span></span><br><span class="line">        line <span class="number">46</span>: <span class="number">12</span></span><br><span class="line">        line <span class="number">48</span>: <span class="number">22</span></span><br><span class="line">        line <span class="number">49</span>: <span class="number">26</span></span><br><span class="line">      StackMapTable: number_of_entries = <span class="number">2</span></span><br><span class="line">        frame_type = <span class="number">255</span> <span class="comment">/* full_frame */</span></span><br><span class="line">          offset_delta = <span class="number">11</span></span><br><span class="line">          locals = [ <span class="class"><span class="keyword">class</span> <span class="title">singleton</span>/<span class="title">Main</span>, <span class="title">int</span> ]</span></span><br><span class="line"><span class="class">          <span class="title">stack</span> </span>= [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Exception</span> ]</span></span><br><span class="line"><span class="class">        <span class="title">frame_type</span> </span>= <span class="number">74</span> <span class="comment">/* same_locals_1_stack_item */</span></span><br><span class="line">          stack = [ <span class="class"><span class="keyword">class</span> <span class="title">java</span>/<span class="title">lang</span>/<span class="title">Throwable</span> ]</span></span><br><span class="line"><span class="class"></span></span><br></pre></td></tr></table></figure>
 
 ]]></content>
+  </entry>
+  <entry>
+    <title>mysql数据库笔记</title>
+    <url>/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h1 id="数据库相关概念"><a href="#数据库相关概念" class="headerlink" title="数据库相关概念"></a>数据库相关概念</h1><h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><p>Database:按照一定数据结构来组织，存储和管理数据的仓库</p>
+<h2 id="数据库管理系统DBMS"><a href="#数据库管理系统DBMS" class="headerlink" title="数据库管理系统DBMS"></a>数据库管理系统DBMS</h2><p>一种操纵和管理数据库的大型软件，用于创建，使用和维护数据库</p>
+<h3 id="关系型数据库RDBMS"><a href="#关系型数据库RDBMS" class="headerlink" title="关系型数据库RDBMS"></a>关系型数据库RDBMS</h3><blockquote><p>建立在关系模型基础上，由多张相互连接的二维表组成的数据库</p>
+</blockquote>
+
+<p>特点:</p>
+<ol>
+<li>使用表存储数据，格式统一，便于维护</li>
+<li>使用sql语句操作，标准统一，使用方便</li>
+<li>数据存储在磁盘中，安全</li>
+</ol>
+<h3 id="非关系型数据库NOSQL"><a href="#非关系型数据库NOSQL" class="headerlink" title="非关系型数据库NOSQL"></a>非关系型数据库NOSQL</h3><blockquote><p>Not-Only SQL，泛指非关系型数据库，是对关系型数据库的补充</p>
+</blockquote>
+
+
+
+<p>特点:</p>
+<ol>
+<li>数据结构灵活</li>
+<li>伸缩性强</li>
+</ol>
+<h3 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h3><ul>
+<li>结构化查询语言(Structured Query Language)</li>
+<li>是一种操作关系型数据库的编程语言，定义了一套操作关系型数据库统一标准</li>
+</ul>
+<h1 id="Mysql数据库"><a href="#Mysql数据库" class="headerlink" title="Mysql数据库"></a>Mysql数据库</h1><h2 id="Mysql概述"><a href="#Mysql概述" class="headerlink" title="Mysql概述"></a>Mysql概述</h2><p>安装过程略，我使用的是brew安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">net start mysql</span><br><span class="line"><span class="comment"># brew方式</span></span><br><span class="line">chaoqiang@Pineapple ~ % brew services start mysql@5.7</span><br><span class="line">==&gt; Successfully started `mysql@5.7` (label: homebrew.mxcl.mysql@5.7)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止服务</span></span><br><span class="line">net stop mysql</span><br><span class="line"><span class="comment">#brew方式</span></span><br><span class="line">chaoqiang@Pineapple ~ % brew services stop mysql@5.7</span><br><span class="line">Stopping `mysql@5.7`... (might take a <span class="keyword">while</span>)</span><br><span class="line">==&gt; Successfully stopped `mysql@5.7` (label: homebrew.mxcl.mysql@5.7)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接mysql</span></span><br><span class="line">mysql [-h 127.0.0.1] [-P 3306] -uroot -p</span><br><span class="line"></span><br><span class="line">chaoqiang@Pineapple ~ % mysql -h127.0.0.1 -P3306 -uroot -p</span><br><span class="line">Enter password: </span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection id is 3</span><br><span class="line">Server version: 5.7.36 Homebrew</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2021, Oracle and/or its affiliates.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type <span class="string">&#x27;help;&#x27;</span> or <span class="string">&#x27;\h&#x27;</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">&#x27;\c&#x27;</span> to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><p>客户端连接DBMS</p>
+<p>客户端向DBMS发送sql命令，DBMS通过sql命令对数据库，表，数据进行处理</p>
+<p><img src="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/image-20220207234511741.png" alt="image-20220207234511741"></p>
+<h2 id="SQL-1"><a href="#SQL-1" class="headerlink" title="SQL"></a>SQL</h2><h3 id="SQL通用语法"><a href="#SQL通用语法" class="headerlink" title="SQL通用语法"></a>SQL通用语法</h3><ol>
+<li><p>以单行或多行书写，以分号结尾，</p>
+</li>
+<li><p>使用空格或锁紧增强语句可读性</p>
+</li>
+<li><p>Mysql数据库的SQL语句不区分大小写，关键字建议使用大写</p>
+</li>
+<li><p>注释</p>
+<ol>
+<li><p>单行注释</p>
+<ol>
+<li><p>– 注释内容</p>
+</li>
+<li><p># 注释内容，Mysql独有</p>
+</li>
+</ol>
+</li>
+<li><p>多行注释 /* 注释内容 */</p>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="SQL分类"><a href="#SQL分类" class="headerlink" title="SQL分类"></a>SQL分类</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>全称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DDL</td>
+<td>Data Defination Language</td>
+<td>数据定义语言，用于定义数据库对象</td>
+</tr>
+<tr>
+<td>DML</td>
+<td>Data Manipulation Language</td>
+<td>数据操作语言，用来对数据库表中的数据进行增删改</td>
+</tr>
+<tr>
+<td>DQL</td>
+<td>Data Query Language</td>
+<td>数据查询语言，用来查询数据库中表的记录</td>
+</tr>
+<tr>
+<td>DCL</td>
+<td>Data Control Language</td>
+<td>数据控制语言，用来创建数据库用户，控制数据库用户的访问权限</td>
+</tr>
+</tbody></table>
+<h4 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h4><ul>
+<li>数据库操作</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> DATABASES;</span><br><span class="line"><span class="comment">-- 查询当前数据库</span></span><br><span class="line"><span class="keyword">SELECT</span> DATABASE();</span><br><span class="line"><span class="comment">-- 创建数据库</span></span><br><span class="line"><span class="keyword">CREATE</span> DATABASE [IF <span class="keyword">NOT</span> EXIST] 数据库名 [<span class="keyword">DEFAULT</span> CHARSET 字符集] [<span class="keyword">COLLATE</span> 排序规则]</span><br><span class="line"><span class="comment">-- 删除数据库</span></span><br><span class="line"><span class="keyword">DROP</span> DATABASE [IF EXIST] 数据库名;</span><br><span class="line"><span class="comment">-- 使用</span></span><br><span class="line">USE 数据库名;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>表操作</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 查询相关</span></span><br><span class="line"><span class="keyword">SHOW</span> TABLES;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DESC</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name(</span><br><span class="line">			字段<span class="number">1</span> 字段<span class="number">1</span>类型 [COMMENT 字段<span class="number">1</span>注释],</span><br><span class="line">  		字段<span class="number">2</span> 字段<span class="number">2</span>类型 [COMMENT 字段<span class="number">2</span>注释],</span><br><span class="line">  		name <span class="type">varchar</span>(<span class="number">30</span>) COMMENT 名称</span><br><span class="line">)[COMMENT 表注释];</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
   </entry>
 </search>

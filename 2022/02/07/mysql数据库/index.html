@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            mysql数据库 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">mysql数据库</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-02-07 22:02:03</span>
+        <span class="mobile">2022-02-07 22:02</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>事务</p>
+<blockquote><p>A <strong>database transaction</strong> symbolizes a unit of work performed within a <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_management_system">database management system<i class="fas fa-external-link-alt"></i></a> (or similar system) against a <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database">database<i class="fas fa-external-link-alt"></i></a>, and treated in a coherent and reliable way independent of other transactions. A transaction generally represents any change in a database. Transactions in a database environment have two main purposes:</p>
+<p>数据库事务象征着在一个数据库管理系统(或类似系统)中执行的工作单元，并以一种连贯可靠的，独立于其他事务去执行。一个事务通常表示在数据库中的任何修改。数据库环境中的事务有两大目的</p>
+<ol>
+<li><p>To provide reliable units of work that allow correct recovery from failures and keep a database consistent even in cases of system failure, when execution prematurely and unexpectedly stops (completely or partially) and many operations upon a database remain uncompleted, with unclear status.</p>
+<p>提供可靠的单元工作(失败可回滚，系统崩了能持久保存数据并保持数据库一致性)</p>
+</li>
+<li><p>To provide isolation between programs accessing a database concurrently. If this isolation is not provided, the programs’ outcomes are possibly erroneous.</p>
+<p>程序并发访问数据库时提供隔离机制</p>
+</li>
+</ol>
+<p>In a database management system, a transaction is a single unit of logic or work, sometimes made up of multiple operations. Any logical calculation done in a consistent mode in a database is known as a transaction. One example is a transfer from one bank account to another: the complete transaction requires subtracting the amount to be transferred from one account and adding that same amount to the other.</p>
+<p>A database transaction, by definition, must be <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Atomicity_(database_systems)">atomic<i class="fas fa-external-link-alt"></i></a> (it must either be complete in its entirety or have no effect whatsoever), <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Consistency_(database_systems)">consistent<i class="fas fa-external-link-alt"></i></a> (it must conform to existing constraints in the database), <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Isolation_(database_systems)">isolated<i class="fas fa-external-link-alt"></i></a> (it must not affect other transactions) and <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Durability_(database_systems)">durable<i class="fas fa-external-link-alt"></i></a> (it must get written to persistent storage).[<a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_transaction#cite_note-1">1]<i class="fas fa-external-link-alt"></i></a> Database practitioners often refer to these properties of database transactions using the acronym <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ACID">ACID<i class="fas fa-external-link-alt"></i></a>.</p>
+<footer><strong>WikiPedia</strong><cite><a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_transaction)">database transaction<i class="fas fa-external-link-alt"></i></a></cite></footer></blockquote>
+
+
+
+
+
+
+
+<p>事务四大特性</p>
+<ul>
+<li>原子性Atomicity<ul>
+<li>要么不成功，要么全部成功</li>
+</ul>
+</li>
+<li>一致性Consistency</li>
+</ul>
+<blockquote><p><strong>Consistency (or Correctness)</strong> in <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_systems">database systems<i class="fas fa-external-link-alt"></i></a> refers to the requirement that <font color="red"> any given <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_transaction">database transaction<i class="fas fa-external-link-alt"></i></a> must change affected data only in allowed ways. </font>Any data written to the database must be valid according to all defined rules, including <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Integrity_constraints">constraints<i class="fas fa-external-link-alt"></i></a>, <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Cascading_rollback">cascades<i class="fas fa-external-link-alt"></i></a>, <a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Database_trigger">triggers<i class="fas fa-external-link-alt"></i></a>, and any combination thereof. This does not guarantee correctness of the transaction in all ways the application programmer might have wanted (that is the responsibility of application-level code) but merely that any programming errors cannot result in the violation of any defined database constraints</p>
+<p>数据库系统中的<strong>一致性</strong>（或正确性）是指任何给定的数据库事务必须仅以允许的方式更改受影响的数据的要求。写入数据库的任何数据都必须根据所有定义的规则有效，包括约束、级联、触发器及其任何组合。这并不能保证应用程序程序员可能想要的所有事务的正确性（这是应用程序级代码的责任），而只是任何编程错误都不会导致违反任何定义的数据库约束</p>
+<p>大概意思是对事务操作必须按照预先定义好的规则去修改数据，网上都用转账来举例子，但是假设程序员写了bug，A向B转账1000，A-1000，B+800，程序执行完成后也遵循了一致性原则，因为你的逻辑就是那样规定的</p>
+<footer><strong>WikiPedia</strong><cite><a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Consistency_(database_systems)">Consistency (database systems)<i class="fas fa-external-link-alt"></i></a></cite></footer></blockquote>
+
+<ul>
+<li>事务发生前的状态和发生后的状态守恒(也可以想象能量守恒)<ul>
+<li>比如银行转账</li>
+<li>小偷偷钱</li>
+<li>将可乐从罐子里导入瓶子里</li>
+</ul>
+</li>
+<li>隔离性Isolation<ul>
+<li>一个事务的执行不被另一个事务的执行干扰。</li>
+</ul>
+</li>
+<li>持久性Durability<ul>
+<li>指一个事务一旦提交，它对数据库中数据的改变是永久性的。</li>
+</ul>
+</li>
+</ul>
+<p>如何实现一致性呢?可以认为只要实现了原子性，就实现了一致性</p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">mysql数据库笔记</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/02/07/jdk8%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E4%BB%A3%E6%9B%BF%E5%8F%8D%E5%B0%84%E6%93%8D%E4%BD%9C/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">jdk8模板方法代替反射操作</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
