@@ -275,7 +275,12 @@
 <ul>
 <li>表操作</li>
 </ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询相关</span></span><br><span class="line"><span class="keyword">SHOW</span> TABLES;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DESC</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name(</span><br><span class="line">			字段<span class="number">1</span> 字段<span class="number">1</span>类型 [COMMENT 字段<span class="number">1</span>注释],</span><br><span class="line">  		字段<span class="number">2</span> 字段<span class="number">2</span>类型 [COMMENT 字段<span class="number">2</span>注释],</span><br><span class="line">  		name <span class="type">varchar</span>(<span class="number">30</span>) COMMENT 名称</span><br><span class="line">)[COMMENT 表注释];</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 查询相关</span></span><br><span class="line"><span class="keyword">SHOW</span> TABLES;</span><br><span class="line"></span><br><span class="line"><span class="keyword">DESC</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建相关</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> tb_name(</span><br><span class="line">			字段<span class="number">1</span> 字段<span class="number">1</span>类型 [COMMENT 字段<span class="number">1</span>注释],</span><br><span class="line">  		字段<span class="number">2</span> 字段<span class="number">2</span>类型 [COMMENT 字段<span class="number">2</span>注释],</span><br><span class="line">  		name <span class="type">varchar</span>(<span class="number">30</span>) COMMENT 名称</span><br><span class="line">)[COMMENT 表注释];</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>作业</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">设计一张员工信息表，要求如下:</span><br><span class="line">1. 编号(纯数字)</span><br><span class="line">2. 员工工号 (字符串类型，长度不超过10位)</span><br><span class="line">3. 员工姓名(字符串类型，长度不超过10位)</span><br><span class="line">4. 性别(男/女，存储一个汉字)</span><br><span class="line">5. 年龄(正常人年龄，不可能存储负数)</span><br><span class="line">6. 身份证号(二代身份证号均为18位，身份证中有X这样的字符)</span><br><span class="line">7. 入职时间(取值年月日即可)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> emp_info(</span><br><span class="line">	id <span class="type">int</span> prima comment &quot;编号&quot;,</span><br><span class="line">  emp_no <span class="type">varchar</span>(<span class="number">10</span>) comment &quot;员工工号&quot;,</span><br><span class="line">  emp_name <span class="type">varchar</span>(<span class="number">10</span>) comment &quot;员工姓名&quot;,</span><br><span class="line">  sex <span class="type">char</span>(<span class="number">1</span>) comment &quot;性别&quot;,</span><br><span class="line">  age tinyint comment &quot;年龄&quot;,</span><br><span class="line">  id_card_num <span class="type">char</span>(<span class="number">18</span>) comment &quot;身份证号&quot;,</span><br><span class="line">  in_company_date <span class="type">date</span> comment &quot;入职时间&quot;</span><br><span class="line">) comment &quot;员工信息表&quot;</span><br></pre></td></tr></table></figure>
 
 
         </div>
@@ -294,6 +299,21 @@
 
         
             <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/02/12/docker%E5%AE%89%E8%A3%85mysql/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">docker安装mysql</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
                 
                 
                     <div class="article-next">
