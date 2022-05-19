@@ -290,6 +290,27 @@
 
 <p>head  file_name</p>
 <p>查看文件前10行数据</p>
+<p>修改文件内容</p>
+<blockquote>
+<p>sed [-hnV] [-e&lt;script&gt;] [-f&lt;script文件&gt;] [文本文件]</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s#Welcome to nginx#chuanzhi niu b#g&#x27;</span> /usr/share/nginx/html/index.html </span><br><span class="line">sed -i <span class="string">&#x27;s#&lt;head&gt;#&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;#g&#x27;</span> /usr/share/nginx/html/index.html</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>-e&lt;script&gt;或–expression=&lt;script&gt;以选项中指定的script处理输入的文件文件</li>
+<li>-f&lt;script文件&gt;或–file=&lt;script文件&gt;以选项中指定的<strong>script文件</strong>处理输入的文本文件</li>
+<li>-h显示帮助</li>
+<li>-n或–quiet或–silent仅显示script处理后的结果</li>
+<li>-V或–version显示版本信息</li>
+</ul>
+<p>动作说明</p>
+<ul>
+<li>a:新增,a的后面可以接字符串，在最后新开一行</li>
+<li>c:取代,c的后面可以接字符串，取代n1,n2之间的行</li>
+<li></li>
+</ul>
 
         </div>
 
