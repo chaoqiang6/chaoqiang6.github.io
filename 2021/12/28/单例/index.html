@@ -9,7 +9,7 @@
     
     <title>
         
-            JVM |
+            单例模式 |
         
         进击的阿强
     </title>
@@ -137,7 +137,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">JVM</span>
+            <span class="title-hover-animation">单例模式</span>
         </div>
 
         
@@ -154,10 +154,32 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-01-04 22:59:34</span>
-        <span class="mobile">2022-01-04 22:59</span>
+        <span class="pc">2021-12-28 21:38:24</span>
+        <span class="mobile">2021-12-28 21:38</span>
     </span>
     
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/%E5%8D%95%E4%BE%8B/">单例</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E5%8D%95%E4%BE%8B/">单例</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -172,11 +194,33 @@
         
 
         <div class="article-content markdown-body">
-            
+            <h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><h3 id="单例模式实现方式"><a href="#单例模式实现方式" class="headerlink" title="单例模式实现方式"></a>单例模式实现方式</h3><h4 id="饿汉式"><a href="#饿汉式" class="headerlink" title="饿汉式"></a>饿汉式</h4><h4 id="枚举型单例"><a href="#枚举型单例" class="headerlink" title="枚举型单例"></a>枚举型单例</h4><h4 id="懒汉式"><a href="#懒汉式" class="headerlink" title="懒汉式"></a>懒汉式</h4><h4 id="双检锁单例"><a href="#双检锁单例" class="headerlink" title="双检锁单例"></a>双检锁单例</h4><p>volitile 解决指令重排序</p>
+<p>可见行</p>
+<p>有序性</p>
+<h4 id="内部类型懒汉单例"><a href="#内部类型懒汉单例" class="headerlink" title="内部类型懒汉单例"></a>内部类型懒汉单例</h4><h3 id="破坏单例"><a href="#破坏单例" class="headerlink" title="破坏单例"></a>破坏单例</h3><ul>
+<li>反射破坏</li>
+<li>反序列化破坏。readResolve</li>
+<li>Unsafe破坏单例</li>
+</ul>
+<p>枚举类型反射和反序列化可以破坏单例</p>
+<p>java类库中使用单例</p>
+<p>Runtime-静态变量</p>
+<p>Consol-双检锁懒汉创建单例</p>
+<p>Collections中的EmptyXXX对象–懒汉式内部类</p>
+<p>Comparators中的NaturalOrderComparator使用的是枚举型饿汉式单例</p>
+
         </div>
 
         
 
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E5%8D%95%E4%BE%8B/">#单例</a>&nbsp;
+                    </li>
+                
+            </ul>
         
 
         
@@ -185,33 +229,18 @@
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/01/04/JVM%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84/"
+                           href="/2021/12/28/Linux%E5%AE%9E%E6%93%8D/"
                         >
                             <span class="left arrow-icon flex-center">
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">JVM内存结构</span>
+                                <span class="post-nav-title-item"></span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
                     </div>
                 
-                
-                    <div class="article-next">
-                        <a class="next"
-                           rel="next"
-                           href="/2021/12/28/VmOptions/"
-                        >
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item"></span>
-                                <span class="post-nav-item">下一篇</span>
-                            </span>
-                            <span class="right arrow-icon flex-center">
-                              <i class="fas fa-chevron-right"></i>
-                            </span>
-                        </a>
-                    </div>
                 
             </div>
         
@@ -376,7 +405,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-text">单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-text">单例模式实现方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A5%BF%E6%B1%89%E5%BC%8F"><span class="nav-text">饿汉式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E5%9E%8B%E5%8D%95%E4%BE%8B"><span class="nav-text">枚举型单例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%87%92%E6%B1%89%E5%BC%8F"><span class="nav-text">懒汉式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%8C%E6%A3%80%E9%94%81%E5%8D%95%E4%BE%8B"><span class="nav-text">双检锁单例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E7%B1%BB%E5%9E%8B%E6%87%92%E6%B1%89%E5%8D%95%E4%BE%8B"><span class="nav-text">内部类型懒汉单例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%B4%E5%9D%8F%E5%8D%95%E4%BE%8B"><span class="nav-text">破坏单例</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>

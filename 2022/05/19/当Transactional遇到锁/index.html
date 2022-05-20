@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            当Transactional遇到锁 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">当Transactional遇到锁</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-19 21:46:54</span>
+        <span class="mobile">2022-05-19 21:46</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/%E9%94%81/">锁</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>知识点:</p>
+<ul>
+<li>Transactional的开始时机为第一个sql语句</li>
+<li>释放锁时，事务不一定提交，第二个线程可能在第一个线程提交前开启事务</li>
+<li><a class="link" target="_blank" rel="noopener" href="https://stackoverflow.com/questions/68417931/add-transactional-annotation-to-the-method-in-spring-is-the-transaction-submi">https://stackoverflow.com/questions/68417931/add-transactional-annotation-to-the-method-in-spring-is-the-transaction-submi<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+<p>在redis解决一人一单时，因为下单操作要对订单和库存两张表进行操作，所以需要使用事务操作，又因为多线程操作同一共享资源，所以通过加锁保证线程安全，代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">seckillVoucher</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SeckillVoucher seckillVoucher = getById(voucherId);</span><br><span class="line">        <span class="keyword">if</span> (seckillVoucher == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;数据库中不存在该优惠券&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (LocalDateTime.now().isBefore(seckillVoucher.getBeginTime()) || LocalDateTime.now().isAfter(seckillVoucher.getEndTime())) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;当前不在该优惠券的秒杀时间&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//判断库存数量</span></span><br><span class="line">        Integer stock = seckillVoucher.getStock();</span><br><span class="line">        <span class="keyword">if</span> (stock &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//保证一人一单</span></span><br><span class="line">        <span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line">        <span class="keyword">final</span> String lock = userId.toString().intern();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line">            Integer count = voucherOrderService.query().eq(<span class="string">&quot;user_id&quot;</span>, userId).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).count();</span><br><span class="line">            <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;一人只能买一个订单&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(System.currentTimeMillis() + <span class="string">&quot;时间&quot;</span> + count);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">boolean</span> updated = update().setSql(<span class="string">&quot;stock = stock - 1&quot;</span>).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).gt(<span class="string">&quot;stock&quot;</span>, <span class="number">0</span>).update();</span><br><span class="line">            <span class="keyword">if</span> (!updated) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">final</span> VoucherOrder order = <span class="keyword">new</span> VoucherOrder();</span><br><span class="line">            order.setId(idWorker.nextId(<span class="string">&quot;order&quot;</span>));</span><br><span class="line">            order.setUserId(userId);</span><br><span class="line">            order.setVoucherId(voucherId);</span><br><span class="line">            voucherOrderService.save(order);</span><br><span class="line">            <span class="keyword">return</span> Result.ok(order.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>但使用jmeter进行压力测试后还是出现了超卖问题，按理说第21行在锁范围内，如果查到数据库中存在该用户订单就会返回失败。进行一番尝试发现只要加了@Transactional就会出现超卖情况,而且每次秒杀非常规律，每次都是前10个线程可以抢到优惠券，不加就一切正常。</p>
+<p>百度搜索@Transactional 锁 关键字，才发现当Transactional与锁使用时真的很容易出问题</p>
+<p>网上说锁结束时，你的事务此时并没有提交(Spring的AOP)，而此时第一个线程释放锁(未提交事务),第二个线程着急忙慌抢到了锁并进行了一次调用，就会出现超卖问题，有道理。但是每次秒杀后，按照这个逻辑应该最多超卖一个优惠券，为什么每次都是卖了10个优惠券呢，因为tomcat最小空闲线程为10，这10个线程并发执行该方法的第4行时执行select方法，此时开启事务，spring事务隔离级别为数据库默认(数据库为可重复读)，所以每次秒杀总会有10个线程抢到票，修改后的代码如下所示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">seckillVoucher</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">//保证一人一单</span></span><br><span class="line">        <span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line">        <span class="keyword">final</span> String lock = userId.toString().intern();</span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">final</span> SeckillVoucher seckillVoucher = getById(voucherId);</span><br><span class="line">            <span class="keyword">if</span> (seckillVoucher == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;数据库中不存在该优惠券&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (LocalDateTime.now().isBefore(seckillVoucher.getBeginTime()) || LocalDateTime.now().isAfter(seckillVoucher.getEndTime())) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;当前不在该优惠券的秒杀时间&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//判断库存数量</span></span><br><span class="line">            Integer stock = seckillVoucher.getStock();</span><br><span class="line">            <span class="keyword">if</span> (stock &lt; <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            Integer count = voucherOrderService.query().eq(<span class="string">&quot;user_id&quot;</span>, userId).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).count();</span><br><span class="line">            <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;一人只能买一个订单&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(System.currentTimeMillis() + <span class="string">&quot;时间&quot;</span> + count);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">boolean</span> updated = update().setSql(<span class="string">&quot;stock = stock - 1&quot;</span>).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).gt(<span class="string">&quot;stock&quot;</span>, <span class="number">0</span>).update();</span><br><span class="line">            <span class="keyword">if</span> (!updated) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">final</span> VoucherOrder order = <span class="keyword">new</span> VoucherOrder();</span><br><span class="line">            order.setId(idWorker.nextId(<span class="string">&quot;order&quot;</span>));</span><br><span class="line">            order.setUserId(userId);</span><br><span class="line">            order.setVoucherId(voucherId);</span><br><span class="line">            voucherOrderService.save(order);</span><br><span class="line">            <span class="keyword">return</span> Result.ok(order.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样jemeter测试后最多超卖一个优惠券，等等，这还怎么称得上初级程序员，必须给我达到100%不超卖</p>
+<p>首先，使用锁时必须使加锁代码尽可能短，只有当订单表中没有数据时才可以进行下单操作，所以优化成</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">seckillVoucher</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SeckillVoucher seckillVoucher = getById(voucherId);</span><br><span class="line">        <span class="keyword">if</span> (seckillVoucher == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;数据库中不存在该优惠券&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (LocalDateTime.now().isBefore(seckillVoucher.getBeginTime()) || LocalDateTime.now().isAfter(seckillVoucher.getEndTime())) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;当前不在该优惠券的秒杀时间&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//判断库存数量</span></span><br><span class="line">        Integer stock = seckillVoucher.getStock();</span><br><span class="line">        <span class="keyword">if</span> (stock &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> createOrder(voucherId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 下单逻辑，必须保证一人一单</span></span><br><span class="line"><span class="comment">     * 在方法上加锁锁的是this对象，粒度太大，所以针对用户id进行加锁，Long.toString会返回一个新对象，所以使用intern()返回常量池地址，保证了同一用户id返回的是同一个地址</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> voucherId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional(isolation = Isolation.SERIALIZABLE)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">createOrder</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//保证一人一单</span></span><br><span class="line">        <span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line">        <span class="keyword">final</span> String lock = userId.toString().intern();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (lock) &#123;</span><br><span class="line"></span><br><span class="line">            Integer count = voucherOrderService.query().eq(<span class="string">&quot;user_id&quot;</span>, userId).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).count();</span><br><span class="line">            <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;一人只能买一个订单&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(System.currentTimeMillis() + <span class="string">&quot;时间&quot;</span> + count);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">boolean</span> updated = update().setSql(<span class="string">&quot;stock = stock - 1&quot;</span>).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).gt(<span class="string">&quot;stock&quot;</span>, <span class="number">0</span>).update();</span><br><span class="line">            <span class="keyword">if</span> (!updated) &#123;</span><br><span class="line">                <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">final</span> VoucherOrder order = <span class="keyword">new</span> VoucherOrder();</span><br><span class="line">            order.setId(idWorker.nextId(<span class="string">&quot;order&quot;</span>));</span><br><span class="line">            order.setUserId(userId);</span><br><span class="line">            order.setVoucherId(voucherId);</span><br><span class="line">            voucherOrderService.save(order);</span><br><span class="line">            <span class="keyword">return</span> Result.ok(order.getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Transactional使用isolation属性为Isolation.SERIALIZABLE保证线程安全，或者将锁放在事务方法外边</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">seckillVoucher</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SeckillVoucher seckillVoucher = getById(voucherId);</span><br><span class="line">        <span class="keyword">if</span> (seckillVoucher == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;数据库中不存在该优惠券&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (LocalDateTime.now().isBefore(seckillVoucher.getBeginTime()) || LocalDateTime.now().isAfter(seckillVoucher.getEndTime())) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;当前不在该优惠券的秒杀时间&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//判断库存数量</span></span><br><span class="line">        Integer stock = seckillVoucher.getStock();</span><br><span class="line">        <span class="keyword">if</span> (stock &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//保证一人一单</span></span><br><span class="line">        <span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line">        <span class="keyword">final</span> SimpleRedisLock lock = <span class="keyword">new</span> SimpleRedisLock(<span class="string">&quot;order:&quot;</span> + userId, redisTemplate);</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> lockSuc = lock.tryLock(Duration.ofSeconds(<span class="number">20</span>));</span><br><span class="line">        <span class="keyword">if</span> (!lockSuc) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;怀疑你开挂&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ISeckillVoucherService proxy = SpringUtil.getBean(ISeckillVoucherService.class);</span><br><span class="line">            <span class="keyword">return</span> proxy.createOrder(voucherId);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.unLock(<span class="string">&quot;order:&quot;</span>+userId);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 下单逻辑，必须保证一人一单</span></span><br><span class="line"><span class="comment">     * 在方法上加锁锁的是this对象，粒度太大，所以针对用户id进行加锁，Long.toString会返回一个新对象，所以使用intern()返回常量池地址，保证了同一用户id返回的是同一个地址</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> voucherId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">createOrder</span><span class="params">(Long voucherId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//保证一人一单</span></span><br><span class="line">        <span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line">        Integer count = voucherOrderService.query().eq(<span class="string">&quot;user_id&quot;</span>, userId).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).count();</span><br><span class="line">        <span class="keyword">if</span> (count &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;一人只能买一个订单&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">boolean</span> updated = update().setSql(<span class="string">&quot;stock = stock - 1&quot;</span>).eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).gt(<span class="string">&quot;stock&quot;</span>, <span class="number">0</span>).update();</span><br><span class="line">        <span class="keyword">if</span> (!updated) &#123;</span><br><span class="line">            <span class="keyword">return</span> Result.fail(<span class="string">&quot;该优惠券已售罄&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">final</span> VoucherOrder order = <span class="keyword">new</span> VoucherOrder();</span><br><span class="line">        order.setId(idWorker.nextId(<span class="string">&quot;order&quot;</span>));</span><br><span class="line">        order.setUserId(userId);</span><br><span class="line">        order.setVoucherId(voucherId);</span><br><span class="line">        voucherOrderService.save(order);</span><br><span class="line">        <span class="keyword">return</span> Result.ok(order.getId());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E9%94%81/">#锁</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/03/01/Mysql%E8%BF%90%E7%BB%B4/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Mysql运维</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
