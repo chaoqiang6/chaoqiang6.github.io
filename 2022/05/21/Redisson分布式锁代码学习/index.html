@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            Redisson分布式锁代码学习 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":false},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Redisson分布式锁代码学习</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-21 18:57:43</span>
+        <span class="mobile">2022-05-21 18:57</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/redis/">redis</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/redission/">redission</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">分布式锁</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="引语"><a href="#引语" class="headerlink" title="引语"></a>引语</h2><p>我们可以利用redis的setnx命令实现分布式锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(Duration timeout)</span> </span>&#123;</span><br><span class="line">  String threadId = ID_PREFIX+Thread.currentThread().getId();</span><br><span class="line">  <span class="keyword">final</span> Boolean suc = redisTemplate.opsForValue().setIfAbsent(LOCK_PREFIX + key, threadId, timeout);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> BooleanUtil.isTrue(suc);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unLock</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  String threadId = ID_PREFIX+Thread.currentThread().getId();</span><br><span class="line">  <span class="comment">//此处使用lua脚本找到键为LOCK_PREFIX+key，值为threadid的缓存，再删除，保证原子性</span></span><br><span class="line">  redisTemplate.execute(UNLOCK_SCRIPT, Collections.singletonList(LOCK_PREFIX + key),threadId);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该锁可满足大部分分布式锁使用场景，但有以下几个缺点</p>
+<ol>
+<li>不可重入</li>
+<li>不可重试</li>
+<li>有可能锁超时，但任务未执行完成，可能导致并发安全</li>
+<li>主从时可能由于主节点宕机导致并发安全</li>
+</ol>
+<p>不可重入还好说，可以在tryLock时使用lua脚本实现，但2，3，4实现起来非常麻烦，这时可以使用Redisson来实现</p>
+<p>导入pom依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.redisson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>redisson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.15.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在RedisConfig配置类中配置RedissonClient对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redissonClient</span><span class="params">()</span></span>&#123;</span><br><span class="line">  Config config = <span class="keyword">new</span> Config();</span><br><span class="line">  config.useSingleServer().setAddress(<span class="string">&quot;redis://127.0.0.1:6379&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> RedissonClient redissonClient;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> RLock rLock = redissonClient.getLock(<span class="string">&quot;order:&quot;</span> + userId);</span><br><span class="line"><span class="keyword">final</span> <span class="keyword">boolean</span> lockSuc = rLock.tryLock();</span><br><span class="line"><span class="keyword">if</span> (!lockSuc) &#123;</span><br><span class="line">  <span class="keyword">return</span> Result.fail(<span class="string">&quot;怀疑你开挂&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  ISeckillVoucherService proxy = SpringUtil.getBean(ISeckillVoucherService.class);</span><br><span class="line">  <span class="keyword">return</span> proxy.createOrder(voucherId);</span><br><span class="line">&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">  rLock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redisson如何解决锁重入"><a href="#Redisson如何解决锁重入" class="headerlink" title="Redisson如何解决锁重入"></a>Redisson如何解决锁重入</h2><p>总的来说就是判断redis中是否有键为锁名称的缓存</p>
+<ul>
+<li>不存在-&gt;hincrby(“锁名称”,”redis连接id+线程id”,”1”)</li>
+<li>存在<ul>
+<li>如果存在属性redis连接id+线程id，值进行累加</li>
+<li>不存在，返回过期时间</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 异步trylock</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> waitTime 最大等待时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> leaseTime 锁超时释放时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> unit 锁超时释放时间单位</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> threadId 事务id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> command redis执行lua脚本命令对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> &lt;T&gt; 执行命令返回对象类型</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 异步执行命令对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    &lt;T&gt; <span class="function">RFuture&lt;T&gt; <span class="title">tryLockInnerAsync</span><span class="params">(<span class="keyword">long</span> waitTime, <span class="keyword">long</span> leaseTime, TimeUnit unit, <span class="keyword">long</span> threadId, RedisStrictCommand&lt;T&gt; command)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//getName返回的是redis连接id+锁名称</span></span><br><span class="line">        <span class="keyword">return</span> evalWriteAsync(getName(), LongCodec.INSTANCE, command,</span><br><span class="line">                <span class="comment">//如果redis中没有该锁对象key</span></span><br><span class="line">                <span class="string">&quot;if (redis.call(&#x27;exists&#x27;, KEYS[1]) == 0) then &quot;</span> +</span><br><span class="line">                        <span class="comment">//创建锁，键为锁名称，值的键为redis连接id+threadId，值的值为1</span></span><br><span class="line">                        <span class="string">&quot;redis.call(&#x27;hincrby&#x27;, KEYS[1], ARGV[2], 1); &quot;</span> +</span><br><span class="line">                        <span class="comment">//设置失效时间，如果tryLock时没有设置失效时间，会使用看门狗的过期时间，默认30 * 1000</span></span><br><span class="line">                        <span class="string">&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;return nil; &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;end; &quot;</span> +</span><br><span class="line">                        <span class="comment">//如果redis中有该锁对象且值为当前线程对象</span></span><br><span class="line">                        <span class="string">&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot;</span> +</span><br><span class="line">                        <span class="comment">//将值得值+1</span></span><br><span class="line">                        <span class="string">&quot;redis.call(&#x27;hincrby&#x27;, KEYS[1], ARGV[2], 1); &quot;</span> +</span><br><span class="line">                        <span class="comment">//重置失效时间</span></span><br><span class="line">                        <span class="string">&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;return nil; &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;end; &quot;</span> +</span><br><span class="line">                        <span class="comment">//如果获取锁失败，返回失效时间</span></span><br><span class="line">                        <span class="string">&quot;return redis.call(&#x27;pttl&#x27;, KEYS[1]);&quot;</span>,</span><br><span class="line">                Collections.singletonList(getName()), unit.toMillis(leaseTime), getLockName(threadId));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redisson如何解决锁超时"><a href="#Redisson如何解决锁超时" class="headerlink" title="Redisson如何解决锁超时"></a>Redisson如何解决锁超时</h2><p>总的来说就是如果获取锁成功，创建一个Timeout对象定时(每隔过期时间/3时间)刷新缓存过期时间</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//在tryLock时如果获取失败，会返回锁的失效时间，在执行lua脚本后的ttlRemaining返回执行结果为true，如果该锁设置了释放时间，重置释放时间，否则，scheduleExpirationRenewal刷新超时时间</span></span><br><span class="line">ttlRemainingFuture.onComplete((ttlRemaining, e) -&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// lock acquired</span></span><br><span class="line">            <span class="keyword">if</span> (ttlRemaining) &#123;</span><br><span class="line">              	</span><br><span class="line">                <span class="keyword">if</span> (leaseTime != -<span class="number">1</span>) &#123;</span><br><span class="line">                    internalLockLeaseTime = unit.toMillis(leaseTime);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    scheduleExpirationRenewal(threadId);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 刷新超时时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> threadId</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">scheduleExpirationRenewal</span><span class="params">(<span class="keyword">long</span> threadId)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        ExpirationEntry entry = <span class="keyword">new</span> ExpirationEntry();</span><br><span class="line">        <span class="comment">//EXPIRATION_RENEWAL_MAP为static final，键为redis连接id+锁名称，值为该锁下的线程id，按理说只会有一个</span></span><br><span class="line">        ExpirationEntry oldEntry = EXPIRATION_RENEWAL_MAP.putIfAbsent(getEntryName(), entry);</span><br><span class="line">        <span class="keyword">if</span> (oldEntry != <span class="keyword">null</span>) &#123;</span><br><span class="line">            oldEntry.addThreadId(threadId);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            entry.addThreadId(threadId);</span><br><span class="line">            <span class="comment">//刷新过期时间</span></span><br><span class="line">            renewExpiration();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 刷新过期时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">renewExpiration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        ExpirationEntry ee = EXPIRATION_RENEWAL_MAP.get(getEntryName());</span><br><span class="line">        <span class="keyword">if</span> (ee == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//当前过期时间/3时间后，执行任务刷新缓存</span></span><br><span class="line">        Timeout task = commandExecutor.getConnectionManager().newTimeout(<span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(Timeout timeout)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                ExpirationEntry ent = EXPIRATION_RENEWAL_MAP.get(getEntryName());</span><br><span class="line">                <span class="keyword">if</span> (ent == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//获取到当前线程</span></span><br><span class="line">                Long threadId = ent.getFirstThreadId();</span><br><span class="line">                <span class="keyword">if</span> (threadId == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//刷新缓存</span></span><br><span class="line">                RFuture&lt;Boolean&gt; future = renewExpirationAsync(threadId);</span><br><span class="line">                future.onComplete((res, e) -&gt; &#123;</span><br><span class="line">                    <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        log.error(<span class="string">&quot;Can&#x27;t update lock &quot;</span> + getName() + <span class="string">&quot; expiration&quot;</span>, e);</span><br><span class="line">                        EXPIRATION_RENEWAL_MAP.remove(getEntryName());</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (res) &#123;</span><br><span class="line">                        <span class="comment">// reschedule itself</span></span><br><span class="line">                        renewExpiration();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, internalLockLeaseTime / <span class="number">3</span>, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">        ee.setTimeout(task);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取锁成功后如果一直持有，刷新缓存过期时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> threadId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> RFuture&lt;Boolean&gt; <span class="title">renewExpirationAsync</span><span class="params">(<span class="keyword">long</span> threadId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">                <span class="string">&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;return 1; &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;end; &quot;</span> +</span><br><span class="line">                        <span class="string">&quot;return 0;&quot;</span>,</span><br><span class="line">                Collections.singletonList(getName()),</span><br><span class="line">                internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redission如何解决锁重试"><a href="#Redission如何解决锁重试" class="headerlink" title="Redission如何解决锁重试"></a>Redission如何解决锁重试</h2><p>总的来说就是每次redis释放锁，会向channel为redisson_lock__channel+锁名称的消息队列发消息，如果未获取到锁且未超过等待获取时间，订阅消息队列，收到消息后再重新尝试获取锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 尝试获取锁，知道waitTime时间为止</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> waitTime 等待获取时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> leaseTime 释放时间</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> unit 时间单位</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> waitTime, <span class="keyword">long</span> leaseTime, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> time = unit.toMillis(waitTime);</span><br><span class="line">        <span class="keyword">long</span> current = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">long</span> threadId = Thread.currentThread().getId();</span><br><span class="line">        <span class="comment">//如果失败，返回超时结果</span></span><br><span class="line">        Long ttl = tryAcquire(waitTime, leaseTime, unit, threadId);</span><br><span class="line">        <span class="comment">// lock acquired</span></span><br><span class="line">        <span class="keyword">if</span> (ttl == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        time -= System.currentTimeMillis() - current;</span><br><span class="line">        <span class="keyword">if</span> (time &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">//大于等待时间了，返回false</span></span><br><span class="line">            acquireFailed(waitTime, unit, threadId);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        current = System.currentTimeMillis();</span><br><span class="line">        <span class="comment">//订阅该锁的消息队列</span></span><br><span class="line">        RFuture&lt;RedissonLockEntry&gt; subscribeFuture = subscribe(threadId);</span><br><span class="line">        <span class="comment">//如果等到time时间还未没有收到通知</span></span><br><span class="line">        <span class="keyword">if</span> (!subscribeFuture.await(time, TimeUnit.MILLISECONDS)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!subscribeFuture.cancel(<span class="keyword">false</span>)) &#123;</span><br><span class="line">                subscribeFuture.onComplete((res, e) -&gt; &#123;</span><br><span class="line">                    <span class="keyword">if</span> (e == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        <span class="comment">//取消订阅</span></span><br><span class="line">                        unsubscribe(subscribeFuture, threadId);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            acquireFailed(waitTime, unit, threadId);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//收到通知</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            time -= System.currentTimeMillis() - current;</span><br><span class="line">            <span class="comment">//如果超时了，也不等了</span></span><br><span class="line">            <span class="keyword">if</span> (time &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                acquireFailed(waitTime, unit, threadId);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">long</span> currentTime = System.currentTimeMillis();</span><br><span class="line">                <span class="comment">//再重新尝试获取锁</span></span><br><span class="line">                ttl = tryAcquire(waitTime, leaseTime, unit, threadId);</span><br><span class="line">                <span class="comment">// lock acquired</span></span><br><span class="line">                <span class="keyword">if</span> (ttl == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                time -= System.currentTimeMillis() - currentTime;</span><br><span class="line">                <span class="keyword">if</span> (time &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    acquireFailed(waitTime, unit, threadId);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// waiting for message</span></span><br><span class="line">                <span class="comment">//又未获取到锁，重新订阅消息队列</span></span><br><span class="line">                currentTime = System.currentTimeMillis();</span><br><span class="line">                <span class="keyword">if</span> (ttl &gt;= <span class="number">0</span> &amp;&amp; ttl &lt; time) &#123;</span><br><span class="line">                    <span class="comment">//超时时间小于过期时间，最多再等过期时间</span></span><br><span class="line">                    <span class="comment">//Semaphore信号量，在时间范围内如果收到信号量，就继续往下走，否则，阻塞</span></span><br><span class="line">                    subscribeFuture.getNow().getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    subscribeFuture.getNow().getLatch().tryAcquire(time, TimeUnit.MILLISECONDS);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//收到信号或到达到期时间</span></span><br><span class="line">                time -= System.currentTimeMillis() - currentTime;</span><br><span class="line">                <span class="keyword">if</span> (time &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">//超过最大等待时间</span></span><br><span class="line">                    acquireFailed(waitTime, unit, threadId);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//没超过最大等待时间，重新循环尝试获取锁</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            unsubscribe(subscribeFuture, threadId);</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">//        return get(tryLockAsync(waitTime, leaseTime, unit));</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 订阅消息队列</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> threadId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> RFuture&lt;RedissonLockEntry&gt; <span class="title">subscribe</span><span class="params">(<span class="keyword">long</span> threadId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//getEntryName()返回redis连接id+锁名称</span></span><br><span class="line">        <span class="comment">//getChannelName()返回redisson_lock__channel+锁名称,redis释放时会向这个channel发送通知</span></span><br><span class="line">        <span class="keyword">return</span> pubSub.subscribe(getEntryName(), getChannelName());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Redisson如何解决一致性问题"><a href="#Redisson如何解决一致性问题" class="headerlink" title="Redisson如何解决一致性问题"></a>Redisson如何解决一致性问题</h2><p>redis主从结构读写分离场景中，如果主节点向从节点同步消息时，redis主节点挂了，可能造成数据不一致问题最终导致分布式锁失效，可以使用RedissonMultiLock来保证CA</p>
+<blockquote>
+<p>假设有5个redis节点，这些节点之间既没有主从，也没有集群关系。客户端用相同的key和随机值在5个节点上请求锁，请求锁的超时时间应小于锁自动释放时间。当在3个（超过半数）redis上请求到锁的时候，才算是真正获取到了锁。如果没有获取到锁，则把部分已锁的redis释放掉。</p>
+</blockquote>
+<ol>
+<li>使用docker在开启两个redis服务，端口分别为6380，6381</li>
+</ol>
+<p>RedisConfig类中定义3个RedissonClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redissonClient</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Config config = <span class="keyword">new</span> Config();</span><br><span class="line">        config.useSingleServer().setAddress(<span class="string">&quot;redis://127.0.0.1:6379&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redissonClient1</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Config config = <span class="keyword">new</span> Config();</span><br><span class="line">        config.useSingleServer().setAddress(<span class="string">&quot;redis://127.0.0.1:6380&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redissonClient2</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Config config = <span class="keyword">new</span> Config();</span><br><span class="line">        config.useSingleServer().setAddress(<span class="string">&quot;redis://127.0.0.1:6381&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>代码使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Long userId = UserHolder.getUser().getId();</span><br><span class="line"><span class="keyword">final</span> RLock rLock = redissonClient.getLock(<span class="string">&quot;order:&quot;</span> + userId);</span><br><span class="line"><span class="keyword">final</span> RLock rLock1 = redissonClient1.getLock(<span class="string">&quot;order:&quot;</span> + userId);</span><br><span class="line"><span class="keyword">final</span> RLock rLock2 = redissonClient2.getLock(<span class="string">&quot;order:&quot;</span> + userId);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> RLock mLock = redissonClient.getMultiLock(rLock, rLock1, rLock2);</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">boolean</span> lockSuc = rLock.tryLock(<span class="number">10L</span>,TimeUnit.SECONDS);</span><br><span class="line"><span class="keyword">if</span> (!lockSuc) &#123;</span><br><span class="line">  <span class="keyword">return</span> Result.fail(<span class="string">&quot;怀疑你开挂&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  ISeckillVoucherService proxy = SpringUtil.getBean(ISeckillVoucherService.class);</span><br><span class="line">  <span class="keyword">return</span> proxy.createOrder(voucherId);</span><br><span class="line">&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">  mLock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原理就是mLock持有三个redis的连接，每次执行命令要向三个客户端同时发起请求，只有失败数量&lt;允许失败数量时，才算成功，一旦出现异常，需要对已经加锁的客户端进行解锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> waitTime, <span class="keyword">long</span> leaseTime, TimeUnit unit)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line"><span class="comment">//        try &#123;</span></span><br><span class="line"><span class="comment">//            return tryLockAsync(waitTime, leaseTime, unit).get();</span></span><br><span class="line"><span class="comment">//        &#125; catch (ExecutionException e) &#123;</span></span><br><span class="line"><span class="comment">//            throw new IllegalStateException(e);</span></span><br><span class="line"><span class="comment">//        &#125;</span></span><br><span class="line">        <span class="keyword">long</span> newLeaseTime = -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (leaseTime != -<span class="number">1</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (waitTime == -<span class="number">1</span>) &#123;</span><br><span class="line"></span><br><span class="line">                newLeaseTime = unit.toMillis(leaseTime);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//如果设置了释放时间，也设置了最长获取时间，释放时间为等待时间的2倍</span></span><br><span class="line">                <span class="comment">//因为重试时间比较久，如果leaseTime比较小，可能还没重试完成就到达释放时间了</span></span><br><span class="line">                newLeaseTime = unit.toMillis(waitTime)*<span class="number">2</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> time = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">long</span> remainTime = -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (waitTime != -<span class="number">1</span>) &#123;</span><br><span class="line">            remainTime = unit.toMillis(waitTime);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">long</span> lockWaitTime = calcLockWaitTime(remainTime);</span><br><span class="line">        <span class="comment">//获取失败限制数，默认为0，即只要有一个失败，就认为失败</span></span><br><span class="line">        <span class="keyword">int</span> failedLocksLimit = failedLocksLimit();</span><br><span class="line">        List&lt;RLock&gt; acquiredLocks = <span class="keyword">new</span> ArrayList&lt;&gt;(locks.size());</span><br><span class="line">        <span class="keyword">for</span> (ListIterator&lt;RLock&gt; iterator = locks.listIterator(); iterator.hasNext();) &#123;</span><br><span class="line">            <span class="comment">//对每个客户端分别尝试加锁</span></span><br><span class="line">            RLock lock = iterator.next();</span><br><span class="line">            <span class="keyword">boolean</span> lockAcquired;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (waitTime == -<span class="number">1</span> &amp;&amp; leaseTime == -<span class="number">1</span>) &#123;</span><br><span class="line">                    lockAcquired = lock.tryLock();</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">long</span> awaitTime = Math.min(lockWaitTime, remainTime);</span><br><span class="line">                    <span class="comment">//获取锁</span></span><br><span class="line">                    lockAcquired = lock.tryLock(awaitTime, newLeaseTime, TimeUnit.MILLISECONDS);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (RedisResponseTimeoutException e) &#123;</span><br><span class="line">                <span class="comment">//遇到异常，释放已经加锁的客户端</span></span><br><span class="line">                unlockInner(Arrays.asList(lock));</span><br><span class="line">                lockAcquired = <span class="keyword">false</span>;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                lockAcquired = <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (lockAcquired) &#123;</span><br><span class="line">                acquiredLocks.add(lock);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//没有获取到锁</span></span><br><span class="line">                <span class="keyword">if</span> (locks.size() - acquiredLocks.size() == failedLocksLimit()) &#123;</span><br><span class="line">                    <span class="comment">//如果锁的数量==允许失败数量，退出循环，比如，如果有3个锁，允许失败数量为3，第一个就失败了，那也返回成功</span></span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (failedLocksLimit == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">//如果不允许有失败的，释放已经获取到的锁</span></span><br><span class="line">                    unlockInner(acquiredLocks);</span><br><span class="line">                    <span class="keyword">if</span> (waitTime == -<span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                    failedLocksLimit = failedLocksLimit();</span><br><span class="line">                    acquiredLocks.clear();</span><br><span class="line">                    <span class="comment">// reset iterator</span></span><br><span class="line">                    <span class="comment">//重置iterator</span></span><br><span class="line">                    <span class="keyword">while</span> (iterator.hasPrevious()) &#123;</span><br><span class="line">                        iterator.previous();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    failedLocksLimit--;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (remainTime != -<span class="number">1</span>) &#123;</span><br><span class="line">                remainTime -= System.currentTimeMillis() - time;</span><br><span class="line">                time = System.currentTimeMillis();</span><br><span class="line">                <span class="keyword">if</span> (remainTime &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    unlockInner(acquiredLocks);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//加锁成功，每个redis都去重置一下过期时间</span></span><br><span class="line">        <span class="keyword">if</span> (leaseTime != -<span class="number">1</span>) &#123;</span><br><span class="line">            acquiredLocks.stream()</span><br><span class="line">                    .map(l -&gt; (RedissonLock) l)</span><br><span class="line">                    .map(l -&gt; l.expireAsync(unit.toMillis(leaseTime), TimeUnit.MILLISECONDS))</span><br><span class="line">                    .forEach(f -&gt; f.syncUninterruptibly());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/redis/">#redis</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/redission/">#redission</a>&nbsp;
+                    </li>
+                
+                    <li class="tag-item">
+                        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">#分布式锁</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/19/%E5%BD%93Transactional%E9%81%87%E5%88%B0%E9%94%81/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">当Transactional遇到锁</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%AF%AD"><span class="nav-text">引语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redisson%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E9%94%81%E9%87%8D%E5%85%A5"><span class="nav-text">Redisson如何解决锁重入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redisson%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E9%94%81%E8%B6%85%E6%97%B6"><span class="nav-text">Redisson如何解决锁超时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redission%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E9%94%81%E9%87%8D%E8%AF%95"><span class="nav-text">Redission如何解决锁重试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redisson%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-text">Redisson如何解决一致性问题</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
