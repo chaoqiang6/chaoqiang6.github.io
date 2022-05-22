@@ -9,7 +9,7 @@
     
     <title>
         
-            多线程设计模式之两阶段中止 |
+            将postman返回数据写入文件 |
         
         进击的阿强
     </title>
@@ -139,7 +139,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">多线程设计模式之两阶段中止</span>
+            <span class="title-hover-animation">将postman返回数据写入文件</span>
         </div>
 
         
@@ -156,8 +156,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-05-21 23:38:53</span>
-        <span class="mobile">2022-05-21 23:38</span>
+        <span class="pc">2022-05-22 09:30:48</span>
+        <span class="mobile">2022-05-22 09:30</span>
     </span>
     
     
@@ -166,11 +166,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/%E7%BA%BF%E7%A8%8B/">线程</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>&nbsp;
+                        <a href="/tags/postman/">postman</a>&nbsp;
                     </li>
                 
             </ul>
@@ -189,24 +185,35 @@
         
 
         <div class="article-content markdown-body">
-            <h2 id="两阶段终止模式"><a href="#两阶段终止模式" class="headerlink" title="两阶段终止模式"></a>两阶段终止模式</h2><p>Two Phace Termination</p>
-<p>在一个线程T1中如何优雅终止线程T2?这里的优雅指的是T2有料理后事的机会</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">* <span class="meta">@deprecated</span> This method is inherently unsafe.  Stopping a thread with</span><br><span class="line">     *       Thread.stop causes it to unlock all of the monitors that it</span><br><span class="line">     *       <span class="function">has <span class="title">locked</span> <span class="params">(as a natural consequence of the unchecked</span></span></span><br><span class="line"><span class="params"><span class="function">     *       &lt;code&gt;ThreadDeath&lt;/code&gt; exception propagating up the stack)</span>.  If</span></span><br><span class="line"><span class="function">     *       any of the objects previously <span class="keyword">protected</span> by these monitors were in</span></span><br><span class="line"><span class="function">     *       an inconsistent state, the damaged objects become visible to</span></span><br><span class="line"><span class="function">     *       other threads, potentially resulting in arbitrary behavior.  Many</span></span><br><span class="line"><span class="function">     *       uses of &lt;code&gt;stop&lt;/code&gt; should be replaced by code that simply</span></span><br><span class="line"><span class="function">     *       modifies some variable to indicate that the target thread should</span></span><br><span class="line"><span class="function">     *       stop running.  The target thread should check <span class="keyword">this</span> variable</span></span><br><span class="line"><span class="function">     *       regularly, and return from its run method in an orderly fashion</span></span><br><span class="line"><span class="function">     *       <span class="keyword">if</span> the variable indicates that it is to stop running.  If the</span></span><br><span class="line"><span class="function">     *       target thread waits <span class="keyword">for</span> <span class="keyword">long</span> <span class="title">periods</span> <span class="params">(on a condition variable,</span></span></span><br><span class="line"><span class="params"><span class="function">     *       <span class="keyword">for</span> example)</span>, the &lt;code&gt;interrupt&lt;/code&gt; method should be used to</span></span><br><span class="line"><span class="function">     *       interrupt the wait.</span></span><br><span class="line"><span class="function">     *       For more information, see</span></span><br><span class="line"><span class="function">     *       &lt;a href</span>=<span class="string">&quot;&#123;@docRoot&#125;/../technotes/guides/concurrency/threadPrimitiveDeprecation.html&quot;</span>&gt;Why</span><br><span class="line">     *       are Thread.stop, Thread.suspend and Thread.resume Deprecated?&lt;/a&gt;.</span><br><span class="line">     */</span><br><span class="line">       <span class="comment">//不安全，会释放所有锁，如果这些锁保护的任意对象在临时状态，这些对象会被其他线程可见，可能导致隐藏问题，使用stop的场景应该使用代码来修改一些变量去标识该线程是否应该停止，目标线程定期检查这些变量，如果变量说应该停止运行，目标线程应该自己return运行的方法，如果线程等待很长时间，应该使用interrupt去打断等待</span></span><br><span class="line">    <span class="meta">@Deprecated</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+            <p>在学习黑马redis异步秒杀教程中，jmeter需要使用包含1000个token的文件来模拟1000个用户秒杀场景，但是如何获取包含1000个token的文件呢，之前用过使用postman批量调用，可以从文件中读取参数并批量调用，postman的TEST标签中的代码为接口调用后的回调函数获取返回数据，但怎样将返回数据写入到文件这个网上很少有教程，通过postman write response to file 关键字，终于找到了对应的教程:smiley:</p>
+<p>原文<a class="link" target="_blank" rel="noopener" href="https://documenter.getpostman.com/view/3407886/RWgp1fB5" title target>将postman返回数据写入文件<i class="fas fa-external-link-alt"></i></a></p>
+<p>上面的链接右上角可以直接在你的postman中导入，如果你没有postman账号，可以使用我导出的<a href="/downloads/%E5%86%99%E5%85%A5%E5%93%8D%E5%BA%94%E5%88%B0%E6%96%87%E4%BB%B6.postman_collection.json">配置文件</a></p>
+<p><img src="/2022/05/22/%E5%B0%86postman%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/localNodeServer-1.png" alt="img"></p>
+<p>思路就是起一个本地服务用来接收POST请求，并将请求数据写入到文件，postman在执行调用后，回调函数中向改本地服务发送请求，请求中包含要写入的数据</p>
+<blockquote>
+<ol>
+<li><p>Put all the requests you want to write the responses for, under this collection.</p>
+<p>将你要写入response的请求放到该集合</p>
+</li>
+<li><p>Clone the following repository to your machine - <a class="link" target="_blank" rel="noopener" href="https://github.com/sivcan/ResponseToFile-Postman">https://github.com/sivcan/ResponseToFile-Postman<i class="fas fa-external-link-alt"></i></a> or use the following command - <code>git clone https://github.com/sivcan/ResponseToFile-Postman</code></p>
+<p>git clone <a class="link" target="_blank" rel="noopener" href="https://github.com/sivcan/ResponseToFile-Postman">https://github.com/sivcan/ResponseToFile-Postman<i class="fas fa-external-link-alt"></i></a></p>
+</li>
+<li><p>Navigate into the directory and install the dependencies. Use the following command: <code>npm i</code></p>
+<p>进入目录，导入依赖npm i</p>
+</li>
+<li><p>Run the local server. Use the following command: <code>node script.js</code></p>
+<p>启动本地服务node script.js</p>
+</li>
+<li><p>Now, the responses for every request which is a part of this collection will be written to the <code>Responses</code> folder inside the project repo. You can modify the local server’s code to change the file location.</p>
+<p>现在该集合下所有的请求都会将response写入到Responses目录</p>
+</li>
+</ol>
+</blockquote>
+<p>照着上面步骤走，很容易就写入文件了，接口返回数据样式如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;success&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">&quot;data&quot;</span>: <span class="string">&quot;5046c7cc9cf1401c9159c0d673f8aa5e&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>错误思路</p>
-<ul>
-<li>使用线程对象的stop方法</li>
-<li>调用System.exit();</li>
-</ul>
-<p>正确思路</p>
-<p>![截屏2022-01-12 下午11.53.08](多线程设计模式之两阶段中止/截屏2022-01-12 下午11.53.08.png)</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j(topic = &quot;c.Monitor1&quot;)</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Monitor</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Thread monitor;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        monitor = <span class="keyword">new</span> Thread(() -&gt;&#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">                <span class="keyword">boolean</span> interrupted = Thread.currentThread().isInterrupted();</span><br><span class="line">                <span class="keyword">if</span>(interrupted)&#123;</span><br><span class="line">                    log.debug(<span class="string">&quot;优雅停止&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">10000</span>);<span class="comment">//</span></span><br><span class="line">                    log.debug(<span class="string">&quot;执行监控记录&quot;</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                    <span class="comment">//重新设置打断标记</span></span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        monitor.start();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stop</span><span class="params">()</span></span>&#123;</span><br><span class="line">        monitor.interrupt();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Monitor monitor = <span class="keyword">new</span> Monitor();</span><br><span class="line">        monitor.run();</span><br><span class="line">        Thread.sleep(<span class="number">10L</span>);</span><br><span class="line">        monitor.stop();</span><br></pre></td></tr></table></figure>
-
-
+<p>所以在collection中的Test标签下脚本</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// The opts for the server, also includes the data to be written to file</span></span><br><span class="line"><span class="keyword">let</span> opts = &#123;</span><br><span class="line">    <span class="attr">requestName</span>: request.name || request.url,</span><br><span class="line">    <span class="attr">fileExtension</span>: <span class="string">&#x27;txt&#x27;</span>,</span><br><span class="line">  <span class="comment">//默认mode为writefile，这里需要改成appendFile</span></span><br><span class="line">    <span class="attr">mode</span>: <span class="string">&#x27;appendFile&#x27;</span>, <span class="comment">// Change this to any function of the fs library of node to use it.</span></span><br><span class="line">    <span class="attr">uniqueIdentifier</span>: <span class="literal">false</span>,</span><br><span class="line">  <span class="comment">//将数据解析出data并加入换行符</span></span><br><span class="line">    <span class="attr">responseData</span>: pm.response.json().data+<span class="string">&quot;\r\n&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">pm.sendRequest(&#123;</span><br><span class="line">    <span class="attr">url</span>: <span class="string">&#x27;http://localhost:3000/write&#x27;</span>,</span><br><span class="line">    <span class="attr">method</span>: <span class="string">&#x27;POST&#x27;</span>,</span><br><span class="line">    <span class="attr">header</span>: <span class="string">&#x27;Content-Type:application/json&#x27;</span>,</span><br><span class="line">    <span class="attr">body</span>: &#123;</span><br><span class="line">        <span class="attr">mode</span>: <span class="string">&#x27;raw&#x27;</span>,</span><br><span class="line">        <span class="attr">raw</span>: <span class="built_in">JSON</span>.stringify(opts)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err, res</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(res);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 
 
         </div>
@@ -217,11 +224,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/%E7%BA%BF%E7%A8%8B/">#线程</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>&nbsp;
+                        <a href="/tags/postman/">#postman</a>&nbsp;
                     </li>
                 
             </ul>
@@ -230,29 +233,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/05/22/%E5%B0%86postman%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">将postman返回数据写入文件</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/05/21/Redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/"
+                           href="/2022/05/21/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%A4%E9%98%B6%E6%AE%B5%E4%B8%AD%E6%AD%A2/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">Redisson分布式锁代码学习</span>
+                                <span class="post-nav-title-item">多线程设计模式之两阶段中止</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
@@ -424,7 +412,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E7%BB%88%E6%AD%A2%E6%A8%A1%E5%BC%8F"><span class="nav-text">两阶段终止模式</span></a></li></ol>
+        
     </div>
 </div>
         </aside>
