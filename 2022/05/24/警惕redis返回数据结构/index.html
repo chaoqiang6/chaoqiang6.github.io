@@ -9,7 +9,7 @@
     
     <title>
         
-            docker安装mysql |
+            警惕redis返回数据结构 |
         
         进击的阿强
     </title>
@@ -139,7 +139,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">docker安装mysql</span>
+            <span class="title-hover-animation">警惕redis返回数据结构</span>
         </div>
 
         
@@ -156,8 +156,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-02-12 14:57:15</span>
-        <span class="mobile">2022-02-12 14:57</span>
+        <span class="pc">2022-05-24 00:50:37</span>
+        <span class="mobile">2022-05-24 00:50</span>
     </span>
     
     
@@ -166,15 +166,7 @@
             <ul>
                 
                     <li>
-                        <a href="/tags/docker/">docker</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/mysql/">mysql</a>&nbsp;
-                    </li>
-                
-                    <li>
-                        | <a href="/tags/arm/">arm</a>&nbsp;
+                        <a href="/tags/redis/">redis</a>&nbsp;
                     </li>
                 
             </ul>
@@ -193,8 +185,14 @@
         
 
         <div class="article-content markdown-body">
-            <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">chaoqiang@Pineapple blog % docker run --name mysql0828 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28</span><br><span class="line">Unable to find image &#x27;mysql:8.0.28&#x27; locally</span><br><span class="line">8.0.28: Pulling from library/mysql</span><br><span class="line">docker: no matching manifest for linux/arm64/v8 in the manifest list entries.</span><br><span class="line">See &#x27;docker run --help&#x27;.</span><br><span class="line"><span class="meta">#</span><span class="bash"> 第一种</span></span><br><span class="line">chaoqiang@Pineapple blog % docker run --name mysql0828 --platform linux/amd64 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 发现在list entries中没找到linux/arm64/v8的manifest，看一眼文档说是arm64的有另外的仓库</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+            <p>sismember查询某数据是否属于某set，返回0 或1</p>
+<p>smismember查询多个数据是否属于某set，返回一个list</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; smismember &quot;seckill:order:8&quot; 1011</span><br><span class="line">1) (integer) 1</span><br><span class="line">127.0.0.1:6379&gt; sismember &quot;seckill:order:8&quot; 1011</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; smismember &quot;seckill:order:8&quot; 1011 1012</span><br><span class="line">1) (integer) 1</span><br><span class="line">2) (integer) 0</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; help sismember</span><br><span class="line"></span><br><span class="line">  SISMEMBER key member</span><br><span class="line">  summary: Determine if a given value is a member of a set</span><br><span class="line">  since: 1.0.0</span><br><span class="line">  group: set</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; help smismember</span><br><span class="line"></span><br><span class="line">  SMISMEMBER key member [member ...]</span><br><span class="line">  summary: Returns the membership associated with the given elements for a set</span><br><span class="line">  since: 6.2.0</span><br><span class="line">  group: set</span><br></pre></td></tr></table></figure>
 
+<p>多人执行优惠券秒杀lua脚本如下</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 秒杀时，直接从redis中读取优惠券数量，如果数量&lt;0,返回-1,再判断当前用户是否已存在，如果当前用户已有秒杀记录，返回0，否则，返回1</span></span><br><span class="line"><span class="keyword">local</span> voucherStockKey = <span class="string">&#x27;seckill:stock:&#x27;</span>..ARGV[<span class="number">1</span>];</span><br><span class="line"><span class="keyword">local</span> voucherOrderKey = <span class="string">&#x27;seckill:order:&#x27;</span>..ARGV[<span class="number">1</span>];</span><br><span class="line"><span class="keyword">local</span> orderId = ARGV[<span class="number">3</span>];</span><br><span class="line"><span class="keyword">local</span> voucherId = ARGV[<span class="number">1</span>] ;</span><br><span class="line"><span class="keyword">local</span> userId = ARGV[<span class="number">2</span>];</span><br><span class="line"><span class="keyword">local</span> voucherCount = <span class="built_in">tonumber</span>(redis.call(<span class="string">&#x27;get&#x27;</span>,voucherStockKey));</span><br><span class="line"><span class="keyword">if</span>(voucherCount &lt;= <span class="number">0</span>) <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">local</span> isMember = <span class="built_in">tonumber</span>(redis.call(<span class="string">&#x27;SMISMEMBER&#x27;</span>,voucherOrderKey,userId));</span><br><span class="line"><span class="keyword">if</span> (isMember == <span class="number">1</span>) <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">redis.call(<span class="string">&#x27;decr&#x27;</span>,voucherStockKey);</span><br><span class="line">redis.call(<span class="string">&#x27;sadd&#x27;</span>,voucherOrderKey,userId);</span><br><span class="line"><span class="comment">--改为验证成功后向redis消费队列发送消息，业务代码通过消费者组订阅消息队列未被消费消息，若消费失败，从waitlist中取消息尝试重新消费</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--XADD key [NOMKSTREAM] [MAXLEN|MINID [=|~] threshold [LIMIT count]] *|ID field value [field value ...]</span></span><br><span class="line"><span class="comment">--summary: Appends a new entry to a stream</span></span><br><span class="line"><span class="comment">--向一个stream中添加一个entry</span></span><br><span class="line"><span class="comment">-- xadd stream1 * k1 v1 k2 v2</span></span><br><span class="line"><span class="comment">--since: 5.0.0</span></span><br><span class="line"><span class="comment">--group: stream</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">--XGROUP [CREATE key groupname ID|$ [MKSTREAM]] [SETID key groupname ID|$] [DESTROY key groupname] [CREATECONSUMER key groupname consumername] [DELCONSUMER key groupname consumername]</span></span><br><span class="line"><span class="comment">--summary: Create, destroy, and manage consumer groups.</span></span><br><span class="line"><span class="comment">--新建，销毁，管理消费者组,</span></span><br><span class="line"><span class="comment">--xgroup create stream1 group1 $ $表示从最后一条开始订阅，0表示从第1条开始订阅</span></span><br><span class="line"><span class="comment">--xgroup create stream1 group2 0</span></span><br><span class="line"><span class="comment">--since: 5.0.0</span></span><br><span class="line"><span class="comment">--group: stream</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--XREADGROUP GROUP group consumer [COUNT count] [BLOCK milliseconds] [NOACK] STREAMS key [key ...] ID [ID ...]</span></span><br><span class="line"><span class="comment">--summary: Return new entries from a stream using a consumer group, or access the history of the pending entries for a given consumer. Can block.</span></span><br><span class="line"><span class="comment">--使用消费者组从stream中返回一个entries，或从pending entries中取出已读取未ACK的记录</span></span><br><span class="line"><span class="comment">--xreadgroup GROUP group1 [Count 本次查询最大数量] [BLOCK 最大阻塞时间] [不需要ACK，取出来这个消息不会放到pendinglist中] STREAMS stream1</span></span><br><span class="line"><span class="comment">--xreadgroup GROUP group1 consumer1 count 1 block 2000 streams stream1 &gt;</span></span><br><span class="line"><span class="comment">--从未被消费消息取</span></span><br><span class="line"><span class="comment">--xreadgroup GROUP group1 consumer1 count 1 block 2000 streams stream1 0</span></span><br><span class="line"><span class="comment">--从pendinglist中取</span></span><br><span class="line"><span class="comment">--xreadgroup group  group2 consumer1 count 3 block 2000 streams stream1 &gt;</span></span><br><span class="line"><span class="comment">--xreadgroup group  group2 consumer1 count 5 block 2000 streams stream1 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--since: 5.0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">--XACK key group ID [ID ...]</span></span><br><span class="line"><span class="comment">--summary: Marks a pending message as correctly processed, effectively removing it from the pending entries list of the consumer group. Return value of the command is the number of messages successfully acknowledged, that is, the IDs we were actually able to resolve in the PEL.</span></span><br><span class="line"><span class="comment">--ack确认 xack stream1 group1 1653314812611-0</span></span><br><span class="line"><span class="comment">--since: 5.0.0</span></span><br><span class="line"><span class="comment">--向消息队列中添加下单信息</span></span><br><span class="line">redis.call(<span class="string">&#x27;xadd&#x27;</span>,<span class="string">&#x27;stream.order&#x27;</span>,<span class="string">&#x27;*&#x27;</span>,<span class="string">&#x27;id&#x27;</span>,orderId,<span class="string">&#x27;voucherId&#x27;</span>,voucherId,<span class="string">&#x27;userId&#x27;</span>,userId,<span class="string">&quot;voucherStockKey&quot;</span>,voucherStockKey,<span class="string">&quot;voucherOrderKey&quot;</span>,voucherOrderKey);</span><br><span class="line"><span class="keyword">return</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第11行由于疏忽使用了smismeber，导致第12行判断为false，向消息队列发送订单信息，应该为sismember。浪费了好几个小时在这上面，debug拿到参数，在命令行实验，在消息队列进行验证，没想到卡在了一个返回数据类型上，redis还是要多敲命令</p>
 
         </div>
 
@@ -204,15 +202,7 @@
             <ul class="post-tags-box">
                 
                     <li class="tag-item">
-                        <a href="/tags/docker/">#docker</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/mysql/">#mysql</a>&nbsp;
-                    </li>
-                
-                    <li class="tag-item">
-                        <a href="/tags/arm/">#arm</a>&nbsp;
+                        <a href="/tags/redis/">#redis</a>&nbsp;
                     </li>
                 
             </ul>
@@ -221,29 +211,14 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/02/13/MYSQL%E9%AB%98%E7%BA%A7/"
-                        >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
-                            <span class="title flex-center">
-                                <span class="post-nav-title-item">MYSQL高级</span>
-                                <span class="post-nav-item">上一篇</span>
-                            </span>
-                        </a>
-                    </div>
-                
                 
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/"
+                           href="/2022/05/22/%E5%B0%86postman%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">mysql数据库笔记</span>
+                                <span class="post-nav-title-item">将postman返回数据写入文件</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center">
