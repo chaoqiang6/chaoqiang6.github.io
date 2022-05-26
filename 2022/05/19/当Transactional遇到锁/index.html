@@ -187,8 +187,8 @@
         <div class="article-content markdown-body">
             <p>知识点:</p>
 <ul>
-<li>Transactional的开始时机为第一个sql语句</li>
-<li>释放锁时，事务不一定提交，第二个线程可能在第一个线程提交前开启事务</li>
+<li>Transactional的事务begin时机为第一个sql语句</li>
+<li>释放锁时，事务不一定提交，第二个线程可能在第一个线程释放锁后提交事务前拿到锁开启事务</li>
 <li><a class="link" target="_blank" rel="noopener" href="https://stackoverflow.com/questions/68417931/add-transactional-annotation-to-the-method-in-spring-is-the-transaction-submi">https://stackoverflow.com/questions/68417931/add-transactional-annotation-to-the-method-in-spring-is-the-transaction-submi<i class="fas fa-external-link-alt"></i></a></li>
 </ul>
 <p>在redis解决一人一单时，因为下单操作要对订单和库存两张表进行操作，所以需要使用事务操作，又因为多线程操作同一共享资源，所以通过加锁保证线程安全，代码如下</p>

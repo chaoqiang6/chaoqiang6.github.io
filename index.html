@@ -267,9 +267,9 @@ smismember查询多个数据是否属于某set，返回一个list
                     
                         知识点:
 
-Transactional的开始时机为第一个sql语句
-释放锁时，事务不一定提交，第二个线程可能在第一个线程提交前开启事务
-https://stackoverflow.com/questions/68417931/add-transact...
+Transactional的事务begin时机为第一个sql语句
+释放锁时，事务不一定提交，第二个线程可能在第一个线程释放锁后提交事务前拿到锁开启事务
+https://stackoverflow.com/questions/6841793...
                     
                 </div>
 
