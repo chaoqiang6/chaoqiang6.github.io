@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            redis高级 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">redis高级</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-05-28 11:45:18</span>
+        <span class="mobile">2022-05-28 11:45</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/redis/">redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="redis持久化"><a href="#redis持久化" class="headerlink" title="redis持久化"></a>redis持久化</h1><h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>Redis Data Backup file</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:6379&gt; help save</span><br><span class="line"><span class="meta">#</span><span class="bash">主进程进行RDB备份</span></span><br><span class="line">  SAVE -</span><br><span class="line">  summary: Synchronously save the dataset to disk</span><br><span class="line">  since: 1.0.0</span><br><span class="line">  group: server</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">127.0.0.1:6379&gt; help bgsave</span><br><span class="line"><span class="meta">#</span><span class="bash"> 开启子进程进行RDB备份</span></span><br><span class="line">  BGSAVE [SCHEDULE]</span><br><span class="line">  summary: Asynchronously save the dataset to disk</span><br><span class="line">  since: 1.0.0</span><br><span class="line">  group: server</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>RDB默认执行bgsave时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Unless specified otherwise, by default Redis will save the DB:</span><br><span class="line">#   * After 3600 seconds (an hour) if at least 1 key changed</span><br><span class="line">#   * After 300 seconds (5 minutes) if at least 100 keys changed</span><br><span class="line">#   * After 60 seconds if at least 10000 keys changed</span><br><span class="line">#</span><br><span class="line"># You can set these explicitly by uncommenting the three following lines.</span><br><span class="line">#</span><br><span class="line"># save 3600 1</span><br><span class="line"># save 300 100</span><br><span class="line"># save 60 10000</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="RDB方式bgsave基本流程"><a href="#RDB方式bgsave基本流程" class="headerlink" title="RDB方式bgsave基本流程"></a>RDB方式bgsave基本流程</h3><ol>
+<li>fork主进程的到一个子进程，通过复制页表实现共享内存空间</li>
+<li>子进程读取内存数据并写入到新的RDB文件中</li>
+<li>用新的RDB文件替换旧的RDB文件</li>
+<li>主进程在过程中执行命令会使用copyonwrite，开辟新的空间对原数据数据读取后进行写入</li>
+</ol>
+<h3 id="RDB执行时机"><a href="#RDB执行时机" class="headerlink" title="RDB执行时机"></a>RDB执行时机</h3><p>RDB默认执行bgsave时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># Save the DB to disk.</span><br><span class="line">#</span><br><span class="line"># save &lt;seconds&gt; &lt;changes&gt;</span><br><span class="line">#</span><br><span class="line"># Redis will save the DB if both the given number of seconds and the given</span><br><span class="line"># number of write operations against the DB occurred.</span><br><span class="line">#</span><br><span class="line"># Snapshotting can be completely disabled with a single empty string argument</span><br><span class="line"># as in following example:</span><br><span class="line"># 禁用RDB</span><br><span class="line">save &quot;&quot;</span><br><span class="line"># Unless specified otherwise, by default Redis will save the DB:</span><br><span class="line">#   * After 3600 seconds (an hour) if at least 1 key changed</span><br><span class="line">#   * After 300 seconds (5 minutes) if at least 100 keys changed</span><br><span class="line">#   * After 60 seconds if at least 10000 keys changed</span><br><span class="line">#</span><br><span class="line"># You can set these explicitly by uncommenting the three following lines.</span><br><span class="line">#</span><br><span class="line"># save 3600 1</span><br><span class="line"># save 300 100</span><br><span class="line"># save 60 10000</span><br></pre></td></tr></table></figure>
+
+<p>当要停止redis时也会进行一次rdb</p>
+<h3 id="Redis缺点"><a href="#Redis缺点" class="headerlink" title="Redis缺点"></a>Redis缺点</h3><ul>
+<li>RDB执行间隔时间长，两次RDB之间写入数据有丢失风险</li>
+<li>fork子进程，压缩，写入RDB文件都比较耗时 </li>
+</ul>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>Append Only File.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># The fsync() call tells the Operating System to actually write data on disk</span><br><span class="line"># instead of waiting for more data in the output buffer. Some OS will really flush</span><br><span class="line"># data on disk, some other OS will just try to do it ASAP.</span><br><span class="line">#</span><br><span class="line"># Redis supports three different modes:</span><br><span class="line">#</span><br><span class="line"># no: don&#x27;t fsync, just let the OS flush the data when it wants. Faster.</span><br><span class="line"># always: fsync after every write to the append only log. Slow, Safest.</span><br><span class="line"># everysec: fsync only one time every second. Compromise.</span><br><span class="line">#</span><br><span class="line"># The default is &quot;everysec&quot;, as that&#x27;s usually the right compromise between</span><br><span class="line"># speed and data safety. It&#x27;s up to you to understand if you can relax this to</span><br><span class="line"># &quot;no&quot; that will let the operating system flush the output buffer when</span><br><span class="line"># it wants, for better performances (but if you can live with the idea of</span><br><span class="line"># some data loss consider the default persistence mode that&#x27;s snapshotting),</span><br><span class="line"># or on the contrary, use &quot;always&quot; that&#x27;s very slow but a bit safer than</span><br><span class="line"># everysec.</span><br><span class="line">#</span><br><span class="line"># More details please check the following article:</span><br><span class="line"># http://antirez.com/post/redis-persistence-demystified.html</span><br><span class="line">#</span><br><span class="line"># If unsure, use &quot;everysec&quot;.</span><br><span class="line"></span><br><span class="line"># appendfsync always</span><br><span class="line">appendfsync everysec</span><br><span class="line"># appendfsync no</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>aof重写出发机制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"># Automatic rewrite of the append only file.</span><br><span class="line"># Redis is able to automatically rewrite the log file implicitly calling</span><br><span class="line"># BGREWRITEAOF when the AOF log size grows by the specified percentage.</span><br><span class="line">#</span><br><span class="line"># This is how it works: Redis remembers the size of the AOF file after the</span><br><span class="line"># latest rewrite (if no rewrite has happened since the restart, the size of</span><br><span class="line"># the AOF at startup is used).</span><br><span class="line">#</span><br><span class="line"># This base size is compared to the current size. If the current size is</span><br><span class="line"># bigger than the specified percentage, the rewrite is triggered. Also</span><br><span class="line"># you need to specify a minimal size for the AOF file to be rewritten, this</span><br><span class="line"># is useful to avoid rewriting the AOF file even if the percentage increase</span><br><span class="line"># is reached but it is still pretty small.</span><br><span class="line">#</span><br><span class="line"># Specify a percentage of zero in order to disable the automatic AOF</span><br><span class="line"># rewrite feature.</span><br><span class="line"></span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br></pre></td></tr></table></figure>
+
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>RDB</th>
+<th>AOF</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>持久化方式</td>
+<td>定时对整个内存做快照</td>
+<td>记录每一次执行的命令</td>
+</tr>
+<tr>
+<td>数据完整性</td>
+<td>不完整，两次备份之间会有丢失</td>
+<td>相对完整，取决于刷盘策略</td>
+</tr>
+<tr>
+<td>文件大小</td>
+<td>会有压缩，文件体积小</td>
+<td>记录命令，文件体积很大</td>
+</tr>
+<tr>
+<td>宕机恢复</td>
+<td>很快</td>
+<td>慢</td>
+</tr>
+<tr>
+<td>数据恢复优先级</td>
+<td>低，数据完整性不如AOF</td>
+<td>高，数据完整性高</td>
+</tr>
+<tr>
+<td>系统资源占用</td>
+<td>高，大量CPU和内存消耗</td>
+<td>低，主要是磁盘，AOF重写时会占用CPU和内存资源</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>可以容忍数分钟的数据丢失</td>
+<td>对数据安全性要求高</td>
+</tr>
+</tbody></table>
+<h1 id="Redis的主从"><a href="#Redis的主从" class="headerlink" title="Redis的主从"></a>Redis的主从</h1><p>单节点Redis并发能力有上限，要进一步提高并发能力，需要搭建主从集群，实现读写分离</p>
+<p><img src="/2022/05/28/redis%E9%AB%98%E7%BA%A7/image-20220528144824987.png" alt="image-20220528144824987"></p>
+<p>主从同步流程</p>
+<ul>
+<li>slave节点请求增量同步</li>
+<li>master节点判断replid，发现不一致，拒绝增量同步</li>
+<li>master将完整内存数据生成rdb，发送rdb到slave</li>
+<li>slave清空本地数据，加载master的rdb</li>
+<li>master将生成rdb期间的命令记录在repl——baklog中，并持续将log中的命令发送给slave</li>
+<li>slave执行接收到的命令，保持与master之间的同步</li>
+</ul>
+<p>优化主从同步</p>
+<ul>
+<li>如果主节点存储一般且主从节点间网络好，主节点配置repl-diskless-sync no</li>
+<li>Redis单节点内存占用不要太大</li>
+<li>适量提高repl——baklog大小，发现slave宕机尽快实现故障恢复，避免全量同步</li>
+<li>限制一个master上的slave节点数量，如果slave数量很多，可采用主-从-从链式结构，减少master压力</li>
+</ul>
+<p>全量同步</p>
+<blockquote>
+<p>master将完整内存数据生成RDB，发送RDB到slave，后续命令记录在repl_baklog,逐个发送到slave</p>
+</blockquote>
+<p>增量同步</p>
+<blockquote>
+<p>slave提交自己的offset到master，master获取repl_baklog中从offset之后的命令给slave</p>
+</blockquote>
+<p>执行全量同步时机</p>
+<ul>
+<li>slave第一次链接master</li>
+<li>slave断开时间太久，repl_baklog中的offset已经被覆盖</li>
+</ul>
+<p>执行增量同步时机</p>
+<ul>
+<li>slave断开又恢复，并且在repl_baklog中能找到offset</li>
+</ul>
+<h1 id="Redis哨兵"><a href="#Redis哨兵" class="headerlink" title="Redis哨兵"></a>Redis哨兵</h1><p>sentinel配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">port 27001</span><br><span class="line">sentinel announce-ip 192.168.150.101</span><br><span class="line">sentinel monitor mymaster 192.168.150.101 7001 2</span><br><span class="line">sentinel down-after-milliseconds mymaster 5000</span><br><span class="line">sentinel failover-timeout mymaster 60000</span><br><span class="line">dir &quot;/tmp/s1&quot;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>作用</p>
+<ul>
+<li>监控:不断检查master和slave是否按预期工作</li>
+<li>自动故障恢复:如果master故障，Sentinel会将一个slave提升为master，当故障实例恢复后也以新的master为主</li>
+<li>通知：Sentinel充当Redis客户端的服务发现来源，当集群发生故障转移时，会将最新信息推送给Redis的客户端</li>
+</ul>
+<p>Sentinel判断redis实例是否健康</p>
+<ul>
+<li>每秒发送一次ping命令，超过一定时间没有响应则认为是主管下限</li>
+<li>超过quorum的sentinel认为实例主观下线，则认为服务下线</li>
+<li>最早发现宕机的sentinel为master，执行故障转移步骤</li>
+</ul>
+<p>故障转移步骤</p>
+<ol>
+<li>选定一个slave作为新的master，执行slave of no one</li>
+<li>让所有节点都执行slaveof 新master</li>
+<li>修改故障节点配置，添加slaveof 新master，恢复后就直接作为slave了</li>
+</ol>
+<p>选取master策略</p>
+<ol>
+<li>判断slave节点与master节点断开时间，如果超过sentinel配置的(down-after-milliseconds*10)会排除该slave节点</li>
+<li>判断slave节点的slave-priority值，值越小，优先级越高</li>
+<li>如果优先级一样，判断slave节点的offset值，offset越大说明优先级越高</li>
+<li>判断slave节点的运行id大小，越小，优先级越高</li>
+</ol>
+<h1 id="Redis-分片集群结构"><a href="#Redis-分片集群结构" class="headerlink" title="Redis 分片集群结构"></a>Redis 分片集群结构</h1><ul>
+<li>解决数据的海量存储</li>
+<li>解决高并发写</li>
+</ul>
+<p>分片集群特征</p>
+<ul>
+<li>集群中有多个master，每个master保存不同数据</li>
+<li>每个master可以有多个slave节点</li>
+<li>master之间通过ping检测彼此健康状态</li>
+<li>客户端请求可以访问集群任意节点，最终被转发到正确的节点</li>
+</ul>
+<p>![截屏2022-05-28 16.29.47](redis高级/截屏2022-05-28 16.29.47.png)</p>
+<p>redis如何判断某个key应该在哪个实例上</p>
+<ul>
+<li>将16384个插槽分配到不同的实例</li>
+<li>根据key的有效部分计算hash值，对16384取余</li>
+<li>余数作为插槽，寻找插槽所在实例</li>
+</ul>
+<p>如何将同一类数据固定的保存在同一个redis实例</p>
+<p>这类数据使用相同的有效部分，例如key都以{typeId}为前缀</p>
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/redis/">#redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/05/29/ReentrentLock/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">ReentrentLock</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/27/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item"></span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-text">redis持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB"><span class="nav-text">RDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB%E6%96%B9%E5%BC%8Fbgsave%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-text">RDB方式bgsave基本流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDB%E6%89%A7%E8%A1%8C%E6%97%B6%E6%9C%BA"><span class="nav-text">RDB执行时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E7%BC%BA%E7%82%B9"><span class="nav-text">Redis缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOF"><span class="nav-text">AOF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E6%AF%94"><span class="nav-text">对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E7%9A%84%E4%B8%BB%E4%BB%8E"><span class="nav-text">Redis的主从</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E5%93%A8%E5%85%B5"><span class="nav-text">Redis哨兵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4%E7%BB%93%E6%9E%84"><span class="nav-text">Redis 分片集群结构</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
