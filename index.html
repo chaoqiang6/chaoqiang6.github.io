@@ -141,6 +141,95 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">
+                        redis主从,哨兵,集群原理
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        主从数据同步原理判断全量同步or增量同步
+redis从节点执行slaveof或replicaof 主节点ip:端口命令
+Replication Id集群id，redis节点启动时会生成一个唯一id
+offset偏移量:当前节点最新的一条同步记录id
+...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 17:32:27 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
+                        redis主从,哨兵,集群搭建
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        主从1234567891011121314151617181920212223242526272829303132333435363738394041# tmp目录下创建7001，7002，7003三个文件夹mkdir 7001 7002 7003#...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 15:19:52 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">
+                        InnoDB什么时候使用表锁而不是行锁
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        明确一点，行锁是建立在索引上的，不通过索引条件检索数据，那么innodb将对表中的所有记录加锁，此时行锁升级为表锁
+
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 13:59:44 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/">
                         为什么lamda表达式中的变量要使用final修饰
                     </a>
@@ -342,93 +431,6 @@ smismember查询多个数据是否属于某set，返回一个list
     </div>
 
     <a href="/2022/05/24/%E8%AD%A6%E6%83%95redis%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/22/%E5%B0%86postman%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/">
-                        将postman返回数据写入文件
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        在学习黑马redis异步秒杀教程中，jmeter需要使用包含1000个token的文件来模拟1000个用户秒杀场景，但是如何获取包含1000个token的文件呢，之前用过使用postman批量调用，可以从文件中读取参数并批量调用，postman的TE...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun May 22 2022 09:30:48 GMT+0800">2022-05-22</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/22/%E5%B0%86postman%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E6%96%87%E4%BB%B6/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/21/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%A4%E9%98%B6%E6%AE%B5%E4%B8%AD%E6%AD%A2/">
-                        多线程设计模式之两阶段中止
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        两阶段终止模式Two Phace Termination
-在一个线程T1中如何优雅终止线程T2?这里的优雅指的是T2有料理后事的机会
-1234567891011121314151617181920212223* @deprecated This me...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat May 21 2022 23:38:53 GMT+0800">2022-05-21</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/21/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E4%B8%A4%E9%98%B6%E6%AE%B5%E4%B8%AD%E6%AD%A2/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/21/Redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">
-                        Redisson分布式锁代码学习
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        引语我们可以利用redis的setnx命令实现分布式锁
-123456789101112131415@Overridepublic boolean tryLock(Duration timeout) &#123;  String threadId = ...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat May 21 2022 18:57:43 GMT+0800">2022-05-21</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/21/Redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BB%A3%E7%A0%81%E5%AD%A6%E4%B9%A0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>

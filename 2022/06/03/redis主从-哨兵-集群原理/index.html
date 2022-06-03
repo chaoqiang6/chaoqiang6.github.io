@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            redis主从,哨兵,集群原理 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">redis主从,哨兵,集群原理</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-06-03 17:32:27</span>
+        <span class="mobile">2022-06-03 17:32</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/redis/">redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="主从数据同步原理"><a href="#主从数据同步原理" class="headerlink" title="主从数据同步原理"></a>主从数据同步原理</h1><h2 id="判断全量同步or增量同步"><a href="#判断全量同步or增量同步" class="headerlink" title="判断全量同步or增量同步"></a>判断全量同步or增量同步</h2><ol>
+<li>redis从节点执行slaveof或replicaof 主节点ip:端口命令<ol>
+<li>Replication Id集群id，redis节点启动时会生成一个唯一id</li>
+<li>offset偏移量:当前节点最新的一条同步记录id</li>
+</ol>
+</li>
+<li>主节点拿到这两个参数进行验证<ol>
+<li>若Replication Id是当前节点id<ol>
+<li>offset偏移量误差够大，超过记录范围，进行全量同步</li>
+<li>offset偏移量与当前最新offset相差不大，进行增量同步，恢复continue</li>
+</ol>
+</li>
+<li>Replication Id不是当前节点id，执行全量同步，返回master的replid和offset</li>
+</ol>
+</li>
+<li>如果主节点回复replid和offset，从节点保存版本信息</li>
+</ol>
+<h2 id="全量同步步骤"><a href="#全量同步步骤" class="headerlink" title="全量同步步骤"></a>全量同步步骤</h2><ul>
+<li>master执行bgsave,将完整内存数据生成RDB文件，在此期间的所有写命令记录到repl_backlog中，发送RDB文件到slave</li>
+<li>slave清空本地数据，加载master的rdb文件</li>
+<li>master将repl_backlog中的命令发送到slave</li>
+<li>slave执行接收到的命令</li>
+</ul>
+<h2 id="增量同步步骤"><a href="#增量同步步骤" class="headerlink" title="增量同步步骤"></a>增量同步步骤</h2><ul>
+<li><p>主节点去repl_baklog中获取offset后的数据，发送offset后的命令</p>
+</li>
+<li><p>从节点执行命令</p>
+</li>
+</ul>
+<p>repl_baklog是类似mysql中的redo_log，大小有上限，写满后会覆盖最早数据，如果slave断开时间过久，导致未备份的数据被覆盖，则无法给予log做增量同步，只能再次进行全量同步</p>
+<h2 id="由此可得出优化项"><a href="#由此可得出优化项" class="headerlink" title="由此可得出优化项"></a>由此可得出优化项</h2><ul>
+<li>如果网络好，硬盘一般，可在master配置文件中配置repl_diskless-sync yes，启用无磁盘复制，避免全量同步时的磁盘IO，即不生成RDB文件了，直接通过socket进行传输数据</li>
+<li>Redis单节点内存不要占用太大，减少RDB导致的过多磁盘IO</li>
+<li>适当提高repl_baklog大小，发现slave宕机尽快恢复，避免全量同步</li>
+<li>限制master上的同步数量，如果很多slave，可采用主-从-从链式结构，减少master压力</li>
+</ul>
+<h1 id="哨兵"><a href="#哨兵" class="headerlink" title="哨兵"></a>哨兵</h1><p>哨兵机制实现了主从集群的自动故障恢复</p>
+<ul>
+<li>监控:每秒向master和slave发送ping，看是否按预期工作<ul>
+<li><strong>主观下线</strong>:单个sentinel节点发现某实例未在规定时间响应，认为该实例主观下线</li>
+<li>**客观下线:**超过指定数量(sentinel.conf中的quorum配置值)的sentinel判断某实例主观下线，则该实例客观下线，建议为sentinel实例数量的一半</li>
+</ul>
+</li>
+<li>自动故障恢复:如果master故障,slave会将一个slave提升为master，当故障实例恢复后也以新的master为主<ul>
+<li>判断slave节点与master节点<strong>断开时间长短</strong>，如果超过(down-after-milliseconds * 10)则会删除该slave节点</li>
+<li>判断slave节点的<strong>slave-priority</strong>值，越小优先级越高，如果是0，用不参与选举</li>
+<li>如果slave-priority值一样，判断slave节点的<strong>offset</strong>值，offset越大，数据越新，优先级越高</li>
+<li>offset值一样，判断slave节点的<strong>运行id</strong>大小，运行id越小，优先级越高</li>
+</ul>
+</li>
+<li>通知:Sentinel充当Redis客户端的服务发现来源，集群发生故障转移时，将最新信息推送给redis的客户端<ul>
+<li>sentinel给选出的新master发送slaveof no one，让该节点成为master</li>
+<li>向其他slave发送slaveof 新的masterip:端口</li>
+<li>将故障节点标记为slave，故障节点恢复后会自动成为新的master上的slave节点</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">port 27001</span><br><span class="line"></span><br><span class="line">sentinel announce-ip &quot;101.43.215.185&quot;</span><br><span class="line"><span class="comment"># mymaster:主节点名称,随便写,ip+port 2 :选取master时的quorum值</span></span><br><span class="line">sentinel monitor mymaster 101.43.215.185 7001 2</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 5000</span><br><span class="line"></span><br><span class="line">sentinel failover-timeout mymaster 60000</span><br><span class="line">dir &quot;/tmp/s0&quot;</span><br></pre></td></tr></table></figure>
+
+<h2 id="RedisTemplate设置主从读写分离"><a href="#RedisTemplate设置主从读写分离" class="headerlink" title="RedisTemplate设置主从读写分离"></a>RedisTemplate设置主从读写分离</h2><h3 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--redis依赖--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--common-pool--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.commons<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-pool2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="application-yml配置sentinel信息"><a href="#application-yml配置sentinel信息" class="headerlink" title="application.yml配置sentinel信息"></a>application.yml配置sentinel信息</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="number">192.168</span><span class="number">.150</span><span class="number">.101</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123321</span></span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">    <span class="comment"># sentinel.conf中配置的master名称</span></span><br><span class="line">      <span class="attr">master:</span> <span class="string">mymaster</span></span><br><span class="line">      <span class="attr">nodes:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7001</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7002</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7003</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置读写分离"><a href="#配置读写分离" class="headerlink" title="配置读写分离"></a>配置读写分离</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 配置读写分离</span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* ReadFrom.MASTER</span></span><br><span class="line"><span class="comment">* ReadFrom.MASTER_PREFERRED</span></span><br><span class="line"><span class="comment">* ReadFrom.REPLICA</span></span><br><span class="line"><span class="comment">* ReadFrom.REPLICA_PREFERRED</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LettuceClientConfigurationBuilderCustomizer <span class="title">clientConfigurationBuilderCustomizer</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> LettuceClientConfigurationBuilderCustomizer() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">customize</span><span class="params">(LettuceClientConfiguration.LettuceClientConfigurationBuilder clientConfigurationBuilder)</span> </span>&#123;</span><br><span class="line">            clientConfigurationBuilder.readFrom(ReadFrom.REPLICA_PREFERRED);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><p>主从和哨兵解决了高可用，高并发度，但未解决可扩展，如果<strong>缓存数据量巨大或存在高并发写场景</strong>，可考虑使用集群</p>
+<p>特征</p>
+<ul>
+<li>集群中有多个master，每个master保存不同数据</li>
+<li>每个master可以有多个slave节点</li>
+<li>master之间通过ping检测彼此健康状态</li>
+<li>客户端请求可以访问集群任意节点，最终都会被转发到正确节点</li>
+</ul>
+<h2 id="散列插槽"><a href="#散列插槽" class="headerlink" title="散列插槽"></a>散列插槽</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@VM-24-2-centos tmp]# redis-cli --cluster create --cluster-replicas 1 101.43.215.185:7001 101.43.215.185:7002 101.43.215.185:7003 101.43.215.185:8001 101.43.215.185:8002 101.43.215.185:8003</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Performing <span class="built_in">hash</span> slots allocation on 6 nodes...</span></span><br><span class="line">Master[0] -&gt; Slots 0 - 5460</span><br><span class="line">Master[1] -&gt; Slots 5461 - 10922</span><br><span class="line">Master[2] -&gt; Slots 10923 - 16383</span><br></pre></td></tr></table></figure>
+
+<p>redis在创建集群时会将16383个插槽平均分到n个master节点上，数据key不是与节点绑定，而是与插槽绑定，redis会根据key的有效部分计算插槽值，分两种情况:</p>
+<ul>
+<li>key中包含{},且{}至少包含一个字符，{}中的部分是有效部分</li>
+<li>key中不包含{},整个key都是有效部分</li>
+</ul>
+<p>利用CRC16算法得到一个hash值，然后对16384取余，得到的结果就是slot值</p>
+<h3 id="redis如何判断某个key应该在哪个实例"><a href="#redis如何判断某个key应该在哪个实例" class="headerlink" title="redis如何判断某个key应该在哪个实例?"></a>redis如何判断某个key应该在哪个实例?</h3><ul>
+<li>将16384个插槽分配到不同的实例</li>
+<li>根据key的有效部分计算hash值，对16384取余</li>
+<li>余数作为插槽，寻找插槽所在的实例即可</li>
+</ul>
+<h3 id="如何将同一类数据固定的保存在同一个redis实例"><a href="#如何将同一类数据固定的保存在同一个redis实例" class="headerlink" title="如何将同一类数据固定的保存在同一个redis实例"></a>如何将同一类数据固定的保存在同一个redis实例</h3><ul>
+<li>这类数据使用相同的有效部分，例如key都以{typeId}作为前缀</li>
+</ul>
+<h2 id="集群伸缩"><a href="#集群伸缩" class="headerlink" title="集群伸缩"></a>集群伸缩</h2><h3 id="添加节点并分配插槽"><a href="#添加节点并分配插槽" class="headerlink" title="添加节点并分配插槽"></a>添加节点并分配插槽</h3><p>需求</p>
+<ul>
+<li>启动一个新的redis实例</li>
+<li>添加7004到之前的集群，并作为一个master节点</li>
+<li>给7004节点分配插槽，使得num这个key可以存到7004实例</li>
+</ul>
+<p>添加一个node节点到集群</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># redis-cli --cluster help</span></span><br><span class="line">Cluster Manager Commands:</span><br><span class="line">  add-node       new_host:new_port existing_host:existing_port</span><br><span class="line">                 --cluster-slave</span><br><span class="line">                 --cluster-master-id &lt;arg&gt;</span><br><span class="line"><span class="comment"># 添加一个节点到集群，默认为master节点，如果要新建一个slave节点,需要加上后面两个参数</span></span><br><span class="line">redis-cli --cluster add-node 101.43.215.185:7004 101.43.215.185:7001</span><br><span class="line"><span class="comment"># 查看集群状态</span></span><br><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># redis-cli -p 7001 cluster nodes</span></span><br><span class="line">15eee057881117df09961f976e358309eb81df4e 101.43.215.185:7004@17004 master - 0 1654275536292 0 connected</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e8696029a2286844bbcd6c7311c7836 0 1654275535289 2 connected</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 slave f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 0 1654275535000 1 connected</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 1654275535000 3 connected 10923-16383</span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 10.0.24.2:7001@17001 myself,master - 0 1654275535000 1 connected 0-5460</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 101.43.215.185:7002@17002 master - 0 1654275535591 2 connected 5461-10922</span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062054fe3963f285a8d0600be61bc5 0 1654275534787 3 connected</span><br><span class="line"><span class="comment"># 发现7004节点作为masrwe节点，但是没有绑定任何插槽，需求说需要将num这个key可以存储到该节点，意思就是num所在插槽必须绑定在该节点上</span></span><br><span class="line"><span class="comment"># 查看num所在插槽</span></span><br><span class="line">101.43.215.185:7001&gt; <span class="built_in">help</span> cluster keyslot</span><br><span class="line"></span><br><span class="line">  CLUSTER KEYSLOT key</span><br><span class="line">  summary: Returns the <span class="built_in">hash</span> slot of the specified key</span><br><span class="line">  since: 3.0.0</span><br><span class="line">  group: cluster</span><br><span class="line">101.43.215.185:7001&gt; CLUSTER KEYSLOT num</span><br><span class="line">(<span class="built_in">integer</span>) 2765</span><br><span class="line"><span class="comment"># 转移插槽，2765插槽转移到7004节点</span></span><br><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># redis-cli --cluster help</span></span><br><span class="line">Cluster Manager Commands:</span><br><span class="line">  reshard        host:port</span><br><span class="line">                 --cluster-from &lt;arg&gt;</span><br><span class="line">                 --cluster-to &lt;arg&gt;</span><br><span class="line">                 --cluster-slots &lt;arg&gt;</span><br><span class="line">                 --cluster-yes</span><br><span class="line">                 --cluster-timeout &lt;arg&gt;</span><br><span class="line">                 --cluster-pipeline &lt;arg&gt;</span><br><span class="line">                 --cluster-replace</span><br><span class="line">                 </span><br><span class="line">redis-cli --cluster reshard 101.43.215.185:7001 --cluster-from f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce --cluster-to 15eee057881117df09961f976e358309eb81df4e --cluster-slots 2766 --cluster-yes</span><br><span class="line"><span class="comment">#再次查看状态</span></span><br><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># redis-cli -p 7001 cluster nodes</span></span><br><span class="line">15eee057881117df09961f976e358309eb81df4e 101.43.215.185:7004@17004 master - 0 1654277717495 7 connected 0-2765</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e8696029a2286844bbcd6c7311c7836 0 1654277717000 2 connected</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 slave f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 0 1654277717595 1 connected</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 1654277717000 3 connected 10923-16383</span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 10.0.24.2:7001@17001 myself,master - 0 1654277716000 1 connected 2766-5460</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 101.43.215.185:7002@17002 master - 0 1654277715588 2 connected 5461-10922</span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062054fe3963f285a8d0600be61bc5 0 1654277717997 3 connected</span><br><span class="line"><span class="comment"># 验证，可以看到已正确路由到7004节点</span></span><br><span class="line">127.0.0.1:7001&gt; <span class="built_in">set</span> num <span class="string">&#x27;abc&#x27;</span></span><br><span class="line">-&gt; Redirected to slot [2765] located at 101.43.215.185:7004</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除实例"><a href="#删除实例" class="headerlink" title="删除实例"></a>删除实例</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 假设要删除7004节点，7004节点id为15eee057881117df09961f976e358309eb81df4e</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 先将插槽转移到其他节点</span></span><br><span class="line">redis-cli --cluster reshard 101.43.215.185:7001 --cluster-from 15eee057881117df09961f976e358309eb81df4e --cluster-to f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce --cluster-slots 2766 --cluster-yes</span><br><span class="line"><span class="meta">#</span><span class="bash"> 再执行删除节点命令</span></span><br><span class="line">[root@VM-24-2-centos tmp]# redis-cli --cluster del-node 101.43.215.185:7001 15eee057881117df09961f976e358309eb81df4e</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Removing node 15eee057881117df09961f976e358309eb81df4e from cluster 101.43.215.185:7001</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Sending CLUSTER FORGET messages to the cluster...</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; Sending CLUSTER RESET SOFT to the deleted node.</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">通过watch方式每2s查询一次集群状态</span></span><br><span class="line">watch redis-cli -p 7002 cluster nodes</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e869</span><br><span class="line">6029a2286844bbcd6c7311c7836 0 1654278809533 2 connected</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 slave f20c36eaf2d65</span><br><span class="line">5b8b4bb99a1369f7cd060e9ddce 0 1654278809131 8 connected</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 16542788</span><br><span class="line">09634 3 connected 10923-16383</span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 10.0.24.2:7001@17001 myself,master - 0 165427</span><br><span class="line">8808000 8 connected 0-5460</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 101.43.215.185:7002@17002 master - 0 16542788</span><br><span class="line">09000 2 connected 5461-10922</span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062</span><br><span class="line">054fe3963f285a8d0600be61bc5 0 1654278810638 3 connected</span><br><span class="line"><span class="meta">#</span><span class="bash"> 7001 下线自动切换slave为master</span></span><br><span class="line">redis-cli -p 7001 shutdown</span><br><span class="line"></span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 101.43.215.185:7001@17001 master,fail - 16542</span><br><span class="line">78883590 1654278882000 8 disconnected</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 10.0.24.2:7002@17002 myself,master - 0 165427</span><br><span class="line">8952000 2 connected 5461-10922</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 master - 0 16542789</span><br><span class="line">53000 9 connected 0-5460</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e869</span><br><span class="line">6029a2286844bbcd6c7311c7836 0 1654278954130 2 connected</span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062</span><br><span class="line">054fe3963f285a8d0600be61bc5 0 1654278953122 3 connected</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 16542789</span><br><span class="line">53626 3 connected 10923-16383</span><br><span class="line"><span class="meta">#</span><span class="bash"> 7001再次启动，作为slave角色</span></span><br><span class="line">redis-server /tmp/7001/redis.conf </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 101.43.215.185:7001@17001 slave decfe59c32d0b</span><br><span class="line">bf0b31782227ea3a22a8bcd9360 0 1654279025598 9 connected</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 10.0.24.2:7002@17002 myself,master - 0 165427</span><br><span class="line">9024000 2 connected 5461-10922</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 master - 0 16542790</span><br><span class="line">25000 9 connected 0-5460</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e869</span><br><span class="line">6029a2286844bbcd6c7311c7836 0 1654279026501 2 connected</span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062</span><br><span class="line">054fe3963f285a8d0600be61bc5 0 1654279025999 3 connected</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 16542790</span><br><span class="line">25000 3 connected 10923-16383</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 将7001再次作为master</span></span><br><span class="line">[root@VM-24-2-centos ~]# redis-cli -p 7001 </span><br><span class="line"><span class="meta">#</span><span class="bash">slave篡位夺取master身份</span></span><br><span class="line">127.0.0.1:7001&gt; help CLUSTER FAILOVER</span><br><span class="line"></span><br><span class="line">  CLUSTER FAILOVER [FORCE|TAKEOVER]</span><br><span class="line">  summary: Forces a replica to perform a manual failover of its master.</span><br><span class="line">  since: 3.0.0</span><br><span class="line">  group: cluster</span><br><span class="line"><span class="meta">#</span><span class="bash"> 执行cluster failover篡位夺取master身份</span></span><br><span class="line">127.0.0.1:7001&gt; cluster failover</span><br><span class="line">OK</span><br><span class="line"><span class="meta">#</span><span class="bash"> 此时可看到7001已夺取master身份</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/image-20220604020610987.png" alt="image-20220604020610987"></p>
+<p>篡位流程</p>
+<ol>
+<li>slave节点告诉master节点我来当master</li>
+<li>master此时拒绝任何外部命令，进来的请求都会阻塞，返回当前offset给slave</li>
+<li>等待数据offset与master一致</li>
+<li>开始故障转移，master变成slave，slave变成master</li>
+<li>标记自己为master，向所有节点广播我是master了</li>
+<li>原来的master解除阻塞，作为slave节点执行读请求</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Manual failover user request accepted.</span><br><span class="line"># Received replication offset for paused master manual failover: 347540</span><br><span class="line"># All master replication stream processed, manual failover can start.</span><br><span class="line"># Start of election delayed for 0 milliseconds (rank #0, offset 347540).</span><br><span class="line"># Starting a failover election for epoch 7545.</span><br><span class="line"># Failover election won: I&#x27;m the new master.</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Basically clients connected to the master we are failing over are stopped. At the same time the master sends its replication offset to the replica, that waits to reach the offset on its side. When the replication offset is reached, the failover starts, and the old master is informed about the configuration switch. When the clients are unblocked on the old master, they are redirected to the new master.</span><br></pre></td></tr></table></figure>
+
+<p>想将一个slave提升为master，必须被集群中的大多数master节点知道你现在是个slave，否则不会赢得故障转移选举。如果一个副本刚添加到集群，在发送cluster failover之前你要先等一会儿确保集群中的节点知道这个副本</p>
+<h2 id="redistemplate集成集群"><a href="#redistemplate集成集群" class="headerlink" title="redistemplate集成集群"></a>redistemplate集成集群</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">cluster:</span></span><br><span class="line">        <span class="attr">nodes:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7001</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7002</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:7003</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:8001</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:8002</span></span><br><span class="line">          <span class="bullet">-</span> <span class="number">101.43</span><span class="number">.215</span><span class="number">.185</span><span class="string">:8003</span></span><br></pre></td></tr></table></figure>
+
+<p>注意，云服务器中不知道当前主机的公网访问地址，其自动生成的nodes.conf文件如下</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[root@VM-24-2-centos 7001]</span><span class="comment"># cat nodes.conf </span></span><br><span class="line">23beef4660964228ae9f2c20833358e0bf5fe385 101.43.215.185:8003@18003 slave 6c3ceeff74062054fe3963f285a8d0600be61bc5 0 1654279250343 3 connected</span><br><span class="line">decfe59c32d0bbf0b31782227ea3a22a8bcd9360 101.43.215.185:8001@18001 slave f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 0 1654279250000 10 connected</span><br><span class="line">4b44dec18400ba5be716121cbeb4aaae3dfba108 101.43.215.185:8002@18002 slave b625b82f1e8696029a2286844bbcd6c7311c7836 0 1654279250000 2 connected</span><br><span class="line">f20c36eaf2d655b8b4bb99a1369f7cd060e9ddce 10.0.24.2:7001@17001 myself,master - 0 1654279249000 10 connected 0-5460</span><br><span class="line">6c3ceeff74062054fe3963f285a8d0600be61bc5 101.43.215.185:7003@17003 master - 0 1654279251346 3 connected 10923-16383</span><br><span class="line">b625b82f1e8696029a2286844bbcd6c7311c7836 101.43.215.185:7002@17002 master - 0 1654279249338 2 connected 5461-10922</span><br><span class="line">vars currentEpoch 10 lastVoteEpoch 0</span><br></pre></td></tr></table></figure>
+
+<p>需将myself,master那一列的ip改为公网ip，否则本地spring会访问其私有ip</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将redis服务全部停止</span></span><br><span class="line">[root@VM-24-2-centos 7001]<span class="comment"># printf &#x27;%s\n&#x27; 7001 7002 7003 8001 8002 8003 | xargs -I&#123;&#125; -t redis-cli -p &#123;&#125; shutdown</span></span><br><span class="line"><span class="comment"># 修改配置文件</span></span><br><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># printf &#x27;%s\n&#x27; 7001 7002 7003 8001 8002 8003 | xargs -I&#123;&#125; -t sed -i &#x27;s/10.0.24.2/101.43.215.185/g&#x27; &#123;&#125;/nodes.conf</span></span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 7001/nodes.conf </span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 7002/nodes.conf </span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 7003/nodes.conf </span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 8001/nodes.conf </span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 8002/nodes.conf </span><br><span class="line">sed -i s/10.0.24.2/101.43.215.185/g 8003/nodes.conf </span><br><span class="line"><span class="comment"># 启动redis</span></span><br><span class="line">[root@VM-24-2-centos tmp]<span class="comment"># printf &#x27;%s\n&#x27; 7001 7002 7003 8001 8002 8003 | xargs -I&#123;&#125; -t redis-server &#123;&#125;/redis.conf</span></span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/redis/">#redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">redis主从,哨兵,集群搭建</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E5%8E%9F%E7%90%86"><span class="nav-text">主从数据同步原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5or%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5"><span class="nav-text">判断全量同步or增量同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5%E6%AD%A5%E9%AA%A4"><span class="nav-text">全量同步步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5%E6%AD%A5%E9%AA%A4"><span class="nav-text">增量同步步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B1%E6%AD%A4%E5%8F%AF%E5%BE%97%E5%87%BA%E4%BC%98%E5%8C%96%E9%A1%B9"><span class="nav-text">由此可得出优化项</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%93%A8%E5%85%B5"><span class="nav-text">哨兵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RedisTemplate%E8%AE%BE%E7%BD%AE%E4%B8%BB%E4%BB%8E%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">RedisTemplate设置主从读写分离</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="nav-text">引入依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#application-yml%E9%85%8D%E7%BD%AEsentinel%E4%BF%A1%E6%81%AF"><span class="nav-text">application.yml配置sentinel信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-text">配置读写分离</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4"><span class="nav-text">集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%A3%E5%88%97%E6%8F%92%E6%A7%BD"><span class="nav-text">散列插槽</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#redis%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%9F%90%E4%B8%AAkey%E5%BA%94%E8%AF%A5%E5%9C%A8%E5%93%AA%E4%B8%AA%E5%AE%9E%E4%BE%8B"><span class="nav-text">redis如何判断某个key应该在哪个实例?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E5%90%8C%E4%B8%80%E7%B1%BB%E6%95%B0%E6%8D%AE%E5%9B%BA%E5%AE%9A%E7%9A%84%E4%BF%9D%E5%AD%98%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AAredis%E5%AE%9E%E4%BE%8B"><span class="nav-text">如何将同一类数据固定的保存在同一个redis实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E4%BC%B8%E7%BC%A9"><span class="nav-text">集群伸缩</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%8A%82%E7%82%B9%E5%B9%B6%E5%88%86%E9%85%8D%E6%8F%92%E6%A7%BD"><span class="nav-text">添加节点并分配插槽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AE%9E%E4%BE%8B"><span class="nav-text">删除实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-text">故障转移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redistemplate%E9%9B%86%E6%88%90%E9%9B%86%E7%BE%A4"><span class="nav-text">redistemplate集成集群</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

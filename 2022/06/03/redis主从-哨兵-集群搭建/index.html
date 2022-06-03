@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            redis主从,哨兵,集群搭建 |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">redis主从,哨兵,集群搭建</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-06-03 15:19:52</span>
+        <span class="mobile">2022-06-03 15:19</span>
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/redis/">redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="主从"><a href="#主从" class="headerlink" title="主从"></a>主从</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tmp目录下创建7001，7002，7003三个文件夹</span></span><br><span class="line">mkdir 7001 7002 7003</span><br><span class="line"><span class="comment"># 复制redis默认配置文件到三个文件夹下</span></span><br><span class="line">cp /usr/<span class="built_in">local</span>/src/redis-6.2.6/redis.conf 7001/redis.conf</span><br><span class="line">cp /usr/<span class="built_in">local</span>/src/redis-6.2.6/redis.conf 7002/redis.conf</span><br><span class="line">cp /usr/<span class="built_in">local</span>/src/redis-6.2.6/redis.conf 7003/redis.conf</span><br><span class="line"><span class="comment"># 修改三个文件夹下的端口分别为对应目录名称</span></span><br><span class="line">sed -i -e <span class="string">&#x27;s/6379/7001/g&#x27;</span> -e <span class="string">&#x27;s/dir .\//dir \/tmp\/7001\//g&#x27;</span> 7001/redis.conf</span><br><span class="line">sed -i -e <span class="string">&#x27;s/6379/7002/g&#x27;</span> -e <span class="string">&#x27;s/dir .\//dir \/tmp\/7002\//g&#x27;</span> 7002/redis.conf</span><br><span class="line">sed -i -e <span class="string">&#x27;s/6379/7003/g&#x27;</span> -e <span class="string">&#x27;s/dir .\//dir \/tmp\/7003\//g&#x27;</span> 7003/redis.conf</span><br><span class="line"><span class="comment"># 设置声明IP，即redis每一个实例指定绑定ip信息</span></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s\n&#x27;</span> 7001 7002 7003 | xargs -I&#123;&#125; -t sed -i <span class="string">&#x27;1a replica-announce-ip 101.43.215.185&#x27;</span> &#123;&#125;/redis.conf</span><br><span class="line"><span class="comment"># 启动</span></span><br><span class="line"><span class="comment"># 第1个</span></span><br><span class="line">redis-server 7001/redis.conf</span><br><span class="line"><span class="comment"># 第2个</span></span><br><span class="line">redis-server 7002/redis.conf</span><br><span class="line"><span class="comment"># 第3个</span></span><br><span class="line">redis-server 7003/redis.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7002，7003分别作为7001的从服务器</span></span><br><span class="line"><span class="comment"># 永久生效在redis.conf中添加一行配置：```slaveof &lt;masterip&gt; &lt;masterport&gt;```</span></span><br><span class="line"><span class="comment"># 临时生效</span></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&#x27;%s\n&#x27;</span> 7002 7003 | xargs -I&#123;&#125; -t redis-cli -p &#123;&#125; slaveof 101.43.215.185 7001</span><br><span class="line"><span class="comment">#连接7001主节点，查看集群状态</span></span><br><span class="line">[root@VM-24-2-centos ~]<span class="comment"># redis-cli -p 7001 info replication</span></span><br><span class="line"><span class="comment"># Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=101.43.215.185,port=7002,state=online,offset=1684,lag=0</span><br><span class="line">slave1:ip=101.43.215.185,port=7003,state=online,offset=1684,lag=0</span><br><span class="line">master_failover_state:no-failover</span><br><span class="line">master_replid:74578d733f129e37dce6c7398cba77947d9175fe</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1684</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:1</span><br><span class="line">repl_backlog_histlen:1684</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="哨兵"><a href="#哨兵" class="headerlink" title="哨兵"></a>哨兵</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 在tmp目录创建s0 s1 s2三个目录</span></span><br><span class="line">mkdir s0 s1 s2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 在s0目录创建文件sentinel.conf</span></span><br><span class="line">vi s0/sentinel.conf</span><br></pre></td></tr></table></figure>
+
+<p>内容如下</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 当前sentinel实例端口</span></span><br><span class="line">port 27001</span><br><span class="line"></span><br><span class="line">sentinel announce-ip &quot;101.43.215.185&quot;</span><br><span class="line"><span class="comment"># mymaster:主节点名称,随便写,ip+port 2 :选取master时的quorum值</span></span><br><span class="line">sentinel monitor mymaster 101.43.215.185 7001 2</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 5000</span><br><span class="line"></span><br><span class="line">sentinel failover-timeout mymaster 60000</span><br><span class="line">dir &quot;/tmp/s0&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 复制相同文件到s1,s2目录下</span></span><br><span class="line">echo s1 s2 | xargs -t -n 1 cp s0/sentinel.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 分别修改s1,s2文件夹内的配置文件，修改端口</span></span><br><span class="line">sed -i -e &#x27;s/27001/27002/g&#x27; -e &#x27;s/s0/s1/g&#x27; s1/sentinel.conf</span><br><span class="line">sed -i -e &#x27;s/27001/27003/g&#x27; -e &#x27;s/s0/s2/g&#x27; s2/sentinel.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 启动三个sentinel实例</span></span><br><span class="line">redis-sentinel s0/sentinel.conf</span><br><span class="line">redis-sentinel s1/sentinel.conf</span><br><span class="line">redis-sentinel s2/sentinel.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 停止7001端口redis，发现自动切换为7003，配置成功</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><h1 id="配置并启动节点"><a href="#配置并启动节点" class="headerlink" title="配置并启动节点"></a>配置并启动节点</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">先停止所有redis实例</span></span><br><span class="line">printf &#x27;%s\n&#x27; 7001 7002 7003 27001 27002 27003 | xargs -I&#123;&#125; -t redis-cli -p &#123;&#125; shutdown</span><br><span class="line"><span class="meta">#</span><span class="bash"> 删除之前的所有700*redis目录</span></span><br><span class="line">rm -rf 700*</span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建7001，7002，7003，8001，8002，8003目录</span></span><br><span class="line">mkdir 7001 7002 7003 8001 8002 8003</span><br><span class="line"><span class="meta">#</span><span class="bash"> tmp目录创建配置文件</span></span><br><span class="line">vi redis.conf</span><br></pre></td></tr></table></figure>
+
+<p>redis.conf</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">port 6379</span><br><span class="line"><span class="comment"># 开启集群功能</span></span><br><span class="line">cluster-enabled yes</span><br><span class="line"><span class="comment"># 集群的配置文件名称，不需要我们创建，由redis自己维护</span></span><br><span class="line">cluster-config-file /tmp/6379/nodes.conf</span><br><span class="line"><span class="comment"># 节点心跳失败的超时时间</span></span><br><span class="line">cluster-node-timeout 5000</span><br><span class="line"><span class="comment"># 持久化文件存放目录</span></span><br><span class="line">dir /tmp/6379</span><br><span class="line"><span class="comment"># 绑定地址</span></span><br><span class="line">bind 0.0.0.0</span><br><span class="line"><span class="comment"># 让redis后台运行</span></span><br><span class="line">daemonize yes</span><br><span class="line"><span class="comment"># 注册的实例ip</span></span><br><span class="line">replica-announce-ip 101.43.215.185</span><br><span class="line"><span class="comment"># 保护模式</span></span><br><span class="line">protected-mode no</span><br><span class="line"><span class="comment"># 数据库数量</span></span><br><span class="line">databases 1</span><br><span class="line"><span class="comment"># 日志</span></span><br><span class="line">logfile /tmp/6379/run.log</span><br></pre></td></tr></table></figure>
+
+<p>继续操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 将该配置文件复制到700*，800*目录</span></span><br><span class="line">root@VM-24-2-centos tmp]# echo 7001 7002 7003 8001 8002 8003 | xargs -t -n 1 cp redis.conf</span><br><span class="line">cp redis.conf 7001 </span><br><span class="line">cp redis.conf 7002 </span><br><span class="line">cp redis.conf 7003 </span><br><span class="line">cp redis.conf 8001 </span><br><span class="line">cp redis.conf 8002 </span><br><span class="line">cp redis.conf 8003 </span><br><span class="line"><span class="meta">#</span><span class="bash"> 批量修改配置文件端口</span></span><br><span class="line">[root@VM-24-2-centos tmp]# printf &#x27;%s\n&#x27; 7001 7002 7003 8001 8002 8003 | xargs -I&#123;&#125; -t sed -i &#x27;s/6379/&#123;&#125;/g&#x27; &#123;&#125;/redis.conf</span><br><span class="line">sed -i s/6379/7001/g 7001/redis.conf </span><br><span class="line">sed -i s/6379/7002/g 7002/redis.conf </span><br><span class="line">sed -i s/6379/7003/g 7003/redis.conf </span><br><span class="line">sed -i s/6379/8001/g 8001/redis.conf </span><br><span class="line">sed -i s/6379/8002/g 8002/redis.conf </span><br><span class="line">sed -i s/6379/8003/g 8003/redis.conf</span><br><span class="line"><span class="meta">#</span><span class="bash"> 一键启动</span></span><br><span class="line">[root@VM-24-2-centos tmp]# printf &#x27;%s\n&#x27; 7001 7002 7003 8001 8002 8003 | xargs -I&#123;&#125; -t redis-server &#123;&#125;/redis.conf</span><br><span class="line">redis-server 7001/redis.conf </span><br><span class="line">redis-server 7002/redis.conf </span><br><span class="line">redis-server 7003/redis.conf </span><br><span class="line">redis-server 8001/redis.conf </span><br><span class="line">redis-server 8002/redis.conf </span><br><span class="line">redis-server 8003/redis.conf </span><br><span class="line">[root@VM-24-2-centos tmp]# ps -ef | grep redis</span><br><span class="line">root      9850     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:7001 [cluster]</span><br><span class="line">root      9852     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:7002 [cluster]</span><br><span class="line">root      9858     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:7003 [cluster]</span><br><span class="line">root      9864     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:8001 [cluster]</span><br><span class="line">root      9866     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:8002 [cluster]</span><br><span class="line">root      9872     1  0 16:36 ?        00:00:00 redis-server 0.0.0.0:8003 [cluster]</span><br><span class="line">root      9992 32393  0 16:37 pts/9    00:00:00 grep --color=auto redis</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建redis集群，注意，如果是云服务器，一定记得打开集群通信端口,为redis端口+10000，即要开启17001,17002,17003,18001,18002,18003端口</span></span><br><span class="line">[root@VM-24-2-centos tmp]# redis-cli --cluster create --cluster-replicas 1 101.43.215.185:7001 101.43.215.185:7002 101.43.215.185:7003 101.43.215.185:8001 101.43.215.185:8002 101.43.215.185:8003</span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入yes，回车</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> redis连接集群，一定记得加-c参数</span></span><br><span class="line">[root@VM-24-2-centos tmp]# redis-cli -c -p  7001</span><br><span class="line">127.0.0.1:7001&gt; set a 2</span><br><span class="line"><span class="meta">-&gt;</span><span class="bash"> Redirected to slot [15495] located at 101.43.215.185:7003</span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">#</span><span class="bash"> 其实就是根据key进行<span class="built_in">hash</span>分片，然后redirect到对应的redis节点</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>redis-cli --cluster</code>或者<code>./redis-trib.rb</code>：代表集群操作命令</li>
+<li><code>create</code>：代表是创建集群</li>
+<li><code>--replicas 1</code>或者<code>--cluster-replicas 1</code> ：指定集群中每个master的副本个数为1，此时<code>节点总数 ÷ (replicas + 1)</code> 得到的就是master的数量。因此节点列表中的前n个就是master，其它节点都是slave节点，随机分配到不同master</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <ul class="post-tags-box">
+                
+                    <li class="tag-item">
+                        <a href="/tags/redis/">#redis</a>&nbsp;
+                    </li>
+                
+            </ul>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">redis主从,哨兵,集群原理</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">InnoDB什么时候使用表锁而不是行锁</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E"><span class="nav-text">主从</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%93%A8%E5%85%B5"><span class="nav-text">哨兵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4"><span class="nav-text">集群</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%B9%B6%E5%90%AF%E5%8A%A8%E8%8A%82%E7%82%B9"><span class="nav-text">配置并启动节点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="nav-text">集群配置</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
