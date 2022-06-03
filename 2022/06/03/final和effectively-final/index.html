@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+            final和effectively final |
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">final和effectively final</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">chaoqiang.qiu</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span class="pc">2022-06-03 10:18:34</span>
+        <span class="mobile">2022-06-03 10:18</span>
+    </span>
+    
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>原文章</p>
+<p><a class="link" target="_blank" rel="noopener" href="https://www.baeldung.com/java-effectively-final">https://www.baeldung.com/java-effectively-final<i class="fas fa-external-link-alt"></i></a></p>
+<p>总的来说</p>
+<ul>
+<li>java8对本地变量进行了优化，如果变量仅进行了一次赋值操作，它就是个effectively final变量</li>
+<li>编译时，如果使用final修饰的字符串进行拼接，其结果在编译时就会生成，如果不使用final修饰，拼接时使用的是StringBuider</li>
+</ul>
+<h1 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1.介绍"></a>1.介绍</h1><p>java8引入的最有趣的特性之一是effectively final,它允许我们对于变量，字段，参数不写final修饰符的情况下与final一样被有效处理和使用</p>
+<p>在本指导中，我们探索这个特性的起源以及与final关键字比起来，编译器怎样处理，此外，我们会探索一种解决方案来解决由effectively final的问题使用场景</p>
+<h1 id="2-起源"><a href="#2-起源" class="headerlink" title="2.起源"></a>2.起源</h1><p><strong>简单说</strong>,对象或原始值如果在初始化后不修改它们的值，那就是effectively final.如果我们不修改对象饮用，他也是effectively final–即便引用对象的状态发生了改变。</p>
+<p>在引入它之前，我们不能在一个匿名类中使用非final变量，我们也不能在匿名类，内部类，lamda表达式中使用分配多个值的变量(也就是普通变量)。这个特性的引入允许我们在effectively final变量上不使用final修饰符，省得敲了</p>
+<p>在JLS8.1.3中指出，匿名类是内部类并且不能访问非final或非effectively final 变量，也不能在方法体中修改引用，lamda表达式也适用于该限制，因为可能导致并发问题</p>
+<h1 id="final和effectively-final"><a href="#final和effectively-final" class="headerlink" title="final和effectively final"></a>final和effectively final</h1><p>了解一个变量是否为effectively final 最简单方法是观察删除final关键字是否允许代码编译和运行</p>
+<h2 id="编译器处理区别"><a href="#编译器处理区别" class="headerlink" title="编译器处理区别"></a>编译器处理区别</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> String hello = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    <span class="keyword">final</span> String world = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">    String test = hello + <span class="string">&quot; &quot;</span> + world;</span><br><span class="line">    System.out.println(test);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面代码编译后字节码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">   Code:</span><br><span class="line">      <span class="number">0</span>: ldc           #<span class="number">2</span>                  <span class="comment">// String hello</span></span><br><span class="line">      <span class="number">2</span>: astore_1</span><br><span class="line">      <span class="number">3</span>: ldc           #<span class="number">3</span>                  <span class="comment">// String world</span></span><br><span class="line">      <span class="number">5</span>: astore_2</span><br><span class="line">      <span class="number">6</span>: ldc           #<span class="number">4</span>                  <span class="comment">// String hello world</span></span><br><span class="line">      <span class="number">8</span>: astore_3</span><br><span class="line">      <span class="number">9</span>: getstatic     #<span class="number">5</span>                  <span class="comment">// Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">     <span class="number">12</span>: aload_3</span><br><span class="line">     <span class="number">13</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span></span><br><span class="line">     <span class="number">16</span>: <span class="keyword">return</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>但如果去掉final</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		 String hello = <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">		 String world = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">		String test = hello + <span class="string">&quot; &quot;</span> + world;</span><br><span class="line">		System.out.println(test);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>字节码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">   Code:</span><br><span class="line">      <span class="number">0</span>: ldc           #<span class="number">2</span>                  <span class="comment">// String hello</span></span><br><span class="line">      <span class="number">2</span>: astore_1</span><br><span class="line">      <span class="number">3</span>: ldc           #<span class="number">3</span>                  <span class="comment">// String world</span></span><br><span class="line">      <span class="number">5</span>: astore_2</span><br><span class="line">      <span class="number">6</span>: <span class="keyword">new</span>           #<span class="number">4</span>                  <span class="comment">// class java/lang/StringBuilder</span></span><br><span class="line">      <span class="number">9</span>: dup</span><br><span class="line">     <span class="number">10</span>: invokespecial #<span class="number">5</span>                  <span class="comment">// Method java/lang/StringBuilder.&quot;&lt;init&gt;&quot;:()V</span></span><br><span class="line">     <span class="number">13</span>: aload_1</span><br><span class="line">     <span class="number">14</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span><br><span class="line">     <span class="number">17</span>: ldc           #<span class="number">7</span>                  <span class="comment">// String</span></span><br><span class="line">     <span class="number">19</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span><br><span class="line">     <span class="number">22</span>: aload_2</span><br><span class="line">     <span class="number">23</span>: invokevirtual #<span class="number">6</span>                  <span class="comment">// Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;</span></span><br><span class="line">     <span class="number">26</span>: invokevirtual #<span class="number">8</span>                  <span class="comment">// Method java/lang/StringBuilder.toString:()Ljava/lang/String;</span></span><br><span class="line">     <span class="number">29</span>: astore_3</span><br><span class="line">     <span class="number">30</span>: getstatic     #<span class="number">9</span>                  <span class="comment">// Field java/lang/System.out:Ljava/io/PrintStream;</span></span><br><span class="line">     <span class="number">33</span>: aload_3</span><br><span class="line">     <span class="number">34</span>: invokevirtual #<span class="number">10</span>                 <span class="comment">// Method java/io/PrintStream.println:(Ljava/lang/String;)V</span></span><br><span class="line">     <span class="number">37</span>: <span class="keyword">return</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，如果我们使用两个final字符串进行连接，编译时直接进行了优化，但如果不使用final修饰的变量进行字符串连接时，使用的是StringBuilder的append方法进行连接</p>
+<h1 id="原子修饰"><a href="#原子修饰" class="headerlink" title="原子修饰"></a>原子修饰</h1><p>如果你想在lamda表达式或匿名类中修改变量，在多线程环境中改变它们可能会导致意外，一般使用<em>AtomicReference</em>或<em>AtomicInteger</em>等类来原子性的修改lamda表达式中的变量</p>
+
+        </div>
+
+        
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">为什么lamda表达式中的变量要使用final修饰</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/05/30/AbstractQueuedSynchronizer/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">AbstractQueuedSynchronizer</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div id="gitalk-container"></div>
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+
+            try {
+                Gitalk && new Gitalk({
+                    clientID: '863fbb8458b81279c355',
+                    clientSecret: 'de73deafd00d910696772359a03ee417eca8e244',
+                    repo: 'chaoqiang6.github.io',
+                    owner: 'chaoqiang6',
+                    admin: ['chaoqiang6'],
+                    id: __gitalk__pathname,
+                    language: 'zh-CN'
+                }).render('gitalk-container');
+
+            } catch (e) {
+                window.Gitalk = null;
+            }
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">1.介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E8%B5%B7%E6%BA%90"><span class="nav-text">2.起源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#final%E5%92%8Ceffectively-final"><span class="nav-text">final和effectively final</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%A4%84%E7%90%86%E5%8C%BA%E5%88%AB"><span class="nav-text">编译器处理区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E4%BF%AE%E9%A5%B0"><span class="nav-text">原子修饰</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
