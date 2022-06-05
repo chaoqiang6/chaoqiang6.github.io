@@ -141,6 +141,98 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
+                        nginx连接redis集群
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        openresty默认支持redis的单节点读取，但不支持redis集群，还有github上有大佬已经开发出这个库
+https://github.com/steve0511/resty-redis-cluster
+下面记录一下使用用法
+123456#...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:51:31 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
+                        lua连接redis集群
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:50:51 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
+                        多级缓存
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        目标效果
+![截屏2022-06-04 15.48.09](多级缓存/截屏2022-06-04 15.48.09.png)
+本地进程缓存分布式缓存
+优点:存储容量更大，可靠性更好，可以在集群间共享
+缺点:访问缓存有网络开销
+场景:缓存数据量较大，可靠...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 02:58:44 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">
                         redis主从,哨兵,集群原理
                     </a>
@@ -340,97 +432,6 @@ java8对本地变量进行了优化，如果变量仅进行了一次赋值操作
     </div>
 
     <a href="/2022/05/29/ReentrentLock/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/28/redis%E9%AB%98%E7%BA%A7/">
-                        redis高级
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        redis持久化RDBRedis Data Backup file
-123456789101112131415127.0.0.1:6379&gt; help save#主进程进行RDB备份  SAVE -  summary: Synchronousl...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat May 28 2022 11:45:18 GMT+0800">2022-05-28</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/28/redis%E9%AB%98%E7%BA%A7/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/27/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/">
-                        
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        1234-- 使用in查询时，数据库默认按照聚簇索引顺序返回，可以使用order by field进行重排序select * from tb_userwhere id in (5,1)order by field(id,5,1)
-
-
-
-12list....
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri May 27 2022 19:07:01 GMT+0800">2022-05-27</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/27/%E6%9F%A5%E6%BC%8F%E8%A1%A5%E7%BC%BA/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2022/05/24/%E8%AD%A6%E6%83%95redis%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
-                        警惕redis返回数据结构
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        sismember查询某数据是否属于某set，返回0 或1
-smismember查询多个数据是否属于某set，返回一个list
-123456789101112131415161718192021127.0.0.1:6379&gt; smismembe...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue May 24 2022 00:50:37 GMT+0800">2022-05-24</span></span>
-        
-        
-    </div>
-
-    <a href="/2022/05/24/%E8%AD%A6%E6%83%95redis%E8%BF%94%E5%9B%9E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
