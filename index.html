@@ -141,26 +141,26 @@
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
-                        nginx连接redis集群
+                    <a href="/2026/09/01/SpringAI%E8%B0%83%E7%94%A8%E9%93%BE%E7%9A%84Token%E5%92%8C%E5%BB%B6%E8%BF%9F%E7%9B%91%E6%8E%A7/">
+                        SpringAI调用链的Token和延迟监控
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        open-resty官方没有支持连接redis集群的工具，可以使用
-https://github.com/steve0511/resty-redis-cluster开源的客户端，具体看wiki吧，这里遇到的一个小坎就是nginx.conf中定义了lu...
+                        大模型接口为什么突然变慢一次问答请求的耗时不只有模型生成时间，还可能包括向量检索、工具调用、重试和上下文拼接。如果只记录 Controller 的总耗时，就看不出到底是哪一步慢。
+12345request total: 4200msembedding...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:51:31 GMT+0800">2022-06-04</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Sep 01 2026 09:28:00 GMT+0800">2026-09-01</span></span>
         
         
     </div>
 
-    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/09/01/SpringAI%E8%B0%83%E7%94%A8%E9%93%BE%E7%9A%84Token%E5%92%8C%E5%BB%B6%E8%BF%9F%E7%9B%91%E6%8E%A7/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -170,25 +170,26 @@ https://github.com/steve0511/resty-redis-cluster开源的客户端，具体看wi
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
-                        lua连接redis集群
+                    <a href="/2026/08/27/LangChain%E5%AF%B9%E8%AF%9D%E8%AE%B0%E5%BF%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%8F%AA%E6%94%BE%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C/">
+                        LangChain对话记忆为什么不能只放在内存里
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        
+                        内存记忆的问题本地 demo 里把历史消息放进一个 list 很方便，但服务一旦多实例部署，请求下一次可能被路由到另一台机器。进程重启后，用户的对话也全部消失。
+12history = &#123;&#125;history[session_id] ...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:50:51 GMT+0800">2022-06-04</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Aug 27 2026 22:19:00 GMT+0800">2026-08-27</span></span>
         
         
     </div>
 
-    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/08/27/LangChain%E5%AF%B9%E8%AF%9D%E8%AE%B0%E5%BF%86%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%8F%AA%E6%94%BE%E5%9C%A8%E5%86%85%E5%AD%98%E9%87%8C/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -198,30 +199,26 @@ https://github.com/steve0511/resty-redis-cluster开源的客户端，具体看wi
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
-                        多级缓存
+                    <a href="/2026/08/18/PythonFastAPI%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5/">
+                        Python FastAPI依赖注入和数据库连接
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        目标效果
-![截屏2022-06-04 15.48.09](多级缓存/截屏2022-06-04 15.48.09.png)
-本地进程缓存分布式缓存
-优点:存储容量更大，可靠性更好，可以在集群间共享
-缺点:访问缓存有网络开销
-场景:缓存数据量较大，可靠...
+                        把连接放在哪里写 FastAPI 接口时，数据库 session 不能在模块导入时创建一个全局对象。这样会遇到连接失效、并发共享和测试难替换等问题。
+12345678910111213from collections.abc import Gener...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 02:58:44 GMT+0800">2022-06-04</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Aug 18 2026 18:42:00 GMT+0800">2026-08-18</span></span>
         
         
     </div>
 
-    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/08/18/PythonFastAPI%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -231,29 +228,28 @@ https://github.com/steve0511/resty-redis-cluster开源的客户端，具体看wi
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">
-                        redis主从,哨兵,集群原理
+                    <a href="/2026/08/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8E%A5%E5%8F%A3%E9%99%90%E6%B5%81%E5%90%8E%E8%BF%98%E4%BC%9A%E9%9B%AA%E5%B4%A9/">
+                        为什么接口限流后还会雪崩
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        主从数据同步原理判断全量同步or增量同步
-redis从节点执行slaveof或replicaof 主节点ip:端口命令
-Replication Id集群id，redis节点启动时会生成一个唯一id
-offset偏移量:当前节点最新的一条同步记录id
-...
+                        只限制入口不够入口限流后，请求仍可能在多个线程池、数据库连接池和下游服务之间排队。排队请求占住资源，最终一起超时，形成级联故障。
+1入口限流 -&gt; 线程池排队 -&gt; 连接池等待 -&gt; 下游超时
+
+分层保护入口限制总量，线程池隔离不同...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 17:32:27 GMT+0800">2022-06-03</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Aug 08 2026 23:28:00 GMT+0800">2026-08-08</span></span>
         
         
     </div>
 
-    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/08/08/%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8E%A5%E5%8F%A3%E9%99%90%E6%B5%81%E5%90%8E%E8%BF%98%E4%BC%9A%E9%9B%AA%E5%B4%A9/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -263,25 +259,26 @@ offset偏移量:当前节点最新的一条同步记录id
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
-                        redis主从,哨兵,集群搭建
+                    <a href="/2026/08/02/SpringAI%E7%9A%84ToolCalling%E4%B8%8D%E6%98%AF%E8%AE%A9%E6%A8%A1%E5%9E%8B%E7%9B%B4%E6%8E%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81/">
+                        Spring AI的ToolCalling不是让模型直接执行代码
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        主从1234567891011121314151617181920212223242526272829303132333435363738394041# tmp目录下创建7001，7002，7003三个文件夹mkdir 7001 7002 7003#...
+                        工具调用的真实流程用户问“帮我查一下订单”，模型并不会真的访问数据库。它先根据工具描述生成一个工具调用请求，应用收到请求后决定是否执行，再把结果返回给模型组织答案。
+12345@Bean@Description(&quot;根据订单号查询订单状态&q...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 15:19:52 GMT+0800">2022-06-03</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Aug 02 2026 10:35:00 GMT+0800">2026-08-02</span></span>
         
         
     </div>
 
-    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/08/02/SpringAI%E7%9A%84ToolCalling%E4%B8%8D%E6%98%AF%E8%AE%A9%E6%A8%A1%E5%9E%8B%E7%9B%B4%E6%8E%A5%E6%89%A7%E8%A1%8C%E4%BB%A3%E7%A0%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -291,26 +288,28 @@ offset偏移量:当前节点最新的一条同步记录id
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">
-                        InnoDB什么时候使用表锁而不是行锁
+                    <a href="/2026/07/24/%E5%90%8E%E7%AB%AF%E6%97%A5%E5%BF%97%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BB%93%E6%9E%84%E5%8C%96/">
+                        后端日志为什么需要结构化
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        明确一点，行锁是建立在索引上的，不通过索引条件检索数据，那么innodb将对表中的所有记录加锁，此时行锁升级为表锁
+                        字符串日志的问题1user 12 query failed cost 87
 
+机器可以看懂，但检索 user、耗时和错误类型都要依赖脆弱的文本规则。字段顺序变化后，查询就可能失效。
+JSON 日志1&#123;&quot;traceId&quot;:...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 13:59:44 GMT+0800">2022-06-03</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jul 24 2026 19:02:00 GMT+0800">2026-07-24</span></span>
         
         
     </div>
 
-    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/07/24/%E5%90%8E%E7%AB%AF%E6%97%A5%E5%BF%97%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BB%93%E6%9E%84%E5%8C%96/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -320,27 +319,26 @@ offset偏移量:当前节点最新的一条同步记录id
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/">
-                        为什么lamda表达式中的变量要使用final修饰
+                    <a href="/2026/07/19/%E7%94%A8LangChain%E5%81%9A%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8FRAG%E6%A3%80%E7%B4%A2%E9%93%BE/">
+                        用LangChain做一个最小RAG检索链
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        源于一次面试题，为什么lamda表达式中的变量要使用final修饰，当时没答出来，事后想一下lamda表达式不就是一个对一个仅有为实现一个方法的类进行简写吗，它就是个匿名内部类
-事后将相关知识点总结一下
-https://www.baeldung.co...
+                        RAG 解决的是什么模型本身不知道公司内部的接口文档和业务规则，直接提问容易得到看起来合理但不存在的答案。RAG 的思路是先从自己的文档中检索相关片段，再把片段和问题一起交给模型。
+12345678910111213from langchain_co...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 12:23:49 GMT+0800">2022-06-03</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Jul 19 2026 23:08:00 GMT+0800">2026-07-19</span></span>
         
         
     </div>
 
-    <a href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/07/19/%E7%94%A8LangChain%E5%81%9A%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8FRAG%E6%A3%80%E7%B4%A2%E9%93%BE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -350,30 +348,25 @@ https://www.baeldung.co...
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/06/03/final%E5%92%8Ceffectively-final/">
-                        final和effectively final
+                    <a href="/2026/07/03/SpringAI%E6%8E%A5%E5%85%A5%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5/">
+                        Spring AI接入大模型的第一步
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        原文章
-https://www.baeldung.com/java-effectively-final
-总的来说
-
-java8对本地变量进行了优化，如果变量仅进行了一次赋值操作，它就是个effectively final变量
-编译时，如果使用fina...
+                        为什么想用 Spring AI后端项目本来就是 Spring Boot 技术栈，如果为了调用大模型再单独维护一套 Python 服务，部署和权限管理都会多一层。Spring AI 提供了 ChatClient、Prompt、Tool Calling ...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 10:18:34 GMT+0800">2022-06-03</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jul 03 2026 21:26:00 GMT+0800">2026-07-03</span></span>
         
         
     </div>
 
-    <a href="/2022/06/03/final%E5%92%8Ceffectively-final/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/07/03/SpringAI%E6%8E%A5%E5%85%A5%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -383,25 +376,26 @@ java8对本地变量进行了优化，如果变量仅进行了一次赋值操作
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/05/30/AbstractQueuedSynchronizer/">
-                        AbstractQueuedSynchronizer
+                    <a href="/2026/06/29/LangChain%E4%BB%8EPrompt%E5%88%B0Runnable/">
+                        LangChain从Prompt到Runnable
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        AQS-抽象队列监视器，这个抽象类没有抽象方法，仅仅是为了不被直接使用创建对象，大部分方法是已经实现的模板方法，只有(tryAcquire,tryRelease,tryAcquireShared,tryReleaseShared,isHeldExcl...
+                        先不急着做 Agent第一次接触 LangChain 时很容易直接研究 Agent，结果把模型、工具、记忆和执行器混在一起。实际项目可以先从一个普通的 prompt chain 开始，确认模型调用、输入输出和异常处理。
+1234567891011fr...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon May 30 2022 01:34:37 GMT+0800">2022-05-30</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Jun 29 2026 19:47:00 GMT+0800">2026-06-29</span></span>
         
         
     </div>
 
-    <a href="/2022/05/30/AbstractQueuedSynchronizer/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/06/29/LangChain%E4%BB%8EPrompt%E5%88%B0Runnable/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -411,25 +405,26 @@ java8对本地变量进行了优化，如果变量仅进行了一次赋值操作
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/05/29/ReentrentLock/">
-                        ReentrentLock
+                    <a href="/2026/06/18/Python%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%8D%8F%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B/">
+                        Python异步编程中的协程和线程
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        类概述里面实现的抽象Sync实现了nonfairTryAcquire(非公平尝试获取锁)，tryRelease，newCondition和其他一些监视方法，有两个实现累FairSync和UnfireSync实现了公平和非公平的监视器，实现了lock和...
+                        最近重新看 Python 异步之前写 Java 多线程时，容易把“并发”理解成创建更多线程。Python 的 async 代码不是把线程变少这么简单，它的核心是事件循环在任务等待 IO 时切换到其他任务。
+123456789101112131415i...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun May 29 2022 21:32:25 GMT+0800">2022-05-29</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Jun 18 2026 22:14:00 GMT+0800">2026-06-18</span></span>
         
         
     </div>
 
-    <a href="/2022/05/29/ReentrentLock/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2026/06/18/Python%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E4%B8%AD%E7%9A%84%E5%8D%8F%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -465,7 +460,7 @@ java8对本地变量进行了优化，如果变量仅进行了一次赋值操作
               <span>2020</span>
               -
             
-            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+            2026&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
         </div>
         
         <div class="theme-info info-item">

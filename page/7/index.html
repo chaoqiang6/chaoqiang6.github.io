@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class="active"
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class="active"
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="home-content-container fade-in-down-animation">
+    <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/05/Redis%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">
+                        Redis最佳实践
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        键值设计优雅的key结构
+遵循基本格式: [业务名称]:[数据名称]:[id]
+例如登陆业务保存用户信息login:user:10
+可读性强，避免key冲突，方便管理
+
+
+值长度不超过44字节
+key是string类型，底层编码包含int,embst...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Jun 05 2022 17:05:44 GMT+0800">2022-06-05</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/05/Redis%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
+                        nginx连接redis集群
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        open-resty官方没有支持连接redis集群的工具，可以使用
+https://github.com/steve0511/resty-redis-cluster开源的客户端，具体看wiki吧，这里遇到的一个小坎就是nginx.conf中定义了lu...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:51:31 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/nginx%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">
+                        lua连接redis集群
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 23:50:51 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/lua%E8%BF%9E%E6%8E%A5redis%E9%9B%86%E7%BE%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">
+                        多级缓存
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        目标效果
+![截屏2022-06-04 15.48.09](多级缓存/截屏2022-06-04 15.48.09.png)
+本地进程缓存分布式缓存
+优点:存储容量更大，可靠性更好，可以在集群间共享
+缺点:访问缓存有网络开销
+场景:缓存数据量较大，可靠...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jun 04 2022 02:58:44 GMT+0800">2022-06-04</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/04/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">
+                        redis主从,哨兵,集群原理
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        主从数据同步原理判断全量同步or增量同步
+redis从节点执行slaveof或replicaof 主节点ip:端口命令
+Replication Id集群id，redis节点启动时会生成一个唯一id
+offset偏移量:当前节点最新的一条同步记录id
+...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 17:32:27 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E5%8E%9F%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">
+                        redis主从,哨兵,集群搭建
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        主从1234567891011121314151617181920212223242526272829303132333435363738394041# tmp目录下创建7001，7002，7003三个文件夹mkdir 7001 7002 7003#...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 15:19:52 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/redis%E4%B8%BB%E4%BB%8E-%E5%93%A8%E5%85%B5-%E9%9B%86%E7%BE%A4%E6%90%AD%E5%BB%BA/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">
+                        InnoDB什么时候使用表锁而不是行锁
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        明确一点，行锁是建立在索引上的，不通过索引条件检索数据，那么innodb将对表中的所有记录加锁，此时行锁升级为表锁
+
+做低代码没有任何成长
+低代码排查bug很难
+面向过程编程，做低代码只有累，做出来没有任何的成就感可言，不支持抽象，没有办法写出来很好...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 13:59:44 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/InnoDB%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E8%A1%A8%E9%94%81%E8%80%8C%E4%B8%8D%E6%98%AF%E8%A1%8C%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/">
+                        为什么lamda表达式中的变量要使用final修饰
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        源于一次面试题，为什么lamda表达式中的变量要使用final修饰，当时没答出来，事后想一下lamda表达式不就是一个对一个仅有为实现一个方法的类进行简写吗，它就是个匿名内部类
+事后将相关知识点总结一下
+https://www.baeldung.co...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 12:23:49 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/%E4%B8%BA%E4%BB%80%E4%B9%88lamda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E4%B8%AD%E7%9A%84%E5%8F%98%E9%87%8F%E8%A6%81%E4%BD%BF%E7%94%A8final%E4%BF%AE%E9%A5%B0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/03/final%E5%92%8Ceffectively-final/">
+                        final和effectively final
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        原文章
+https://www.baeldung.com/java-effectively-final
+总的来说
+
+java8对本地变量进行了优化，如果变量仅进行了一次赋值操作，它就是个effectively final变量
+编译时，如果使用fina...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jun 03 2022 10:18:34 GMT+0800">2022-06-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/03/final%E5%92%8Ceffectively-final/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/05/30/AbstractQueuedSynchronizer/">
+                        AbstractQueuedSynchronizer
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        AQS-抽象队列监视器，这个抽象类没有抽象方法，仅仅是为了不被直接使用创建对象，大部分方法是已经实现的模板方法，只有(tryAcquire,tryRelease,tryAcquireShared,tryReleaseShared,isHeldExcl...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon May 30 2022 01:34:37 GMT+0800">2022-05-30</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/05/30/AbstractQueuedSynchronizer/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+    </ul>
+
+    <div class="home-paginator">
+        <div class="paginator">
+    
+        <a class="prev btn"
+           href="/page/6/"
+        >上一页</a>
+    
+
+    
+        <a class="next btn"
+           href="/page/8/"
+        >下一页</a>
+    
+</div>
+
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2026&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>

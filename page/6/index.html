@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="chaoqiang.qiu">
+    
+    <title>
+        
+        进击的阿强
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"chaoqiang6.github.io","root":"/","language":"zh-CN","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":false,"init_open":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":false}}},"local_search":{"enable":true,"preload":true},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":false},"lazyload":{"enable":false},"version":"3.4.5"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                进击的阿强
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class="active"
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class="active"
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="home-content-container fade-in-down-animation">
+    <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/02/22/RabbitMQ%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86/">
+                        RabbitMQ消息重复消费怎么处理
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        重复消费从哪里来消费者拿到消息后，业务已经执行成功，但是确认消息前进程宕机，RabbitMQ 会把消息重新投递。只要业务执行和消息确认不是一个原子操作，重复消费就可能发生。
+错误思路123456@RabbitListener(queues = &qu...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Feb 22 2023 21:35:00 GMT+0800">2023-02-22</span></span>
+        
+        
+    </div>
+
+    <a href="/2023/02/22/RabbitMQ%E6%B6%88%E6%81%AF%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2023/01/11/JVM%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%E5%88%B0%E5%BA%95%E4%BC%98%E5%8C%96%E4%BA%86%E4%BB%80%E4%B9%88/">
+                        JVM逃逸分析到底优化了什么
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        逃逸的含义如果一个方法创建的对象被返回、赋值给外部字段，或者被其他线程使用，就可以认为它逃逸了。没有逃逸的对象只在当前方法内部可见。
+1234public int sum() &#123;    Point point = new Point(1, ...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Jan 11 2023 00:18:00 GMT+0800">2023-01-11</span></span>
+        
+        
+    </div>
+
+    <a href="/2023/01/11/JVM%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%E5%88%B0%E5%BA%95%E4%BC%98%E5%8C%96%E4%BA%86%E4%BB%80%E4%B9%88/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/12/27/Spring%E4%BA%8B%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%95%88/">
+                        Spring事务为什么会失效
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        一个容易忽略的写法1234567891011@Servicepublic class OrderService &#123;    public void createOrder() &#123;        saveOrder();    &#1...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Dec 27 2022 19:42:00 GMT+0800">2022-12-27</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/12/27/Spring%E4%BA%8B%E5%8A%A1%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E5%A4%B1%E6%95%88/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/11/03/MySQL%E7%B4%A2%E5%BC%95%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%9C%89%E7%94%9F%E6%95%88/">
+                        MySQL索引为什么没有生效
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        先看执行计划1EXPLAIN SELECT * FROM user WHERE phone = 13800138000;
+
+看 key 是否为预期索引，type 是否至少达到 ref，rows 是否扫描了大量记录。不能只看 SQL 中写了索引名，就认...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Nov 03 2022 23:07:00 GMT+0800">2022-11-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/11/03/MySQL%E7%B4%A2%E5%BC%95%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%9C%89%E7%94%9F%E6%95%88/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/10/24/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%98%9F%E5%88%97%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E9%80%89/">
+                        Java线程池队列到底怎么选
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        问题线程池的核心线程数、最大线程数都配置好了，但是任务还是越来越多。后来发现真正决定任务行为的是 workQueue。
+1234new ThreadPoolExecutor(        4, 8, 60, TimeUnit.SECONDS,   ...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Oct 24 2022 09:38:00 GMT+0800">2022-10-24</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/10/24/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0%E9%98%9F%E5%88%97%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E9%80%89/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/09/07/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F/">
+                        Redis缓存穿透的几种处理方式
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        什么是缓存穿透请求查询一个根本不存在的数据，缓存和数据库都没有结果。请求每次都会绕过缓存打到数据库，参数被人利用后，数据库连接很快就被占满。
+一个简单的例子123456789101112public User find(Long id) &#123;...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Sep 07 2022 22:16:00 GMT+0800">2022-09-07</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/09/07/Redis%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E7%9A%84%E5%87%A0%E7%A7%8D%E5%A4%84%E7%90%86%E6%96%B9%E5%BC%8F/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/08/07/kubenetes%E5%91%BD%E4%BB%A4/">
+                        kubenetes命令
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        kubectl get po -n kube-system -o wide
+kubectl get pod podName -n kube-system -oyaml | grep hostNetwork
+metrics
+kubectl top no...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Aug 07 2022 18:17:51 GMT+0800">2022-08-07</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/08/07/kubenetes%E5%91%BD%E4%BB%A4/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/08/01/UTM%E5%AE%89%E8%A3%85centos/">
+                        UTM安装centos
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        学习k8s需要n台节点，本来想通过云服务器，但三台一月一百多有点吃不消，所以尝试使用UTM安装centos系统
+本机配置
+
+Macbook Air m1 16g
+
+下载安装我就不多说了，简单介绍一下我踩的坑吧
+
+选择centos7镜像后，
+
+
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Aug 01 2022 19:39:41 GMT+0800">2022-08-01</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/08/01/UTM%E5%AE%89%E8%A3%85centos/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/20/SpringSecurity/">
+                        SpringSecurity
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        学习目标1234567graph LR		B(SpringSecurity)---E(SpringSecurity)		B---F(Oauth2)		B---G(SpringSecurityOauth2)		B---D[JWT]		B---C(Spr...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Jun 20 2022 13:02:13 GMT+0800">2022-06-20</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/20/SpringSecurity/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/16/mockito%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">
+                        mockito单元测试
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        单元测试 单元测试应该有以下特征
+
+自动化
+可以快速测试执行
+不依赖其他测试的测试结果和测试顺序，单元测试框架可以以仁义顺序执行
+
+
+美国习语
+American Idioms
+
+ants in your pants - can’t sit still...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Jun 16 2022 18:48:50 GMT+0800">2022-06-16</span></span>
+        
+        
+    </div>
+
+    <a href="/2022/06/16/mockito%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+    </ul>
+
+    <div class="home-paginator">
+        <div class="paginator">
+    
+        <a class="prev btn"
+           href="/page/5/"
+        >上一页</a>
+    
+
+    
+        <a class="next btn"
+           href="/page/7/"
+        >下一页</a>
+    
+</div>
+
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2026&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.5</a>
+        </div>
+        
+        
+    </div>
+</footer>
+
+        </div>
+    </div>
+
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="fas fa-arrow-up"></i>
+            </li>
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+
+<div class="post-scripts">
+    
+</div>
+
+
+
+</body>
+</html>

@@ -141,27 +141,28 @@
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/21/InnoDB-Locking/">
-                        InnoDB Locking
+                    <a href="/2025/08/21/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%A7%AF%E5%8E%8B%E4%BA%86%E5%BA%94%E8%AF%A5%E5%85%88%E6%89%A9%E5%AE%B9%E5%90%97/">
+                        消息队列积压了应该先扩容吗
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        InnoDB锁文档
+                        先计算速度积压量增加说明生产速度超过消费速度。先看生产速率、消费速率、单条处理耗时和失败重试次数，不能看到 lag 就马上加机器。
+1lag 增加 = produce_rate - consume_rate &gt; 0
 
-InnoDB支持事务，事务有四大特性，原子性，一致性，隔离性，持久性，事务有四种隔离级别:Read Uncommitted,READ COMMITTED,REPEATABLE_REaD,SERIALIZABLE,本文主要对Inn...
+如果消费端被数据库连接池限...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Feb 21 2022 17:37:52 GMT+0800">2022-02-21</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Aug 21 2025 21:49:00 GMT+0800">2025-08-21</span></span>
         
         
     </div>
 
-    <a href="/2022/02/21/InnoDB-Locking/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/08/21/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%A7%AF%E5%8E%8B%E4%BA%86%E5%BA%94%E8%AF%A5%E5%85%88%E6%89%A9%E5%AE%B9%E5%90%97/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -171,36 +172,26 @@ InnoDB支持事务，事务有四大特性，原子性，一致性，隔离性�
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/13/MYSQL%E9%AB%98%E7%BA%A7/">
-                        MYSQL高级
+                    <a href="/2025/07/12/%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E%E6%85%A2%E4%BD%86%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B9%B6%E4%B8%8D%E6%85%A2/">
+                        接口返回慢但数据库并不慢
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        存储引擎MYSQL体系结构
-
-连接层
-
-
-最上层是一些客户端和连接服务，主要完成一些类似于连接处理，授权认证，权限认证
-
-
-服务层
-
-
-主要完成大多数的核心服务功能，如SQL接口，并完成缓存的查询，SQL的分析和优化，部分内置函数的执行。所有跨存储引...
+                        慢在哪里数据库监控显示 SQL 只用了 20ms，但接口耗时 2s。中间还可能有线程池排队、RPC、JSON 序列化、锁等待和连接池等待。
+12345total=2000mssql=20msrpc=1800msserialize=30msqueue=...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Feb 13 2022 15:59:54 GMT+0800">2022-02-13</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Jul 12 2025 00:06:00 GMT+0800">2025-07-12</span></span>
         
         
     </div>
 
-    <a href="/2022/02/13/MYSQL%E9%AB%98%E7%BA%A7/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/07/12/%E6%8E%A5%E5%8F%A3%E8%BF%94%E5%9B%9E%E6%85%A2%E4%BD%86%E6%95%B0%E6%8D%AE%E5%BA%93%E5%B9%B6%E4%B8%8D%E6%85%A2/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -210,25 +201,26 @@ InnoDB支持事务，事务有四大特性，原子性，一致性，隔离性�
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/12/docker%E5%AE%89%E8%A3%85mysql/">
-                        docker安装mysql
+                    <a href="/2025/06/24/MySQL%E5%A4%A7%E8%A1%A8%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5%E6%80%8E%E4%B9%88%E9%99%8D%E4%BD%8E%E5%BD%B1%E5%93%8D/">
+                        MySQL大表添加字段怎么降低影响
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        1234567891011chaoqiang@Pineapple blog % docker run --name mysql0828 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8.0.28Unable to fi...
+                        DDL 也会影响业务大表添加字段可能需要重建表或持有 metadata lock。即使数据拷贝很快，只要有长事务阻塞元数据锁，DDL 就可能排队。
+12SHOW PROCESSLIST;SELECT * FROM information_schema...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sat Feb 12 2022 14:57:15 GMT+0800">2022-02-12</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Jun 24 2025 19:31:00 GMT+0800">2025-06-24</span></span>
         
         
     </div>
 
-    <a href="/2022/02/12/docker%E5%AE%89%E8%A3%85mysql/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/06/24/MySQL%E5%A4%A7%E8%A1%A8%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5%E6%80%8E%E4%B9%88%E9%99%8D%E4%BD%8E%E5%BD%B1%E5%93%8D/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -238,30 +230,26 @@ InnoDB支持事务，事务有四大特性，原子性，一致性，隔离性�
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/">
-                        mysql数据库笔记
+                    <a href="/2025/05/09/Java%E9%94%81%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B%E7%9A%84%E7%90%86%E8%A7%A3/">
+                        Java锁升级过程的理解
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        数据库相关概念数据库Database:按照一定数据结构来组织，存储和管理数据的仓库
-数据库管理系统DBMS一种操纵和管理数据库的大型软件，用于创建，使用和维护数据库
-关系型数据库RDBMS建立在关系模型基础上，由多张相互连接的二维表组成的数据库
-
-
-...
+                        synchronized 不是永远重量级HotSpot 会根据竞争情况优化锁的获取。无竞争时路径很轻，竞争增加后可能进入更重的同步机制。不同 JDK 版本实现细节会变化，不能把旧资料中的偏向锁流程当成永远不变的规范。
+123synchronized ...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Feb 07 2022 23:15:19 GMT+0800">2022-02-07</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri May 09 2025 22:08:00 GMT+0800">2025-05-09</span></span>
         
         
     </div>
 
-    <a href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AC%94%E8%AE%B0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/05/09/Java%E9%94%81%E5%8D%87%E7%BA%A7%E8%BF%87%E7%A8%8B%E7%9A%84%E7%90%86%E8%A7%A3/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -271,26 +259,26 @@ InnoDB支持事务，事务有四大特性，原子性，一致性，隔离性�
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93/">
-                        mysql数据库
+                    <a href="/2025/04/30/RedisStream%E6%B6%88%E8%B4%B9%E7%BB%84%E7%9A%84Pending%E6%B6%88%E6%81%AF/">
+                        RedisStream消费组的Pending消息
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        事务
-A database transaction symbolizes a unit of work performed within a database management system (or similar system) against...
+                        消息为什么会 pending消费者使用消费组读取消息后，Redis 会把消息放入 Pending Entries List。业务处理完成并执行 XACK 后，消息才从待处理列表中移除。
+12XREADGROUP GROUP order worker ...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Feb 07 2022 22:02:03 GMT+0800">2022-02-07</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Apr 30 2025 12:25:00 GMT+0800">2025-04-30</span></span>
         
         
     </div>
 
-    <a href="/2022/02/07/mysql%E6%95%B0%E6%8D%AE%E5%BA%93/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/04/30/RedisStream%E6%B6%88%E8%B4%B9%E7%BB%84%E7%9A%84Pending%E6%B6%88%E6%81%AF/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -300,26 +288,26 @@ A database transaction symbolizes a unit of work performed within a database man
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/07/jdk8%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E4%BB%A3%E6%9B%BF%E5%8F%8D%E5%B0%84%E6%93%8D%E4%BD%9C/">
-                        jdk8模板方法代替反射操作
+                    <a href="/2025/03/17/%E5%88%86%E5%B8%83%E5%BC%8FID%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9E/">
+                        分布式ID为什么不用数据库自增
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        实际业务中有两个vo对象,页面上分别有是否可放行，是否可批退两个按钮，通过后段传来的结果设置其disable状态，现在有PageVo对象，用于首次进入页面渲染数据，有OperationVo对象，用于用户执行操作后渲染耶main数据，代码如下:
-Pag...
+                        自增 ID 的局限单库自增简单，但多节点写入时容易冲突；把所有请求集中到一个发号表，又会增加中心节点压力。ID 还可能暴露业务规模。
+常见方案Snowflake 组合时间、机器号和序列号，通常趋势递增；UUID 冲突概率很低，但随机性会让 B+Tre...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Feb 07 2022 20:12:07 GMT+0800">2022-02-07</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Mar 17 2025 20:56:00 GMT+0800">2025-03-17</span></span>
         
         
     </div>
 
-    <a href="/2022/02/07/jdk8%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95%E4%BB%A3%E6%9B%BF%E5%8F%8D%E5%B0%84%E6%93%8D%E4%BD%9C/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/03/17/%E5%88%86%E5%B8%83%E5%BC%8FID%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9E/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -329,29 +317,26 @@ Pag...
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/06/%E5%85%B3%E4%BA%8ESPI/">
-                        关于SPI
+                    <a href="/2025/02/06/Docker%E5%AE%B9%E5%99%A8%E9%87%8C%E7%9A%84JVM%E5%86%85%E5%AD%98%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%87%86/">
+                        Docker容器里的JVM内存为什么不准
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        SPI:全程:Service Provider Interface服务提供接口
-Java6开始引入，是一种基于ClassLoader发现并加载服务的机制
-
-Service-公开的接口或抽象类，定义了一个抽象的功能模块
-ServiceProvider-...
+                        容器限制和 JVM 堆容器有自己的 memory limit，JVM 如果按照宿主机内存估算堆大小，就可能在容器中被 OOM Kill。现代 JDK 会读取容器限制，但仍然要确认实际版本和启动参数。
+12docker run --memory=512...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Feb 06 2022 22:11:24 GMT+0800">2022-02-06</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Feb 06 2025 08:41:00 GMT+0800">2025-02-06</span></span>
         
         
     </div>
 
-    <a href="/2022/02/06/%E5%85%B3%E4%BA%8ESPI/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/02/06/Docker%E5%AE%B9%E5%99%A8%E9%87%8C%E7%9A%84JVM%E5%86%85%E5%AD%98%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%87%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -361,29 +346,26 @@ ServiceProvider-...
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
-                        Ant构建tomcat源码环境乱码原因分析
+                    <a href="/2025/01/23/%E4%B8%80%E6%AC%A1HTTP%E6%8E%A5%E5%8F%A3%E8%B6%85%E6%97%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95/">
+                        一次HTTP接口超时的排查记录
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        为什么会有乱码呢，根据网上资料，打印日志文件时，调用了StringManager类的getString方法，str就是getString方法返回的乱码值。
-
-追ResoutceBundle的getString方法
-
-可以看到，getString方法中...
+                        超时不只有一种连接超时说明还没有建立连接，读取超时说明连接建立后迟迟没有响应。两个超时如果只配置一个，故障时仍可能长时间占用业务线程。
+123HttpRequest request = HttpRequest.newBuilder(uri)     ...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Feb 06 2022 17:18:48 GMT+0800">2022-02-06</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Jan 23 2025 23:03:00 GMT+0800">2025-01-23</span></span>
         
         
     </div>
 
-    <a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BAtomcat%E6%BA%90%E7%A0%81%E7%8E%AF%E5%A2%83%E4%B9%B1%E7%A0%81%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2025/01/23/%E4%B8%80%E6%AC%A1HTTP%E6%8E%A5%E5%8F%A3%E8%B6%85%E6%97%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -393,30 +375,25 @@ ServiceProvider-...
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/">
-                        Ant构建Tomcat源码开发环境，解决乱码
+                    <a href="/2024/12/08/Spring%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E4%B8%A2%E6%95%B0%E6%8D%AE/">
+                        Spring事件监听为什么会丢数据
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        学习tomcat，因为网上好多使用maven搭建的tomcat，但tomcat官方推荐的是使用ant搭建，所以在此记录。
-上半部分搭建环境，下半部分解决乱码。
-参考资料:
-官方搭建开发环境文档(推荐一定要先看一下文档)
-解决乱码{
-关于Tomcat源...
+                        事务中的事件12345@Transactionalpublic void createOrder(Order order) &#123;    mapper.insert(order);    publisher.publishEvent(new O...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Feb 06 2022 14:10:48 GMT+0800">2022-02-06</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 08 2024 17:13:00 GMT+0800">2024-12-08</span></span>
         
         
     </div>
 
-    <a href="/2022/02/06/Ant%E6%9E%84%E5%BB%BATomcat%E6%BA%90%E7%A0%81%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%8C%E8%A7%A3%E5%86%B3%E4%B9%B1%E7%A0%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2024/12/08/Spring%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E4%B8%A2%E6%95%B0%E6%8D%AE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -426,27 +403,26 @@ ServiceProvider-...
                 
 
                 <h3 class="home-article-title">
-                    <a href="/2022/01/26/%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E6%97%A0%E9%94%81/">
-                        共享模型之无锁
+                    <a href="/2024/11/26/MySQL%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%87%8F%E5%B0%91%E5%9B%9E%E8%A1%A8/">
+                        MySQL覆盖索引为什么能减少回表
                     </a>
                 </h3>
 
                 <div class="home-article-content markdown-body">
                     
-                        对一个账户开启多个线程进行取款操作
-Account接口
-12345678package cas;public interface Account &#123;    void withdraw(int num);    int getbalance(...
+                        什么是回表二级索引叶子节点保存索引列和主键。通过二级索引找到主键后，如果还需要其他列，就要回到聚簇索引再次读取，这一步就是回表。
+12CREATE INDEX idx_user_status_id ON user(status, id);SELECT...
                     
                 </div>
 
                 <div class="home-article-meta-info-container">
     <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Wed Jan 26 2022 02:50:03 GMT+0800">2022-01-26</span></span>
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Nov 26 2024 22:39:00 GMT+0800">2024-11-26</span></span>
         
         
     </div>
 
-    <a href="/2022/01/26/%E5%85%B1%E4%BA%AB%E6%A8%A1%E5%9E%8B%E4%B9%8B%E6%97%A0%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+    <a href="/2024/11/26/MySQL%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E5%87%8F%E5%B0%91%E5%9B%9E%E8%A1%A8/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
@@ -486,7 +462,7 @@ Account接口
               <span>2020</span>
               -
             
-            2022&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
+            2026&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">chaoqiang.qiu</a>
         </div>
         
         <div class="theme-info info-item">
