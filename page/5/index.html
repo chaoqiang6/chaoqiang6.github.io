@@ -141,6 +141,37 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2024/01/09/G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%97%A5%E5%BF%97%E6%80%8E%E4%B9%88%E7%9C%8B/">
+                        G1垃圾回收日志怎么看
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        开启日志12-Xms2g -Xmx2g-Xlog:gc*,safepoint:file=gc.log:time,uptime,level,tags
+
+初始堆和最大堆设置相同，可以减少运行中的扩容抖动，但不代表一定更快。
+看什么Young GC 主要回...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Tue Jan 09 2024 19:24:00 GMT+0800">2024-01-09</span></span>
+        
+        
+    </div>
+
+    <a href="/2024/01/09/G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%97%A5%E5%BF%97%E6%80%8E%E4%B9%88%E7%9C%8B/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2023/12/20/Spring%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E8%A1%8C%E4%B8%BA%E7%9A%84%E4%B8%80%E6%AC%A1%E5%AE%9E%E9%AA%8C/">
                         Spring事务传播行为的一次实验
                     </a>
@@ -395,35 +426,6 @@
     </div>
 
     <a href="/2023/04/19/Java%E4%B8%AD%E7%9A%84CompletableFuture%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2023/03/05/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%AF%AF%E5%88%A0/">
-                        Redis分布式锁为什么会误删
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        锁被别人删除了客户端 A 获取锁后执行时间太长，锁过期。客户端 B 获取了同一个锁，A 执行结束时直接 DEL key，结果把 B 的锁删掉了。
-1234A: SET lock order-1 token-a NX PX 30000A: 执行超时，锁...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Mar 05 2023 18:26:00 GMT+0800">2023-03-05</span></span>
-        
-        
-    </div>
-
-    <a href="/2023/03/05/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%AF%AF%E5%88%A0/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
