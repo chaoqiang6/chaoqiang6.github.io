@@ -28,14 +28,80 @@
 
 
 <body>
-<div class="progress-bar-container">
-    
-        <span class="scroll-progress-bar"></span>
-    
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: $z-index-9;
 
-    
-</div>
+  if (hexo-config('pjax.enable') == true) {
 
+    .pjax-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--pjax-progress-bar-color);
+      visibility: hidden;
+      opacity: 0;
+      z-index: $z-index-8;
+      transition-t("width", "0", "0.1", "linear");
+
+
+      &.show {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+
+    .pjax-progress-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: $z-index-8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 6px 0 0;
+      visibility: hidden;
+      font-size: 1.1rem;
+      color: var(--default-text-color);
+
+      +keep-tablet() {
+        padding: 6px 5px 0 0;
+        font-size: 1rem;
+      }
+
+      &.show {
+        visibility: visible;
+      }
+    }
+
+  }
+
+  if (hexo-config('style.scroll.progress_bar.enable') == true) {
+
+    .scroll-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: $scroll-progress-bar-height;
+      visibility: hidden;
+      z-index: $z-index-7;
+      background: var(--primary-color);
+      transition-t("width", "0", "0.1", "linear");
+
+      &.hide {
+        display: none !important;
+      }
+    }
+
+  }
+}
 
 <main class="page-container">
 
@@ -135,6 +201,63 @@
                 
                     <div class="home-content-container fade-in-down-animation">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2025/11/02/Java%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81/">
+                        Java记录一次线程死锁
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        复现代码1234567synchronized (lockA) &#123;    synchronized (lockB) &#123; work(); &#125;&#125;synchronized (lockB) &#123;    sync...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Nov 02 2025 22:57:00 GMT+0800">2025-11-02</span></span>
+        
+        
+    </div>
+
+    <a href="/2025/11/02/Java%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2025/10/27/%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%98%B2%E9%87%8D%E6%94%BE/">
+                        接口签名为什么要防重放
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        只有签名还不够客户端对请求参数做 HMAC 签名，可以防止参数被篡改，但攻击者仍可能把完整请求复制后再次发送，这就是重放。
+1signature = HMAC(secret, method + path + timestamp + nonce + b...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Oct 27 2025 09:08:00 GMT+0800">2025-10-27</span></span>
+        
+        
+    </div>
+
+    <a href="/2025/10/27/%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%98%B2%E9%87%8D%E6%94%BE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
         
             <li class="home-article-item">
 
@@ -366,63 +489,6 @@
     </div>
 
     <a href="/2025/02/06/Docker%E5%AE%B9%E5%99%A8%E9%87%8C%E7%9A%84JVM%E5%86%85%E5%AD%98%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%87%86/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2025/01/23/%E4%B8%80%E6%AC%A1HTTP%E6%8E%A5%E5%8F%A3%E8%B6%85%E6%97%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95/">
-                        一次HTTP接口超时的排查记录
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        超时不只有一种连接超时说明还没有建立连接，读取超时说明连接建立后迟迟没有响应。两个超时如果只配置一个，故障时仍可能长时间占用业务线程。
-123HttpRequest request = HttpRequest.newBuilder(uri)     ...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Thu Jan 23 2025 23:03:00 GMT+0800">2025-01-23</span></span>
-        
-        
-    </div>
-
-    <a href="/2025/01/23/%E4%B8%80%E6%AC%A1HTTP%E6%8E%A5%E5%8F%A3%E8%B6%85%E6%97%B6%E7%9A%84%E6%8E%92%E6%9F%A5%E8%AE%B0%E5%BD%95/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2024/12/08/Spring%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E4%B8%A2%E6%95%B0%E6%8D%AE/">
-                        Spring事件监听为什么会丢数据
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        事务中的事件12345@Transactionalpublic void createOrder(Order order) &#123;    mapper.insert(order);    publisher.publishEvent(new O...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Dec 08 2024 17:13:00 GMT+0800">2024-12-08</span></span>
-        
-        
-    </div>
-
-    <a href="/2024/12/08/Spring%E4%BA%8B%E4%BB%B6%E7%9B%91%E5%90%AC%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E4%B8%A2%E6%95%B0%E6%8D%AE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>

@@ -28,14 +28,80 @@
 
 
 <body>
-<div class="progress-bar-container">
-    
-        <span class="scroll-progress-bar"></span>
-    
+.progress-bar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: $z-index-9;
 
-    
-</div>
+  if (hexo-config('pjax.enable') == true) {
 
+    .pjax-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--pjax-progress-bar-color);
+      visibility: hidden;
+      opacity: 0;
+      z-index: $z-index-8;
+      transition-t("width", "0", "0.1", "linear");
+
+
+      &.show {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+
+    .pjax-progress-icon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: $z-index-8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 6px 0 0;
+      visibility: hidden;
+      font-size: 1.1rem;
+      color: var(--default-text-color);
+
+      +keep-tablet() {
+        padding: 6px 5px 0 0;
+        font-size: 1rem;
+      }
+
+      &.show {
+        visibility: visible;
+      }
+    }
+
+  }
+
+  if (hexo-config('style.scroll.progress_bar.enable') == true) {
+
+    .scroll-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: $scroll-progress-bar-height;
+      visibility: hidden;
+      z-index: $z-index-7;
+      background: var(--primary-color);
+      transition-t("width", "0", "0.1", "linear");
+
+      &.hide {
+        display: none !important;
+      }
+    }
+
+  }
+}
 
 <main class="page-container">
 
@@ -135,6 +201,63 @@
                 
                     <div class="home-content-container fade-in-down-animation">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2026/07/03/SpringAI%E6%8E%A5%E5%85%A5%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5/">
+                        Spring AI接入大模型的第一步
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        为什么想用 Spring AI后端项目本来就是 Spring Boot 技术栈，如果为了调用大模型再单独维护一套 Python 服务，部署和权限管理都会多一层。Spring AI 提供了 ChatClient、Prompt、Tool Calling ...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Fri Jul 03 2026 21:26:00 GMT+0800">2026-07-03</span></span>
+        
+        
+    </div>
+
+    <a href="/2026/07/03/SpringAI%E6%8E%A5%E5%85%A5%E5%A4%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2026/06/29/LangChain%E4%BB%8EPrompt%E5%88%B0Runnable/">
+                        LangChain从Prompt到Runnable
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        先不急着做 Agent第一次接触 LangChain 时很容易直接研究 Agent，结果把模型、工具、记忆和执行器混在一起。实际项目可以先从一个普通的 prompt chain 开始，确认模型调用、输入输出和异常处理。
+1234567891011fr...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Jun 29 2026 19:47:00 GMT+0800">2026-06-29</span></span>
+        
+        
+    </div>
+
+    <a href="/2026/06/29/LangChain%E4%BB%8EPrompt%E5%88%B0Runnable/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
         
             <li class="home-article-item">
 
@@ -370,63 +493,6 @@ POST 通常不是幂等的。即使使用 PUT...
     </div>
 
     <a href="/2025/12/19/MySQL%E4%B9%90%E8%A7%82%E9%94%81%E4%B8%80%E5%AE%9A%E4%B8%8D%E4%BC%9A%E5%86%B2%E7%AA%81%E5%90%97/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2025/11/02/Java%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81/">
-                        Java记录一次线程死锁
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        复现代码1234567synchronized (lockA) &#123;    synchronized (lockB) &#123; work(); &#125;&#125;synchronized (lockB) &#123;    sync...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Sun Nov 02 2025 22:57:00 GMT+0800">2025-11-02</span></span>
-        
-        
-    </div>
-
-    <a href="/2025/11/02/Java%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2025/10/27/%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%98%B2%E9%87%8D%E6%94%BE/">
-                        接口签名为什么要防重放
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        只有签名还不够客户端对请求参数做 HMAC 签名，可以防止参数被篡改，但攻击者仍可能把完整请求复制后再次发送，这就是重放。
-1signature = HMAC(secret, method + path + timestamp + nonce + b...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-history"></i>&nbsp;<span class="home-article-date" data-date="Mon Oct 27 2025 09:08:00 GMT+0800">2025-10-27</span></span>
-        
-        
-    </div>
-
-    <a href="/2025/10/27/%E6%8E%A5%E5%8F%A3%E7%AD%BE%E5%90%8D%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%98%B2%E9%87%8D%E6%94%BE/">阅读全文&nbsp;<i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
